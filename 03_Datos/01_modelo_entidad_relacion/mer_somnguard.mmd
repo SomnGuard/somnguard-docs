@@ -1,5 +1,5 @@
 erDiagram
-    %% CATALOGS
+    %% CATALOGS (Modulo 7: Parametrizacion y catalogos)
     status_catalog {
         UUID id PK
         varchar code
@@ -7,6 +7,10 @@ erDiagram
         varchar description
         timestamptz created_at
         timestamptz updated_at
+        timestamptz deleted_at
+        UUID created_by
+        UUID updated_by
+        UUID deleted_by
     }
 
     media_type_catalog {
@@ -15,6 +19,10 @@ erDiagram
         varchar name
         timestamptz created_at
         timestamptz updated_at
+        timestamptz deleted_at
+        UUID created_by
+        UUID updated_by
+        UUID deleted_by
     }
 
     severity_catalog {
@@ -24,6 +32,10 @@ erDiagram
         int rank
         timestamptz created_at
         timestamptz updated_at
+        timestamptz deleted_at
+        UUID created_by
+        UUID updated_by
+        UUID deleted_by
     }
 
     event_category_catalog {
@@ -32,9 +44,28 @@ erDiagram
         varchar name
         timestamptz created_at
         timestamptz updated_at
+        timestamptz deleted_at
+        UUID created_by
+        UUID updated_by
+        UUID deleted_by
     }
 
-    %% SECURITY
+    sound_pattern {
+        UUID id PK
+        varchar code
+        varchar description
+        int frequency_hz
+        int duration
+        UUID status_id FK
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at
+        UUID created_by
+        UUID updated_by
+        UUID deleted_by
+    }
+
+    %% SECURITY (Modulo 1: Seguridad, cuenta y autorizacion)
     person {
         UUID id PK
         varchar first_name
@@ -152,7 +183,7 @@ erDiagram
         UUID deleted_by
     }
 
-    %% DEVICE
+    %% DEVICE MANAGEMENT (Modulo 2: Gestion de dispositivos asociados)
     device {
         UUID id PK
         varchar serial_number
@@ -195,13 +226,13 @@ erDiagram
         UUID deleted_by
     }
 
-    %% SYSTEM CATALOG + EVENTS
-    sound_pattern {
+    %% INGESTA Y SINCRONIZACION (Modulo 4)
+    event {
         UUID id PK
-        varchar code
-        varchar description
-        int frequency_hz
-        int duration
+        UUID device_id FK
+        UUID event_type_id FK
+        timestamptz occurred_at
+        boolean is_offline_sync
         UUID status_id FK
         timestamptz created_at
         timestamptz updated_at
@@ -211,6 +242,21 @@ erDiagram
         UUID deleted_by
     }
 
+    evidence {
+        UUID id PK
+        UUID event_id FK
+        UUID media_type_id FK
+        varchar file_url
+        UUID status_id FK
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at
+        UUID created_by
+        UUID updated_by
+        UUID deleted_by
+    }
+
+    %% MONITOREO DE EVENTOS Y ALERTAMIENTO (Modulo 5)
     event_type {
         UUID id PK
         varchar code
@@ -227,39 +273,10 @@ erDiagram
         UUID deleted_by
     }
 
-    event {
-        UUID id PK
-        UUID device_id FK
-        UUID event_type_id FK
-        timestamptz occurred_at
-        boolean is_offline_sync
-        UUID status_id FK
-        timestamptz created_at
-        timestamptz updated_at
-        timestamptz deleted_at
-        UUID created_by
-        UUID updated_by
-        UUID deleted_by
-    }
-
     alert {
         UUID id PK
         UUID event_id FK
         UUID sound_pattern_id FK
-        UUID status_id FK
-        timestamptz created_at
-        timestamptz updated_at
-        timestamptz deleted_at
-        UUID created_by
-        UUID updated_by
-        UUID deleted_by
-    }
-
-    evidence {
-        UUID id PK
-        UUID event_id FK
-        UUID media_type_id FK
-        varchar file_url
         UUID status_id FK
         timestamptz created_at
         timestamptz updated_at

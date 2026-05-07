@@ -1,43 +1,77 @@
 erDiagram
-    TYPE_DOCUMENT
-    PERSON
-    FILE
-    ROLE
-    MODULE
-    APP_VIEW
-    APP_USER
-    USER_ROLE
-    ROLE_MODULE
-    MODULE_VIEW
-    CATEGORY
-    SUPPLIER
-    PRODUCT
-    INVENTORY
-    CUSTOMER
-    METHOD_PAYMENT
-    SALES_ORDER
-    ORDER_ITEM
-    INVOICE
-    INVOICE_ITEM
-    PAYMENT
+    status_catalog
+    media_type_catalog
+    severity_catalog
+    event_category_catalog
 
-    PERSON ||--o| APP_USER : representa
-    ROLE ||--o{ USER_ROLE : asigna
-    APP_USER ||--o{ USER_ROLE : recibe
-    ROLE ||--o{ ROLE_MODULE : habilita
-    MODULE ||--o{ ROLE_MODULE : agrupa
-    MODULE ||--o{ MODULE_VIEW : contiene
-    APP_VIEW ||--o{ MODULE_VIEW : muestra
-    CATEGORY ||--o{ PRODUCT : agrupa
-    SUPPLIER ||--o{ PRODUCT : abastece
-    PRODUCT ||--o| INVENTORY : controla
-    CUSTOMER ||--o{ SALES_ORDER : realiza
-    APP_USER ||--o{ SALES_ORDER : gestiona
-    SALES_ORDER ||--o{ ORDER_ITEM : incluye
-    PRODUCT ||--o{ ORDER_ITEM : compone
-    SALES_ORDER ||--o| INVOICE : genera
-    CUSTOMER ||--o{ INVOICE : recibe
-    INVOICE ||--o{ INVOICE_ITEM : detalla
-    PRODUCT ||--o{ INVOICE_ITEM : lista
-    METHOD_PAYMENT ||--o{ PAYMENT : usa
-    INVOICE ||--o{ PAYMENT : paga
+    person
+    user
+    role
+    permission
+    module
+    form
+    form_module
+    role_user
+    role_form_permission
+
+    device
+    device_assignment
+    device_config
+    sound_pattern
+
+    event_type
+    event
+    alert
+    evidence
+    notification
+
+    person ||--|| user : person_id
+
+    user ||--o{ role_user : has_roles
+    role ||--o{ role_user : assigned_to
+
+    module ||--o{ form_module : has_forms
+    form ||--o{ form_module : belongs_to_modules
+
+    role ||--o{ role_form_permission : grants
+    permission ||--o{ role_form_permission : uses
+    form ||--o{ role_form_permission : on_form
+
+    device ||--o{ device_assignment : assignment_history
+    user ||--o{ device_assignment : assignment_history
+    device ||--|| device_config : has_current_config
+
+    event_category_catalog ||--o{ event_type : categorizes
+    severity_catalog ||--o{ event_type : default_severity
+    sound_pattern ||--o{ event_type : default_sound
+
+    device ||--o{ event : generates
+    event_type ||--o{ event : typed_as
+
+    event ||--o{ alert : triggers
+    sound_pattern ||--o{ alert : plays
+
+    event ||--o{ evidence : has_evidence
+    media_type_catalog ||--o{ evidence : evidence_type
+
+    user ||--o{ notification : receives
+    event ||--o{ notification : causes
+
+    status_catalog ||--o{ person : status
+    status_catalog ||--o{ user : status
+    status_catalog ||--o{ role : status
+    status_catalog ||--o{ permission : status
+    status_catalog ||--o{ module : status
+    status_catalog ||--o{ form : status
+    status_catalog ||--o{ form_module : status
+    status_catalog ||--o{ role_user : status
+    status_catalog ||--o{ role_form_permission : status
+    status_catalog ||--o{ device : status
+    status_catalog ||--o{ device_assignment : status
+    status_catalog ||--o{ device_config : status
+    status_catalog ||--o{ sound_pattern : status
+    status_catalog ||--o{ event_type : status
+    status_catalog ||--o{ event : status
+    status_catalog ||--o{ alert : status
+    status_catalog ||--o{ evidence : status
+    status_catalog ||--o{ notification : status
