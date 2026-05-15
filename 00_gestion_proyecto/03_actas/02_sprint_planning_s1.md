@@ -64,7 +64,7 @@ Se priorizaron historias iniciales orientadas a la estructura del proyecto, back
 2. Iniciar el desarrollo de la HU-001.
 3. Organizar el tablero del sprint con seguimiento por responsable.
 
-### Estado: En progreso
+### Estado: Cerrado
 
 ---
 
