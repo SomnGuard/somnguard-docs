@@ -24,8 +24,8 @@ Detalles de la decisión:
 - **Build tool:** Maven (`pom.xml`).
 - **Base de datos:** PostgreSQL, sin cambios.
 - **Migraciones:** Liquibase, sin cambios.
-- **Estructura de paquetes por módulo:** `interfaces`, `application`, `domain`, `infrastructure` (ver `documento-arquitectura.md`, sección 8).
-- **Autenticación:** a definir en una ADR posterior (ver `open-questions.md`).
+- **Estructura de paquetes por módulo:** `interfaces`, `application`, `domain`, `infrastructure` (ver `../../documento-arquitectura.md`, sección 8).
+- **Autenticación:** a definir en una ADR posterior (ver `../../../15-project-control/open-questions.md`).
 
 ## Consecuencias
 
@@ -59,7 +59,7 @@ Detalles de la decisión:
 
 ## Referencias
 
-- Documento de arquitectura: `../../05-architecture/documento-arquitectura.md`
-- Acta kick-off: `../../15-project-control/01-actas/01_kickoff.md`
-- Reglas de documentación de módulos: `../../00-documentation-governance/structure-rules.md`
-- Preguntas abiertas: `../../15-project-control/open-questions.md`
+- Documento de arquitectura: `../../documento-arquitectura.md`
+- Acta kick-off: `../../../15-project-control/01-actas/01_kickoff.md`
+- Reglas de documentación de módulos: `../../../00-documentation-governance/structure-rules.md`
+- Preguntas abiertas: `../../../15-project-control/open-questions.md`

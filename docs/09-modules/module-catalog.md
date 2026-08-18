@@ -17,7 +17,7 @@
 
 </div>
 
-Catálogo de los módulos del backend de SomnGuard. Fuente de verdad del listado de módulos; el detalle de entidades y atributos vive en `06-data-architecture/02-modulos-entidades.md`.
+Catálogo de los módulos del backend de SomnGuard. Fuente de verdad del listado de módulos; el detalle de entidades y atributos vive en `../06-data-architecture/02-modulos-entidades.md`.
 
 | Módulo | Responsabilidad | Entidades |
 |--------|-----------------|-----------|
@@ -29,5 +29,5 @@ Catálogo de los módulos del backend de SomnGuard. Fuente de verdad del listado
 
 ## Reglas
 
-- No documentar módulos ficticios: un módulo solo se registra aquí cuando existe en el código o tiene ADR aprobada (ver `structure-rules.md`).
+- No documentar módulos ficticios: un módulo solo se registra aquí cuando existe en el código o tiene ADR aprobada (ver `../00-documentation-governance/structure-rules.md`).
 - La documentación detallada de un módulo se ubica en `modules/<nombre-del-modulo>/`.

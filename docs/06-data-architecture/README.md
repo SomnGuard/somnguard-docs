@@ -19,11 +19,11 @@
 
 ## Contenido
 
-Modelo de datos vigente del sistema. Este modelo es la **fuente de verdad** para entidades, atributos y relaciones; las versiones anteriores están archivadas en `99-archive/deprecated/data-model-v1/`.
+Modelo de datos vigente del sistema. Este modelo es la **fuente de verdad** para entidades, atributos y relaciones; las versiones anteriores están archivadas en `../99-archive/deprecated/data-model-v1/`.
 
 | Archivo | Descripción | Estado |
 |---------|-------------|--------|
-| [01-modelo-entidad-relacion.mmd](./01-modelo-entidad-relacion.mmd) | Diagrama entidad-relación vigente (22 entidades) | Estable |
+| [01-modelo-entidad-relacion.mmd](./01-modelo-entidad-relacion.mmd) | Diagrama entidad-relación vigente (20 entidades) | Estable |
 | [02-modulos-entidades.md](./02-modulos-entidades.md) | Módulos, entidades y atributos con convenciones | Estable |
 | [02-modelo-relacional.mmd](./02-modelo-relacional.mmd) | Esquema relacional implementable del modelo vigente | En progreso |
 | [03-diccionario-datos.md](./03-diccionario-datos.md) | Diccionario de datos del modelo vigente | En progreso |

@@ -37,7 +37,7 @@ Este documento establece los lineamientos, criterios y buenas prácticas para la
 ### ADRs
 
 - Formato: `ADR-NNN-titulo-corto.md`.
-- Los ADRs viven en `05-architecture/decisions/records/`.
+- Los ADRs viven en `../05-architecture/decisions/records/`.
 - Ver proceso completo en [05-architecture/decisions/README.md](../05-architecture/decisions/README.md).
 
 ## Estructura mínima
@@ -80,7 +80,7 @@ Todo documento `.md` debe iniciar con:
 | Situación | Acción |
 |-----------|--------|
 | Documento sustituido por otro | Cambiar estado a **Deprecado**, agregar `> Reemplazado por: [enlace al nuevo]` al inicio, dejar en su ubicación actual |
-| Documento de sección eliminada o reestructurada | Mover a `99-archive/deprecated/`, registrar el movimiento en `CHANGELOG.md` |
+| Documento de sección eliminada o reestructurada | Mover a `../99-archive/deprecated/`, registrar el movimiento en `../../CHANGELOG.md` |
 | ADR obsoleta | Nunca mover — cambiar estado a `DEPRECATED` en `records/` y agregar `> Reemplazada por: ADR-NNN-nueva.md` |
 
 
@@ -89,8 +89,8 @@ Todo documento `.md` debe iniciar con:
 - Todo archivo nuevo debe enlazarse desde el `README.md` de su carpeta.
 - Toda carpeta nueva debe tener `README.md`.
 - Los documentos movidos deben conservar trazabilidad mediante enlace o nota en `CHANGELOG.md`.
-- Los ADRs se registran en `05-architecture/decisions/README.md`.
-- Los módulos del backend se registran en `09-modules/module-catalog.md`.
+- Los ADRs se registran en `../05-architecture/decisions/README.md`.
+- Los módulos del backend se registran en `../09-modules/module-catalog.md`.
 
 
 ## Documentos y carpetas
@@ -116,18 +116,18 @@ No crear carpetas `misc/`, `otros/`, `temp/` ni carpetas con un solo documento.
 
 | Tipo de recurso | Dónde va |
 |----------------|----------|
-| Fuentes UML `.wsd` / `.puml` | `08-uml/diagrams/source/` |
-| Exportaciones UML `.svg` / `.png` | `08-uml/diagrams/exports/` |
-| Logos | `assets/icons/` |
-| Capturas, mockups o imágenes no UML | `assets/images/` |
-| Diagramas UML referenciados por arquitectura | Fuente y export en `08-uml/`, enlace desde `05-architecture/` |
+| Fuentes UML `.wsd` / `.puml` | `../08-uml/diagrams/source/` |
+| Exportaciones UML `.svg` / `.png` | `../08-uml/diagrams/exports/` |
+| Logos | `../../assets/icons/` |
+| Capturas, mockups o imágenes no UML | `../../assets/images/` |
+| Diagramas UML referenciados por arquitectura | Fuente y export en `../08-uml/`, enlace desde `../05-architecture/` |
 
 Reglas:
 
 - Todo diagrama debe tener fuente editable.
 - SVG es preferido sobre PNG.
 - No subir solo la imagen exportada si existe fuente editable.
-- Registrar diagramas en `08-uml/diagram-index.md`.
+- Registrar diagramas en `../08-uml/diagram-index.md`.
 
 ## Errores comunes
 

@@ -17,7 +17,7 @@
 
 </div>
 
-Estrategia de pruebas inicial del proyecto SomnGuard, alineada con la metodología adoptada (Scrum) y la arquitectura definida. Complementa la sección de calidad de `00-documentation-governance/metodologia-adoptada.md`.
+Estrategia de pruebas inicial del proyecto SomnGuard, alineada con la metodología adoptada (Scrum) y la arquitectura definida. Complementa la sección de calidad de `../00-documentation-governance/metodologia-adoptada.md`.
 
 ## Objetivo
 
@@ -66,7 +66,7 @@ Una historia se considera probada cuando (aplica a la HU):
 
 ## Relación con CI/CD
 
-Las pruebas se ejecutan en GitHub Actions (ver `10-devops/ci-cd-strategy.md`): unitarias e integración en cada push, E2E en release. El pipeline debe bloquear el merge si las pruebas fallan.
+Las pruebas se ejecutan en GitHub Actions (ver `../10-devops/ci-cd-strategy.md`): unitarias e integración en cada push, E2E en release. El pipeline debe bloquear el merge si las pruebas fallan.
 
 ## Pendientes
 

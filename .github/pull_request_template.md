@@ -17,7 +17,7 @@
 
 - [ ] El documento usa el encabezado estándar (título, estado, fecha)
 - [ ] Está enlazado desde el `README.md` de su sección
-- [ ] Los diagramas tienen fuente editable en `08-uml/diagrams/source/`
+- [ ] Los diagramas tienen fuente editable en `../docs/08-uml/diagrams/source/`
 - [ ] No contiene credenciales, tokens ni datos personales
 - [ ] Enlaces relativos verificados
 - [ ] CHANGELOG actualizado (si modifica gobernanza, estructura o contratos compartidos)
