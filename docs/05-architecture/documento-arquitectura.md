@@ -250,7 +250,7 @@ La arquitectura de datos se alinea con los módulos ya definidos en el proyecto:
 - alert, notification.
 - status_catalog, media_type_catalog, severity_catalog, event_category_catalog, sound_pattern, event_type.
 
-> **Nota:** el modelo de datos vigente (con atributos) está en [06-data-architecture/](../06-data-architecture/). El listado anterior corresponde a la primera versión del modelo, archivada en `99-archive/deprecated/data-model-v1/`.
+> **Nota:** el modelo de datos vigente (con atributos) está en [06-data-architecture/](../06-data-architecture/). El listado anterior corresponde a la primera versión del modelo, archivada en `../99-archive/deprecated/data-model-v1/`.
 
 ## 10. Autenticación y autorización
 

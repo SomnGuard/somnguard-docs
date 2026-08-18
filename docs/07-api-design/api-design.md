@@ -17,7 +17,7 @@
 
 </div>
 
-Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 3.x). Documento de trabajo: los contratos definitivos se validarán con las decisiones registradas en `05-architecture/decisions/` y las preguntas abiertas de `15-project-control/open-questions.md`.
+Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 3.x). Documento de trabajo: los contratos definitivos se validarán con las decisiones registradas en `../05-architecture/decisions/` y las preguntas abiertas de `../15-project-control/open-questions.md`.
 
 ## Convenciones generales
 

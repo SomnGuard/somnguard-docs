@@ -17,7 +17,7 @@
 
 </div>
 
-Estrategia de integración y despliegue continuo del proyecto, alineada con la metodología adoptada (`00-documentation-governance/metodologia-adoptada.md`) y el documento de arquitectura.
+Estrategia de integración y despliegue continuo del proyecto, alineada con la metodología adoptada (`../00-documentation-governance/metodologia-adoptada.md`) y el documento de arquitectura.
 
 ## Herramienta
 

@@ -25,6 +25,6 @@ Un documento está **listo para revisión** cuando:
 - [ ] Tiene título, estado y fecha
 - [ ] Explica su contexto y propósito
 - [ ] Está enlazado desde el `README.md` de su sección
-- [ ] Los diagramas referenciados existen en `08-uml/` con fuente editable
+- [ ] Los diagramas referenciados existen en `../08-uml/` con fuente editable
 - [ ] No contiene credenciales, tokens, datos personales ni información sensible
 - [ ] Fue revisado antes del PR

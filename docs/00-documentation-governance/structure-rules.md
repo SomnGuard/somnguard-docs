@@ -17,7 +17,7 @@
 
 </div>
 
-SomnGuard se implementa como un **monolito modular** en Java 21 con Spring Boot 3.x (Maven) con principios de clean architecture (ver `05-architecture/documento-arquitectura.md`). No se orienta a microservicios. Este documento establece los lineamientos para documentar los módulos del backend.
+SomnGuard se implementa como un **monolito modular** en Java 21 con Spring Boot 3.x (Maven) con principios de clean architecture (ver `../05-architecture/documento-arquitectura.md`). No se orienta a microservicios. Este documento establece los lineamientos para documentar los módulos del backend.
 
 ## Regla crítica
 
@@ -25,11 +25,11 @@ No crear carpetas por módulo hasta que el módulo exista en el repositorio de c
 
 No crear módulos ficticios para llenar la estructura.
 
-**Requisito de aprobación:** Todo módulo nuevo debe tener una ADR en `05-architecture/decisions/records/` o una decisión registrada en `15-project-control/open-questions.md` con estado RESUELTA antes de crear su carpeta de documentación. Sin ese artefacto, el PR será rechazado.
+**Requisito de aprobación:** Todo módulo nuevo debe tener una ADR en `../05-architecture/decisions/records/` o una decisión registrada en `../15-project-control/open-questions.md` con estado RESUELTA antes de crear su carpeta de documentación. Sin ese artefacto, el PR será rechazado.
 
 ## Catálogo de módulos
 
-La fuente de verdad del listado de módulos es `09-modules/module-catalog.md`. Todo módulo del backend debe estar registrado allí antes de documentarse en detalle.
+La fuente de verdad del listado de módulos es `../09-modules/module-catalog.md`. Todo módulo del backend debe estar registrado allí antes de documentarse en detalle.
 
 ## Ubicación
 

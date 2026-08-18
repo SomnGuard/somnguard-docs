@@ -1,7 +1,7 @@
 <div style="display:flex; align-items:center; justify-content:space-between;">
 
 <div>
-<img src="../../assets/icons/logo-somnguard.png" width="140"/>
+<img src="../assets/icons/logo-somnguard.png" width="140"/>
 </div>
 
 <div align="right">

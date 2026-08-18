@@ -25,4 +25,4 @@ Catálogo de módulos del backend. SomnGuard es un monolito modular en Java 21 (
 |---------|-------------|--------|
 | [module-catalog.md](./module-catalog.md) | Catálogo de módulos con responsabilidad y entidades | En progreso |
 
-Reglas para documentar módulos: ver `00-documentation-governance/structure-rules.md`.
+Reglas para documentar módulos: ver `../00-documentation-governance/structure-rules.md`.
