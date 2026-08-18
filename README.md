@@ -1,64 +1,76 @@
-# SomnGuard
+<div style="display:flex; align-items:center; justify-content:space-between;">
 
+<div>
+<img src="assets/icons/logo-somnguard.png" width="140"/>
+</div>
 
-## Estructura de la Documentación
+<div align="right">
 
-Este repositorio contiene la documentación completa del proyecto SomnGuard, organizada en las siguientes fases:
+# SOMNGUARD
 
-### 📋 00_gestion_proyecto/
-Documentación de gestión del proyecto, incluyendo:
-- **01_anteproyecto**: Propuesta inicial y objetivos del proyecto
-- **02_cronograma**: Planificación temporal y hitos del proyecto
-- **03_actas**: Actas y registros de reuniones
-- **04_normativa_del_proyecto**: Normativa y documentos legales
+## Repositorio de documentación
 
-### 📝 01_requisitos/
-Especificaciones y requerimientos del sistema:
-- **01_srs**: Documento de especificación de requisitos del software (ej. `01_srs.pdf`, `01_srs.docx`)
-- **02_instrumentos_recoleccion**: Herramientas y métodos de recopilación de requisitos (encuestas, entrevistas)
-- **03_mapa_de_procesos**: Mapeo de procesos del negocio
-- **04_casos_de_uso**: Casos de uso del sistema con diagramas Mermaid (`*.mmd`, `*.png`)
+**Estado:** En progreso
+**Fecha:** 2026-08-16
 
-### 🏗️ 02_arquitectura_y_diseno/
-Diseño arquitectónico y especificaciones técnicas del sistema
+</div>
 
-### 💾 03_datos/
-Modelos de datos y especificaciones:
-- **01_modelo_entidad_relacion**: Diagrama E-R conceptual (ej. `mer_somnguard.mmd`)
-- **02_modelo_relacional**: Esquema relacional implementable (ej. `er_somnguard.mmd`)
-- **03_diccionario_datos**: Definición de atributos y entidades (ej. `diccionario_datos_somnguard.md`)
+</div>
 
-### 🎨 04_ux_ui/
-Diseño de experiencia e interfaz de usuario
+SomnGuard es un sistema integral (software + hardware) para el monitoreo de somnolencia y fatiga al volante: un dispositivo Raspberry Pi con cámara detecta patrones de riesgo, emite alertas preventivas y registra evidencia, mientras una plataforma web y una app móvil permiten consultar eventos, alertas y analítica.
 
-### 💻 05_desarrollo/
-Código fuente y documentación técnica de desarrollo
+Este repositorio centraliza toda la documentación del proyecto, organizada en secciones numeradas dentro de `docs/`.
 
-### ✅ 06_pruebas_y_calidad/
-Planes de prueba, casos de prueba y métricas de calidad
+## Estructura
 
-### 🚀 07_despliegue_y_operaciones/
-Procedimientos de despliegue e instrucciones operacionales
+```
+docs/
+├── 00-documentation-governance/   # Normativa, metodología y reglas de documentación
+├── 01-project-context/            # Anteproyecto y cronograma
+├── 02-domain/                     # Dominio del negocio: mapa de procesos
+├── 03-product-definition/         # Definición del producto e investigación
+├── 04-requeriments/               # SRS, funcionalidades, estructura por módulo
+├── 05-architecture/               # Arquitectura y decisiones (ADRs)
+├── 06-data-architecture/          # Modelo de datos y diccionarios
+├── 07-api-design/                 # Diseño de API
+├── 08-uml/                        # Diagramas UML (fuentes y exportaciones)
+├── 09-modules/                    # Catálogo de módulos del backend
+├── 10-devops/                     # CI/CD y despliegue
+├── 11-quality-assurance/          # Pruebas y calidad
+├── 12-user-experience/            # UX/UI
+├── 13-operations/                 # Operaciones
+├── 14-training-and-adoption/      # Capacitación y adopción
+├── 15-project-control/            # Actas y control del proyecto
+└── 99-archive/                    # Documentación archivada o deprecada
+```
 
-### 📚 08_anexos/
-Documentación adicional, referencias y apéndices
+## Cómo usar este repositorio
 
----
+1. **Empieza por la gobernanza**: lee `docs/00-documentation-governance/README.md` para conocer las reglas de documentación, normativa y metodología.
+2. **Requisitos**: revisa el SRS y las funcionalidades en `docs/04-requeriments/`.
+3. **Arquitectura**: consulta `docs/05-architecture/documento-arquitectura.md` para el detalle técnico.
+4. **Datos**: el modelo vigente está en `docs/06-data-architecture/` (MER y módulos/entidades).
+5. **Diagramas**: los casos de uso y sus exportaciones están en `docs/08-uml/`.
+6. **Módulos del backend**: consulta el catálogo en `docs/09-modules/module-catalog.md`.
+7. **Control del proyecto**: actas y seguimiento en `docs/15-project-control/`.
 
-## Cómo Usar este Repositorio
+## Archivos raíz
 
-1. **Navega por las carpetas** según la fase del proyecto que necesites consultar
-2. **Lee el SRS** (`01_requisitos/01_srs`) para entender los requisitos generales
-3. **Consulta los Casos de Uso** en `01_requisitos/04_casos_de_uso` para comprender las funcionalidades
-4. **Revisa los Modelos de Datos** en `03_datos` para entender la estructura de información (ej. `mer_somnguard.mmd`, `er_somnguard.mmd`)
-5. **Accede a la Arquitectura** en `02_arquitectura_y_diseno` para detalles técnicos
+| Archivo | Descripción |
+|---------|-------------|
+| [CHANGELOG.md](./CHANGELOG.md) | Historial de cambios de este repositorio |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | Guía para contribuir |
+| [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) | Código de conducta |
+| [LICENSE](./LICENSE) | Licencia del proyecto |
+| [templates/](./templates/) | Plantillas reutilizables de documentos |
+| [assets/](./assets/) | Recursos estáticos (logo, imágenes, exportaciones) |
 
-## Formato de Documentos
+## Formato de documentos
 
-- Archivos **Markdown (.md)**: Documentación textual y especificaciones
-- Archivos **Mermaid (.mmd)**: Diagramas y gráficos (Entidad-Relación, Casos de Uso, etc.)
+- **Markdown (`.md`)**: documentación textual y especificaciones.
+- **Mermaid (`.mmd`)**: diagramas entidad-relación y casos de uso (fuentes editables).
+- **PDF/DOCX/XLSX**: versiones de consulta o entrega de documentos oficiales.
 
+## Historial
 
-
----
-
+- **2026-08-16**: unificación de las estructuras anteriores en una sola, organizada por secciones y sin orientación a microservicios.

@@ -1,0 +1,90 @@
+<div style="display:flex; align-items:center; justify-content:space-between;">
+
+<div>
+<img src="../../assets/icons/logo-somnguard.png" width="140"/>
+</div>
+
+<div align="right">
+
+# SOMNGUARD
+
+## Estrategia de CI/CD
+
+**Estado:** En progreso
+**Fecha:** 2026-08-16
+
+</div>
+
+</div>
+
+Estrategia de integración y despliegue continuo del proyecto, alineada con la metodología adoptada (`00-documentation-governance/metodologia-adoptada.md`) y el documento de arquitectura.
+
+## Herramienta
+
+- **GitHub Actions** como orquesta de CI/CD.
+- **Maven** para build y ejecución de pruebas del backend (Java 21 / Spring Boot 3.x).
+- Gestión de secretos mediante GitHub Secrets (nunca credenciales en el repositorio).
+
+## Flujo de ramas
+
+Cada historia se despliega por ambiente con su propia rama `hu-###-<ambiente>`. Los cambios se propagan entre ambientes copiándolos o con `cherry-pick` (nunca por merge directo entre `develop`, `qa` y `main`):
+
+```
+hu-###-dev → develop (PR + review)
+     ↓  (copiar cambios / cherry-pick)
+hu-###-qa → qa (pruebas manuales/automatizadas)
+     ↓  (copiar cambios / cherry-pick)
+hu-###-main → main (producción controlada)
+```
+
+- `develop`, `qa` y `main` no se trabajan directamente: solo reciben PRs desde las ramas `hu-###-<ambiente>`.
+- Los PRs hacia `qa` y `main` deben incluir los mismos cambios ya validados en el ambiente anterior.
+
+## Pipeline propuesto
+
+### Job 1: Build (cada push a ramas `hu-*` y `develop`)
+
+- Checkout del repositorio.
+- Setup de Java 21 (Temurin).
+- `mvn verify` (compila, corre pruebas unitarias e integración).
+- Publicación de reportes de pruebas.
+
+### Job 2: Calidad (cada push a `develop`)
+
+- Linters y análisis estático (Spotless/Checkstyle; SonarQube o equivalente propuesto).
+- Reporte de cobertura (JaCoCo).
+- Verificación de dependencias contra vulnerabilidades conocidas (OWASP Dependency-Check propuesto).
+
+### Job 3: Despliegue a `qa` (merge a rama `qa`)
+
+- Build de artefactos.
+- Despliegue del backend a entorno `qa`.
+- Ejecución de pruebas E2E (Playwright web) cuando estén disponibles.
+
+### Job 4: Publicación a main (PR de `hu-###-main` hacia `main`)
+
+- Los cambios validados en `qa` se copian a la rama `hu-###-main` (copiar cambios o `cherry-pick`).
+- PR de `hu-###-main` hacia `main` con checks en verde y aprobación explícita del Líder Técnico.
+- Empaquetado de artefactos (`somnguard-v{MAJOR}.{MINOR}.{PATCH}.zip`).
+- Publicación del release con changelog desde commits (Conventional Commits).
+- Despliegue a producción controlado.
+
+## Reglas de protección
+
+| Rama | Regla |
+|------|-------|
+| `develop` | PR con revisión (1 aprobación) y checks del pipeline en verde |
+| `qa` | PR desde `hu-###-qa` con validación de tester/QA |
+| `main` | PR desde `hu-###-main`, checks en verde y aprobación explícita del Líder Técnico |
+
+## Releases
+
+- Versionado semántico: `v{MAJOR}.{MINOR}.{PATCH}` (ej: `v1.0.0`).
+- Nombres de artefactos: `somnguard-v{MAJOR}.{MINOR}.{PATCH}.zip`.
+- Changelog generado desde los mensajes de commit.
+
+## Pendientes
+
+- Definir infraestructura de despliegue (local/nube) — ver preguntas abiertas.
+- Definir estrategia de contenedores (Docker) si aplica.
+- Definir secretos y configuraciones por entorno.
