@@ -11,7 +11,7 @@
 ## Gobierno documental
 
 **Estado:** En Progreso
-**Fecha:** 2026-06-18
+**Fecha:** 2026-08-16
 
 </div>
 
@@ -24,3 +24,10 @@ Reglas y lineamientos comunes para documentar con un criterio uniforme, mantener
 | Archivo | Descripción | Estado |
 |---------|-------------|--------|
 | [documentation-rules.md](./documentation-rules.md) | Naming, estructura mínima, estados, índices y diagramas | Estable |
+| [structure-rules.md](./structure-rules.md) | Reglas para documentar módulos del backend | En progreso |
+| [git-conventions.md](./git-conventions.md) | Ramas, flujos y Conventional Commits | En progreso |
+| [security-rules.md](./security-rules.md) | Reglas de seguridad y privacidad | En progreso |
+| [definition-of-ready.md](./definition-of-ready.md) | Checklist antes de elaborar un documento | En progreso |
+| [definition-of-done.md](./definition-of-done.md) | Checklist para considerar un documento completado | En progreso |
+| [normativa-del-proyecto.md](./normativa-del-proyecto.md) | Normas, políticas y estándares del proyecto | Estable |
+| [metodologia-adoptada.md](./metodologia-adoptada.md) | Metodología Scrum y proceso de trabajo | Estable |

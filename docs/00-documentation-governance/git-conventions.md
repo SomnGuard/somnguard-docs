@@ -23,8 +23,9 @@
 
 | Rama | Propósito | Regla |
 |------|-----------|-------|
-| `develop` | Integración de trabajo en desarrollo | Recibe PRs desde ramas hijas |
-| `main` | Producción / documentación estable | Recibe solo PRs desde `release/*` |
+| `develop` | Integración de trabajo en desarrollo | Recibe PRs desde ramas hijas (`hu-<numero>-dev`) |
+| `qa` | Validación de pruebas antes de producción | Recibe PRs desde `hu-<numero>-qa` |
+| `main` | Producción / documentación estable | Recibe solo PRs desde `hu-<numero>-main` |
 
 ## Ramas documentales
 
@@ -33,16 +34,19 @@
 | `feat` | Documento nuevo | `feat/doc-api-guidelines` | `docs` |
 | `fix` | Corrección de contenido | `fix/doc-scope` | `fix` |
 | `chore` | Reorganización o renombrado | `chore/doc-move-adr-003` | `chore` |
-| `docs` | Actualización de documento existente | `docs/doc-service-catalog` | `docs` |
+| `docs` | Actualización de documento existente | `docs/doc-module-catalog` | `docs` |
 
 El tipo de rama describe intención. El tipo del commit sigue Conventional Commits.
 
 ## Ramas por historia de usuario
 
+Cada historia usa una rama por ambiente. Los cambios se propagan entre ambientes copiándolos o con `cherry-pick` (no por merge directo entre `develop`, `qa` y `main`).
+
 | Caso | Rama base | Formato | Ejemplo |
 |------|-----------|---------|---------|
-| Desarrollo de HU | `develop` | `hu-<numero>-develop` | `hu-01-develop` |
-| Release de iteración | `main` | `release/<iteracion>` | `release/iteration-01` |
+| Desarrollo de HU | `develop` | `hu-<numero>-dev` | `hu-01-dev` |
+| Validación en QA | `qa` | `hu-<numero>-qa` | `hu-01-qa` |
+| Publicación a producción | `main` | `hu-<numero>-main` | `hu-01-main` |
 
 Las ramas `hu-*` son un caso especial para trazabilidad por historia. No siguen el formato `<tipo>/doc-*`.
 
@@ -52,36 +56,37 @@ Las ramas `hu-*` son un caso especial para trazabilidad por historia. No siguen 
 ```bash
 git switch develop
 git pull origin develop
-git switch -c hu-01-develop
+git switch -c hu-01-dev
 
 git add <archivos>
 git commit -m "docs(04-requirements): add scheduling availability user story"
-git push origin hu-01-develop
+git push origin hu-01-dev
 ```
 
-Abrir PR de `hu-01-develop` hacia `develop`.
+Abrir PR de `hu-01-dev` hacia `develop`.
 
 
-## Release hacia main
+## Propagación hacia qa y main
 
-`main` representa documentación estable. Para producción, crear una rama release desde `main`:
+Para mover una historia al siguiente ambiente, copiar los cambios o usar `cherry-pick` desde el ambiente anterior:
 
 ```bash
-git checkoswitchut main
-git pull origin main
-git switch -c release/iteration-01
+git switch develop
+git switch -c hu-01-qa
+git cherry-pick <commit-hu-01-dev>
+git push origin hu-01-qa
 ```
 
-La rama release puede acumular varias HUs de una iteración:
+Abrir PR de `hu-01-qa` hacia `qa`. Repetir el mismo procedimiento para producción:
 
 ```bash
-git cherry-pick <commit-hu-01>
-git cherry-pick <commit-hu-02>
-git cherry-pick <commit-hu-03>
-git push origin release/iteration-01
+git switch qa
+git switch -c hu-01-main
+git cherry-pick <commit-hu-01-qa>
+git push origin hu-01-main
 ```
 
-Abrir PR de `release/iteration-01` hacia `main`.
+Abrir PR de `hu-01-main` hacia `main`.
 
 
 ## Conventional Commits
@@ -107,7 +112,7 @@ Ejemplos:
 
 ```bash
 docs(04-requirements): add scheduling user stories
-docs(09-microservices): register auth service
+docs(09-modules): register auth module
 fix(01-context): clarify project scope
 chore(08-uml): export sequence diagrams to SVG
 refactor(00-governance): split contribution rules by topic
@@ -118,7 +123,7 @@ refactor(00-governance): split contribution rules by topic
 - La descripción del commit va en inglés.
 - El contenido de los documentos puede estar en español.
 - Los commits deben ser pequeños y trazables.
-- Si se documentan varios microservicios, usar un commit por microservicio cuando sea posible.
+- Si se documentan varios módulos, usar un commit por módulo cuando sea posible.
 - No mezclar cambios funcionales de varias secciones sin razón clara.
 
 Cuando se detecta un error crítico en `main` que no puede esperar el flujo normal de release:

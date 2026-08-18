@@ -90,7 +90,7 @@ Todo documento `.md` debe iniciar con:
 - Toda carpeta nueva debe tener `README.md`.
 - Los documentos movidos deben conservar trazabilidad mediante enlace o nota en `CHANGELOG.md`.
 - Los ADRs se registran en `05-architecture/decisions/README.md`.
-- Los microservicios se registran en `09-microservices/service-catalog.md`.
+- Los módulos del backend se registran en `09-modules/module-catalog.md`.
 
 
 ## Documentos y carpetas
@@ -118,7 +118,7 @@ No crear carpetas `misc/`, `otros/`, `temp/` ni carpetas con un solo documento.
 |----------------|----------|
 | Fuentes UML `.wsd` / `.puml` | `08-uml/diagrams/source/` |
 | Exportaciones UML `.svg` / `.png` | `08-uml/diagrams/exports/` |
-| Logos | `assets/logos/` |
+| Logos | `assets/icons/` |
 | Capturas, mockups o imágenes no UML | `assets/images/` |
 | Diagramas UML referenciados por arquitectura | Fuente y export en `08-uml/`, enlace desde `05-architecture/` |
 
