@@ -11,7 +11,7 @@
 ## Documentación
 
 **Estado:** En progreso
-**Fecha:** 2026-08-16
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -28,10 +28,10 @@
 | [02-domain](./02-domain/README.md) | Dominio del negocio: mapa de procesos |
 | [03-product-definition](./03-product-definition/README.md) | Definición del producto e investigación |
 | [04-requeriments](./04-requeriments/README.md) | SRS, funcionalidades, estructura por módulo |
-| [05-architecture](./05-architecture/README.md) | Documento de arquitectura y ADRs |
+| [05-architecture](./05-architecture/README.md) | Documento de arquitectura, informe de diseño y ADRs |
 | [06-data-architecture](./06-data-architecture/README.md) | Modelo entidad-relación, módulos y entidades |
 | [07-api-design](./07-api-design/README.md) | Diseño de API |
-| [08-uml](./08-uml/diagram-index.md) | Diagramas UML: casos de uso y modelos |
+| [08-uml](./08-uml/diagram-index.md) | Diagramas UML: casos de uso, secuencias, clases y modelos |
 | [09-modules](./09-modules/README.md) | Catálogo de módulos del backend |
 | [10-devops](./10-devops/README.md) | CI/CD y despliegue |
 | [11-quality-assurance](./11-quality-assurance/README.md) | Pruebas y calidad |

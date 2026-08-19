@@ -32,10 +32,28 @@
 ### Added
 - **Nuevos documentos (2026-08-16):**
   - `docs/05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md` — decisión del stack del backend.
-  - `docs/06-data-architecture/02-modelo-relacional.mmd` — esquema relacional implementable del modelo vigente.
-  - `docs/06-data-architecture/03-diccionario-datos.md` — diccionario de datos del modelo vigente.
+  - `docs/06-data-architecture/02-relational-model.mmd` — esquema relacional implementable del modelo vigente.
+  - `docs/06-data-architecture/03-data-dictionary.md` — diccionario de datos del modelo vigente.
   - `docs/07-api-design/api-design.md` — propuesta inicial de diseño de la API REST.
   - `docs/10-devops/ci-cd-strategy.md` — estrategia de CI/CD con GitHub Actions.
   - `docs/11-quality-assurance/test-strategy.md` — estrategia de pruebas por nivel.
-  - `docs/02-domain/glosario.md` — glosario del dominio, técnico y de proceso.
+  - `docs/02-domain/glossary.md` — glosario del dominio, técnico y de proceso.
   - `docs/15-project-control/open-questions.md` — preguntas abiertas y decisiones resueltas.
+  - `docs/05-architecture/software-design-report.md` — informe de diseño de software (modelo arquitectónico, componentes, modelo de datos, interfaces, patrones de diseño, reglas de negocio, seguridad y especificaciones técnicas).
+
+### Added
+- **Diagramas UML (2026-08-19):**
+  - 8 diagramas de secuencia en `docs/08-uml/diagrams/source/` (detección y alerta, sincronización offline, autenticación, restablecimiento de contraseña, alta de dispositivo, consulta de eventos, notificación crítica y generación de reportes) con sus exportaciones en `exports/`.
+  - 1 diagrama de clases de dominio (`cd-domain.mmd`) con su exportación.
+  - Índice actualizado (`docs/08-uml/diagram-index.md`) con las secciones de secuencia y clases; informe de diseño enlazado a las fuentes editables.
+
+### Added
+- **Propuesta técnica (2026-08-19):** `docs/01-project-context/software-technical-proposal.md` — solución propuesta, arquitectura, stack tecnológico, diseño, metodología, plan de trabajo, recursos, costos referenciales, riesgos y entregables.
+
+### Added
+- **Análisis del software (2026-08-19):** `docs/04-requeriments/software-analysis.md` — modelo de dominio, casos de uso, vistas estáticas y vistas dinámicas (secuencia, actividades y estados) con trazabilidad funcionalidad → caso de uso → módulo → pruebas.
+  - Nuevos diagramas en `docs/08-uml/diagrams/source/`: 4 de actividades (`ac-*.mmd`) y 3 de estados (`es-*.mmd`), con sus exportaciones en `exports/`.
+  - Índice de diagramas actualizado con las secciones de actividades y estados.
+
+### Changed
+- **Nombres de archivos en inglés (2026-08-19):** todos los archivos y carpetas vigentes se renombraron a inglés (kebab-case) conservando el contenido en español: documentos (`documento-arquitectura` → `architecture-document`, `informe-diseno-software` → `software-design-report`, `propuesta-tecnica-software` → `software-technical-proposal`, `analisis-software` → `software-analysis`, `normativa-del-proyecto` → `project-regulations`, `metodologia-adoptada` → `adopted-methodology`, `glosario` → `glossary`, etc.), diagramas (`sd-*`, `ac-*`, `es-*`, `cd-*`, `cu-*`) y carpetas (`01-anteproyecto` → `01-project-proposal`, `02-cronograma` → `02-schedule`, `01-mapa-de-procesos` → `01-process-map`, `01-investigacion` → `01-research`, `01-actas` → `01-meeting-minutes`) junto con sus archivos binarios. Se actualizaron todas las referencias cruzadas.

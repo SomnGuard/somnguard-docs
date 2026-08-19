@@ -23,6 +23,7 @@ Especificación de requisitos y requerimientos funcionales del sistema SomnGuard
 
 | Archivo | Descripción | Estado |
 |---------|-------------|--------|
+| [software-analysis.md](./software-analysis.md) | Análisis del software: modelo de dominio, casos de uso, vistas estáticas y dinámicas | En progreso |
 | [01-srs/](./01-srs/) | Documento de especificación de requisitos del software | Estable |
-| [funcionalidades-sistema.md](./funcionalidades-sistema.md) | Posibles funcionalidades del sistema por módulo | En progreso |
-| [estructura-modulo-entidad.md](./estructura-modulo-entidad.md) | Estructura por módulo y entidad (preliminar, sin atributos) | En progreso |
+| [system-functionalities.md](./system-functionalities.md) | Posibles funcionalidades del sistema por módulo | En progreso |
+| [module-entity-structure.md](./module-entity-structure.md) | Estructura por módulo y entidad (preliminar, sin atributos) | En progreso |
