@@ -81,7 +81,7 @@ Funcionalidades principales (detalle en [system-functionalities.md](./system-fun
 
 ## 3. Modelo de dominio
 
-El modelo de dominio agrupa **20 entidades** en 5 módulos, alineado con el modelo de datos vigente:
+El modelo de dominio agrupa **20 entidades** en 6 módulos, alineado con el modelo de datos vigente:
 
 | Módulo | Entidades |
 |--------|-----------|
@@ -90,6 +90,7 @@ El modelo de dominio agrupa **20 entidades** en 5 módulos, alineado con el mode
 | Device Management | device, device_assignment, device_config |
 | Telemetry Service | event, evidence, alert_log |
 | Monitoring | notification |
+| Analytics | vistas/reportes derivados (sin entidades transaccionales) |
 
 Diagrama de clases del dominio: [cd-domain.mmd](../08-uml/diagrams/source/cd-domain.mmd) ([exportación](../08-uml/diagrams/exports/cd-domain.png)).
 
@@ -120,10 +121,12 @@ com.somnguard
 ├── parameterization
 ├── device-management
 ├── telemetry-service
-└── monitoring
+├── monitoring
+├── analytics
+└── platform        # Transversal, fuera de los módulos: errores, logging, observabilidad
 ```
 
-Cada módulo se organiza en capas: `interfaces`, `application`, `domain`, `infrastructure` (arquitectura limpia, ver [documento de arquitectura](../05-architecture/architecture-document.md)).
+Cada módulo se organiza con arquitectura hexagonal (puertos y adaptadores): `application/port/{in,out}`, `application/usecase`, `domain/{model,service}`, `adapter/in/{web,amqp}`, `adapter/out/{persistence,storage}` (ver [documento de arquitectura](../05-architecture/architecture-document.md) y ADR-002).
 
 ### 5.2 Componentes por entorno
 

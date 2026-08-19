@@ -93,7 +93,7 @@ La propuesta contempla el desarrollo completo de ambos entornos, la integración
 ### 3.1 Estilo arquitectónico
 
 - **Híbrida edge-cloud**: el dispositivo opera de forma autónoma (detección y alertas locales) y sincroniza de forma asíncrona con la plataforma. No depende de conectividad para su función crítica.
-- **Monolito modular** en el backend (Java/Spring Boot): una sola aplicación desplegable, organizada internamente en módulos independientes con arquitectura limpia en capas (interfaces, application, domain, infrastructure).
+- **Monolito modular** en el backend (Java/Spring Boot): una sola aplicación desplegable, organizada internamente en módulos independientes con arquitectura hexagonal (puertos y adaptadores): `application/port/{in,out}`, `application/usecase`, `domain/{model,service}`, `adapter/in/{web,amqp}`, `adapter/out/{persistence,storage}`; `platform` (errores, logging, observabilidad) va **fuera de los módulos**, al nivel de `com.somnguard` (ver ADR-002).
 
 ### 3.2 Vista general
 
@@ -121,7 +121,7 @@ La propuesta contempla el desarrollo completo de ambos entornos, la integración
 |----------|----------|---------------|
 | Procesamiento en el edge | Raspberry Pi + Python | Detección en tiempo real sin depender de conectividad; latencia mínima para la alerta al conductor. |
 | Backend | Java 21 + Spring Boot 3.x + Maven | Madurez, ecosistema, rendimiento y productividad (ver ADR-001). |
-| Monolito modular | Un artefacto, 5 módulos | Menor complejidad operativa que microservicios para un sistema de tamaño medio (ver ADR-001). |
+| Monolito modular | Un artefacto, 6 módulos | Menor complejidad operativa que microservicios para un sistema de tamaño medio (ver ADR-001). |
 | Base de datos | PostgreSQL + Liquibase | Motor relacional robusto y migraciones versionadas de esquema. |
 | Portal web | React JS | SPA responsive de fácil mantenimiento y amplio ecosistema. |
 | Aplicación móvil | React Native | Desarrollo multiplataforma (iOS/Android) con una sola base de código. |
@@ -164,6 +164,7 @@ La propuesta contempla el desarrollo completo de ambos entornos, la integración
 | Device Management | Ciclo de vida del dispositivo y configuración | device, device_assignment, device_config |
 | Telemetry Service | Eventos, evidencia y alertas | event, evidence, alert_log |
 | Monitoring | Notificaciones de eventos críticos | notification |
+| Analytics | Línea de tiempo, métricas, resumen IA y reportes | vistas/reportes derivados (sin entidades transaccionales; ver ADR-003) |
 
 ### 5.2 Modelo de datos
 

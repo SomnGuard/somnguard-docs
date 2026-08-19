@@ -19,7 +19,7 @@
 
 > **Nota:** los nombres de módulos se alinean con el catálogo vigente en [09-modules/module-catalog.md](../09-modules/module-catalog.md).
 
-## 1. Modulo: Seguridad, Cuenta y Autorizacion (Security)
+## 1. Modulo: Seguridad, Cuenta y Autorizacion (security)
 
 ### Funcionalidad: Registro y validacion de cuenta
 Permite crear cuenta de usuario plataforma, validar identidad basica y dejar habilitado el acceso inicial al sistema.
@@ -45,7 +45,7 @@ Permite organizar funcionalidades por modulo y pantalla para control de acceso y
 ### Funcionalidad: Asignacion de roles a usuario
 Permite asociar uno o varios roles a una cuenta para habilitar permisos efectivos.
 
-## 2. Modulo: Gestion de Dispositivos Asociados (DeviceManagement)
+## 2. Modulo: Gestion de Dispositivos Asociados (device-management)
 
 ### Funcionalidad: Asociar dispositivo
 Permite vincular un dispositivo SomnGuard a una cuenta de usuario.
@@ -57,7 +57,7 @@ Permite retirar la relacion entre usuario y dispositivo manteniendo historial de
 ### Funcionalidad: Gestion de configuracion de dispositivo
 Permite parametrizar y actualizar configuracion enviada desde plataforma al dispositivo.
 
-## 3. Modulo: Ingesta y Sincronizacion de Datos (EventIngestion)
+## 3. Modulo: Ingesta y Sincronizacion de Datos (telemetry-service)
 
 ### Funcionalidad: Registrar eventos y evidencia
 Permite almacenar eventos, metadatos y evidencia multimedia generada por el dispositivo.
@@ -72,7 +72,7 @@ Permite transmitir JSON y archivos multimedia al backend cuando hay conectividad
 Permite recibir, validar y persistir los datos enviados por dispositivos asociados.
 
 
-## 4. Modulo: Monitoreo de Eventos y Alertamiento (Monitoring)
+## 4. Modulo: Monitoreo de Eventos y Alertamiento (monitoring)
 
 ### Funcionalidad: Gestion de alertas
 Permite generar y controlar alertas vinculadas a eventos detectados.
@@ -83,7 +83,7 @@ Permite enviar notificaciones al usuario plataforma ante eventos criticos.
 ### Funcionalidad: Seguimiento de estado de notificaciones
 Permite controlar el ciclo de notificacion (emitida, leida, cerrada u otro estado).
 
-## 5. Modulo: Parametrizacion y Catalogos (Parameterization)
+## 5. Modulo: Parametrizacion y Catalogos (parameterization)
 
 ### Funcionalidad: Gestion de catalogo de estados
 Permite administrar estados logicos comunes para entidades del sistema.

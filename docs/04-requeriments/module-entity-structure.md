@@ -19,7 +19,7 @@
 
 > **Nota:** la versión vigente del modelo de datos (con atributos) está en [06-data-architecture/02-modules-entities.md](../06-data-architecture/02-modules-entities.md). Este documento es la versión preliminar sin atributos.
 
-## 1. Seguridad, cuenta y autorizacion (Security)
+## 1. Seguridad, cuenta y autorizacion (security)
 
 - person
 - user
@@ -31,24 +31,24 @@
 - form_module
 - role_form_permission
 
-## 2. Gestion de dispositivos asociados (DeviceManagement)
+## 2. Gestion de dispositivos asociados (device-management)
 
 - device
 - device_assignment
 - device_config
 
 
-## 3. Ingesta y sincronizacion de datos (EventIngestion)
+## 3. Ingesta y sincronizacion de datos (telemetry-service)
 
 - event
 - evidence
 
-## 4. Monitoreo de eventos y alertamiento (Monitoring)
+## 4. Monitoreo de eventos y alertamiento (monitoring)
 
 - alert
 - notification
 
-## 5. Parametrizacion y catalogos (Parameterization)
+## 5. Parametrizacion y catalogos (parameterization)
 
 - status_catalog
 - media_type_catalog
