@@ -25,6 +25,8 @@ Detalles de la decisión:
 - **Base de datos:** PostgreSQL, sin cambios.
 - **Migraciones:** Liquibase, sin cambios.
 - **Estructura de paquetes por módulo:** `interfaces`, `application`, `domain`, `infrastructure` (ver `../../architecture-document.md`, sección 8).
+
+> **Nota (2026-08-19):** esta estructura de paquetes queda **reemplazada** por la arquitectura hexagonal (puertos y adaptadores) del [ADR-002](./ADR-002-hexagonal-architecture.md).
 - **Autenticación:** a definir en una ADR posterior (ver `../../../15-project-control/open-questions.md`).
 
 ## Consecuencias

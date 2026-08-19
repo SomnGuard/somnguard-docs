@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### Changed
+- **Arquitectura hexagonal formalizada (2026-08-19):** la arquitectura limpia del backend se formaliza como hexagonal (puertos y adaptadores) en `architecture-document.md` (sección 8) y `software-design-report.md` (sección 3.2.1 y 8), con la estructura de paquetes `com.somnguard.<modulo>` (`application/port/{in,out}`, `application/usecase`, `domain/{model,service}`, `adapter/in/{web,amqp}`, `adapter/out/{persistence,storage}`, `platform`):
+  - Nuevas ADRs: [ADR-002](docs/05-architecture/decisions/records/ADR-002-hexagonal-architecture.md) (arquitectura hexagonal) y [ADR-003](docs/05-architecture/decisions/records/ADR-003-analytics-module.md) (módulo analítico).
+  - Módulos alineados en `architecture-document.md` (security, parameterization, device-management, telemetry-service, monitoring, analytics) y entidades actualizadas a las 20 del modelo vigente.
+  - `docs/09-modules/module-catalog.md` actualizado: nueva estructura por módulo y registro de `analytics`.
+
+### Added
+- **Estructura del backend Java (2026-08-19):** `somnguard-api/backend-java/` con el árbol de carpetas completo del backend hexagonal (solo estructura, con `.gitkeep`), alineado a docs y ADRs: 6 módulos (security, parameterization, device-management, telemetry-service, monitoring, analytics) × `application/port/{in,out}`, `application/usecase`, `domain/{model,service}`, `adapter/in/{web,amqp}`, `adapter/out/{persistence,storage}`, más `platform/{error-handling,logging,observability}`. El backend .NET existente se conserva intacto.
+
+## [Unreleased] (2026-08-19)
+
 ### Added
 - Se añadió la nueva estructura de documentación base para SomnGuard.
 

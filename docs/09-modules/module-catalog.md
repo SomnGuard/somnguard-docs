@@ -24,8 +24,9 @@ Catálogo de los módulos del backend de SomnGuard. Fuente de verdad del listado
 | **security** | Gestiona la autenticación, autorización y auditoría de usuarios | user, role, module, feature, role_feature, user_role, password_reset_request, audit_login |
 | **parameterization** | Gestiona los catálogos configurables del sistema | event_category, severity, media_type, sound_pattern, event_type |
 | **device-management** | Gestiona dispositivos, asignaciones y configuración | device, device_assignment, device_config |
-| **telemetry-service** | Recibe y almacena la información generada por los dispositivos (corresponde al módulo EventIngestion del documento de arquitectura) | event, evidence, alert_log |
+| **telemetry-service** | Recibe y almacena la información generada por los dispositivos | event, evidence, alert_log |
 | **monitoring** | Gestiona el envío y seguimiento de notificaciones | notification |
+| **analytics** | Módulo analítico: línea de tiempo de eventos, métricas de comportamiento, resumen descriptivo con IA y reportes (ver [ADR-003](../05-architecture/decisions/records/ADR-003-analytics-module.md)) | vistas/reportes derivados (no agrega entidades transaccionales) |
 
 ## Reglas
 

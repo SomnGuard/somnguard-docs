@@ -45,8 +45,11 @@ Glosario de términos del dominio y técnicos utilizados en la documentación de
 |---------|-------------|
 | Backend | API central del sistema; monolito modular en Java 21 (Spring Boot 3.x, Maven). |
 | Monolito modular | Aplicación con un solo despliegue, organizada internamente por dominios (módulos). |
-| Clean architecture | Estilo de organización por capas (interfaces, application, domain, infrastructure) con dependencias hacia adentro. |
-| Módulo | Dominio funcional del backend (security, parameterization, device-management, telemetry-service, monitoring). |
+| Clean architecture | Estilo de organización con dependencias hacia adentro: el dominio no conoce frameworks, HTTP ni la base de datos. |
+| Arquitectura hexagonal (puertos y adaptadores) | Formalización de la clean architecture por módulo: puertos de entrada (`port/in`) y salida (`port/out`), casos de uso (`usecase`), dominio (`model`, `service`) y adaptadores (`adapter/in`, `adapter/out`); ver ADR-002. |
+| Puerto | Contrato (interfaz) que define la frontera de un módulo: de entrada (casos de uso) o de salida (repositorios, almacenamiento, notificadores). |
+| Adaptador | Implementación concreta de un puerto (JPA, HTTP, MinIO/S3, mensajería); es lo único que conoce la tecnología. |
+| Módulo | Dominio funcional del backend (security, parameterization, device-management, telemetry-service, monitoring, analytics). |
 | Microservicio | Estilo de arquitectura por servicios independientes; **explícitamente descartado** en SomnGuard. |
 | PostgreSQL | Sistema de gestión de base de datos relacional usado por el proyecto. |
 | Liquibase | Herramienta de migraciones y versionado de esquema de base de datos. |

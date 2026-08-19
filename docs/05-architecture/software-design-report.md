@@ -11,7 +11,7 @@
 ## Informe de Diseño de Software
 
 **Estado:** En progreso
-**Fecha:** 2026-08-18
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -155,7 +155,46 @@ El backend sigue una **arquitectura limpia en capas**, donde cada capa tiene una
 | **Domain** | Núcleo del sistema: entidades de dominio, reglas del negocio e interfaces (contratos) independientes de tecnología. | Entidades (Usuario, Dispositivo, Evento, Alerta), interfaces de repositorio, servicios de dominio. |
 | **Infrastructure** | Implementa el acceso a datos y la integración con tecnologías externas. | Repositorios (Spring Data JPA), migraciones (Liquibase), cliente de almacenamiento multimedia, envío de notificaciones push. |
 
-Regla de dependencia: **las capas externas pueden depender de las internas, nunca al revés**; el dominio no conoce Spring, HTTP, JPA ni la base de datos.
+Regla de dependencia: **las capas externas pueden depender de las internas, nunca al revés**; el dominio no conoce Spring, HTTP, JPA ni la base de datos. El mapeo de estas capas a la estructura hexagonal de paquetes está en la sección 3.2.1.
+
+### 3.2.1 Arquitectura hexagonal (puertos y adaptadores)
+
+La arquitectura limpia se formaliza como **hexagonal (puertos y adaptadores)**, siguiendo [ADR-002](./decisions/records/ADR-002-hexagonal-architecture.md). Cada módulo del monolito es un hexágono aislado:
+
+| Elemento | Paquete | Rol |
+|----------|---------|-----|
+| Puertos de entrada | `application/port/in` | Interfaces de casos de uso: lo que el módulo puede hacer (ej: `IngestEventUseCase`, `GetEventQuery`). |
+| Puertos de salida | `application/port/out` | Interfaces que el dominio necesita del exterior (ej: `EventRepository`, `EvidenceStore`). |
+| Casos de uso | `application/usecase` | Implementaciones de los casos de uso. |
+| Dominio | `domain/model`, `domain/service` | Entidades de negocio y servicios de dominio (reglas). |
+| Adaptadores de entrada | `adapter/in/web`, `adapter/in/amqp` | Controladores REST y consumidores de mensajes. |
+| Adaptadores de salida | `adapter/out/persistence`, `adapter/out/storage` | Implementaciones concretas: JPA/PostgreSQL, MinIO/S3, notificadores. |
+| Transversal (fuera del módulo) | `platform` | Manejo de errores, logging y observabilidad; paquete único al nivel de `com.somnguard`, compartido por todos los módulos. |
+
+Estructura de paquetes de referencia (Java/Spring Boot):
+
+```text
+com.somnguard.telemetry-service/
+├── application/
+│   ├── port/
+│   │   ├── in/            # IngestEventUseCase, GetEventQuery, ...
+│   │   └── out/           # EventRepository, EvidenceStore, ...
+│   └── usecase/           # IngestEventService, GetEventService, ...
+├── domain/
+│   ├── model/             # Event, Evidence, AlertLog, ...
+│   └── service/           # Evaluación de severidad, validación de eventos, ...
+└── adapter/
+    ├── in/
+    │   ├── web/           # EventController, ...
+    │   └── amqp/          # Consumidores (si aplica)
+    └── out/
+        ├── persistence/   # JpaEventAdapter, ...
+        └── storage/       # MinioEvidenceStore, ...
+```
+
+> `platform` **no va dentro de cada módulo**: es un paquete único al nivel de `com.somnguard` (junto a los módulos: security, parameterization, device-management, telemetry-service, monitoring, analytics), compartido por todos. Los módulos pueden depender de `platform`; `platform` no depende de ningún módulo.
+
+Beneficios: testabilidad con mocks de puertos, cambio tecnológico aislado en los adaptadores, y fronteras claras entre módulos (un módulo solo usa los puertos de entrada de otro), lo que facilita extraer un módulo a microservicio si se requiere.
 
 ### 3.3 Vista de componentes
 
@@ -178,12 +217,13 @@ flowchart TB
         DEV[Módulo Device Management]
         TEL[Módulo Telemetry Service]
         MON[Módulo Monitoring]
+        ANL[Módulo Analytics]
         WEB[Portal Web - React JS]
         APP[Aplicación Móvil - React Native]
         DB[(PostgreSQL + Liquibase)]
         STO[Almacenamiento Multimedia]
-        API --> SEG & PAR & DEV & TEL & MON
-        SEG & PAR & DEV & TEL & MON --> DB
+        API --> SEG & PAR & DEV & TEL & MON & ANL
+        SEG & PAR & DEV & TEL & MON & ANL --> DB
         TEL --> STO
         WEB --> API
         APP --> API
@@ -217,7 +257,7 @@ flowchart TB
 
 ## 4. Diseño de componentes o módulos
 
-El backend (monolito modular) se organiza en cinco módulos que replican la estructura del modelo de datos. Cada módulo expone su propio paquete de API, casos de uso, dominio e infraestructura.
+El backend (monolito modular) se organiza en **seis** módulos que replican la estructura del modelo de datos. Cada módulo sigue la estructura hexagonal del ADR-002 (application, domain, adapter); analytics no agrega entidades transaccionales.
 
 | Módulo | Responsabilidad | Entidades principales |
 |--------|-----------------|-----------------------|
@@ -226,6 +266,7 @@ El backend (monolito modular) se organiza en cinco módulos que replican la estr
 | **Device Management** | Ciclo de vida del dispositivo: alta, asignación a cuenta, configuración básica. | device, device_assignment, device_config |
 | **Telemetry Service** | Recepción y consulta de eventos, gestión de evidencia multimedia y registro de alertas. | event, evidence, alert_log |
 | **Monitoring** | Notificaciones a la cuenta ante eventos críticos. | notification |
+| **Analytics** | Línea de tiempo, métricas, resumen IA y reportes (ver ADR-003). | vistas/reportes derivados |
 
 ### 4.1 Componentes por entorno
 
@@ -425,13 +466,14 @@ El dispositivo a bordo no posee interfaz gráfica en esta versión; su interfaz 
 
 | Patrón | Capa / Componente | Aplicación |
 |--------|-------------------|------------|
-| **Repository** | Infrastructure | Abstrae el acceso a datos mediante interfaces definidas en el dominio; implementado con Spring Data JPA. |
+| **Repository** | adapter/out/persistence | Abstrae el acceso a datos mediante interfaces definidas en el dominio (`port/out`); implementado con Spring Data JPA. |
 | **DTO (Data Transfer Object)** | Interfaces / Application | Separa el contrato de la API (request/response) de las entidades de dominio; evita exponer la persistencia. |
 | **Service Layer** | Application | Orquesta casos de uso y transacciones; centraliza la lógica de aplicación. |
 | **Factory** | Domain | Construcción de entidades de dominio con invariantes garantizadas (p. ej., un evento requiere categoría y severidad válidas). |
 | **Strategy** | Edge / Application | Selección dinámica de algoritmos de detección y de políticas de evaluación de severidad. |
 | **Observer / Event-Driven** | Monitoring | Publicación de eventos de dominio y generación reactiva de notificaciones ante eventos críticos. |
-| **Adapter** | Infrastructure | Adapta integraciones externas (almacenamiento multimedia, envío de correos, push) a interfaces propias del dominio. |
+| **Adapter** | adapter/out | Adapta integraciones externas (almacenamiento multimedia, envío de correos, push) a interfaces propias del dominio. |
+| **Ports & Adapters (Hexagonal)** | Application / Infrastructure | Formaliza los contratos de entrada (`port/in`) y salida (`port/out`) del módulo; los adaptadores (`adapter/in`, `adapter/out`) los implementan sin que el dominio conozca la tecnología (ver ADR-002). |
 | **Singleton (gestión por contenedor)** | Framework (Spring) | Ciclo de vida de beans controlado por el contenedor de Spring. |
 | **Builder** | Infrastructure | Construcción de consultas dinámicas (especificaciones) para filtros de eventos. |
 | **Pipeline** | Edge (Python) | Cadena de procesamiento de imágenes: captura → preprocesado → detección → decisión. |
@@ -469,7 +511,7 @@ El dispositivo a bordo no posee interfaz gráfica en esta versión; su interfaz 
 | Datos personales | Minimización: solo los datos necesarios para el funcionamiento; la evidencia multimedia no se expone públicamente y requiere autenticación. |
 | Secretos | No se almacenan secretos en el repositorio; configuración por variables de entorno en cada entorno (dev/qa/main). |
 | Transporte | HTTPS obligatorio en todas las comunicaciones dispositivo → API y frontends → API. |
-| Validación de entrada | Validación de parámetros y DTOs en la capa de interfaces; saneamiento en el backend. |
+| Validación de entrada | Validación de parámetros y DTOs en los adaptadores de entrada (`adapter/in/web`); saneamiento en el backend. |
 
 ---
 
@@ -518,7 +560,7 @@ El dispositivo a bordo no posee interfaz gráfica en esta versión; su interfaz 
 ## 12. Consideraciones de implementación
 
 - **Orden de implementación sugerido**: módulo Security (base de cuentas y permisos) → Parameterization (catálogos) → Device Management (alta y asignación) → Telemetry Service (ingesta de eventos y evidencia) → Monitoring (notificaciones) → Módulo analítico (línea de tiempo, métricas, reportes, resumen IA).
-- **Estructura de paquetes** (por módulo): `com.somnguard.<modulo>.interfaces`, `.application`, `.domain`, `.infrastructure`, replicando la arquitectura limpia.
+- **Estructura de paquetes** (por módulo): `com.somnguard.<modulo>.application.port.{in,out}`, `.application.usecase`, `.domain.{model,service}`, `.adapter.in.{web,amqp}`, `.adapter.out.{persistence,storage}`; `com.somnguard.platform` (transversal: errores, logging, observabilidad) va **fuera de los módulos**, al nivel de `com.somnguard` (ver sección 3.2.1 y ADR-002).
 - **Convenciones**: nombres kebab-case para documentación; Conventional Commits en los repositorios; ramas `hu-###-<ambiente>` hacia `develop`/`qa`/`main`.
 - **Calidad**: cobertura de pruebas por capa de aplicación e infraestructura; integración con el pipeline de CI; verificación de enlaces y estructura de la documentación en cada PR.
 - **Riesgos a gestionar**: conectividad intermitente en el vehículo (mitigado con cola offline e idempotencia), precisión del algoritmo de detección (mitigado con calibración vía `device_config` y evaluación con datos reales), y retención de evidencia (política definida por el administrador).

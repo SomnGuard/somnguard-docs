@@ -379,7 +379,7 @@ Notificaciones enviadas a los usuarios como consecuencia de una alarma.
 
 ---
 
-## telemetry
+## telemetry-service
 
 - Un **DEVICE** genera múltiples **EVENT**.
 - Un **EVENT** pertenece a un **EVENT_TYPE**.

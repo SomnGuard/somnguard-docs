@@ -13,13 +13,15 @@
 **Autor:** Equipo SomnGuard
 **Estado:** Aprobado
 **Fecha:** 2026-05-14
-**Última actualización:** 2026-08-16
+**Última actualización:** 2026-08-19
 
 </div>
 
 </div>
 
 > **Actualización de stack (2026-08-16):** el backend se migra de C#/.NET a **Java 21 con Spring Boot 3.x (Maven)**. Ver [ADR-001: Backend en Java Spring Boot](./decisions/records/ADR-001-backend-java-spring-boot.md).
+>
+> **Actualización de arquitectura (2026-08-19):** el backend se estructura con **arquitectura hexagonal (puertos y adaptadores)** dentro del monolito modular. Ver [ADR-002: Arquitectura hexagonal en el backend](./decisions/records/ADR-002-hexagonal-architecture.md).
 
 ---
 
@@ -142,55 +144,89 @@ La evidencia multimedia no se guarda directamente en PostgreSQL. Se almacena en 
 
 ## 7. Módulos funcionales del backend
 
-Los módulos funcionales que deben existir a nivel de API son los siguientes:
+Los módulos funcionales del backend siguen el catálogo de módulos ([09-modules](../09-modules/module-catalog.md)):
 
-### 7.1 Security
+### 7.1 security
 
-Responsable de cuentas, inicio de sesión, roles, permisos, módulos, formularios y asignación de accesos.
+Responsable de cuentas, inicio de sesión, roles, permisos y auditoría de accesos.
 
-### 7.2 DeviceManagement
+### 7.2 parameterization
+
+Responsable de los catálogos configurables: categoría de evento, severidad, tipo de medio, patrón de sonido y tipo de evento.
+
+### 7.3 device-management
 
 Responsable de asociar, desasociar y configurar dispositivos.
 
-### 7.3 EventIngestion
+### 7.4 telemetry-service
 
-Responsable de registrar eventos, metadatos, telemetría y evidencias desde el dispositivo.
+Responsable de registrar eventos, evidencia y alertas desde el dispositivo (corresponde al módulo EventIngestion de la versión anterior de este documento).
 
-### 7.4 Monitoring
+### 7.5 monitoring
 
-Responsable de seguimiento de alertas, notificaciones y estados de seguimiento.
+Responsable de notificaciones asociadas a eventos críticos y su seguimiento.
 
-### 7.5 Parameterization
+### 7.6 analytics
 
-Responsable de catálogos como estados, severidad, tipo de medio, categoría de evento, patrón de sonido y tipo de evento.
+Responsable del módulo analítico: línea de tiempo de eventos, métricas de comportamiento, resumen descriptivo con IA y generación de reportes.
 
-## 8. Backend y clean architecture
+## 8. Backend: clean architecture con puertos y adaptadores (hexagonal)
 
-La API se sugiere estructurar con una arquitectura limpia por módulos. Cada módulo debe organizarse al menos en:
+La API se estructura con arquitectura limpia formalizada como **hexagonal (puertos y adaptadores)** por módulo, dentro del monolito modular. Cada módulo es un hexágono aislado que solo se comunica con otros módulos a través de sus puertos de entrada.
 
-- Presentación o API.
-- Aplicación.
-- Dominio.
-- Infraestructura.
+Reglas de dependencia:
 
-Con ese enfoque se mantiene un solo despliegue principal, pero con fronteras internas claras que facilitan crecimiento y mantenimiento.
+- El dominio (`model` + `service`) está en el centro y no conoce Spring, JPA, HTTP ni la base de datos.
+- `application/port/in` define los **puertos de entrada**: interfaces de casos de uso (lo que el módulo puede hacer).
+- `application/port/out` define los **puertos de salida**: interfaces que el dominio necesita (repositorios, almacenamiento, notificadores, clientes externos).
+- `application/usecase` implementa los casos de uso.
+- `adapter/in` implementa la entrada: controladores REST (`web`) y consumidores de mensajes (`amqp`, si aplica).
+- `adapter/out` implementa la salida: persistencia (`persistence`), almacenamiento multimedia (`storage`) y otros servicios externos.
+- `platform` contiene lo transversal del backend (manejo de errores, logging y observabilidad) y **no va dentro de cada módulo**: es un paquete único al nivel de `com.somnguard`, junto a los módulos. Los módulos pueden depender de `platform`; `platform` no depende de ningún módulo.
 
-En Java (Spring Boot) la organización típica por paquete es:
+En Java (Spring Boot) la organización típica por módulo es:
 
 ```text
 com.somnguard.<modulo>/
-├── interfaces/        # Controladores REST (presentación)
-├── application/       # Casos de uso y servicios de aplicación
-├── domain/            # Entidades de negocio y reglas de dominio
-└── infrastructure/    # Repositorios, clientes externos y configuración
+├── application/
+│   ├── port/
+│   │   ├── in/            # Interfaces de casos de uso (IngestEventUseCase, GetEventQuery, ...)
+│   │   └── out/           # Interfaces de repositorios y servicios (EventRepository, ...)
+│   └── usecase/           # Implementaciones de casos de uso (IngestEventService, ...)
+├── domain/
+│   ├── model/             # Entidades de negocio (Event, Evidence, AlertLog, ...)
+│   └── service/           # Servicios de dominio (evaluación de severidad, validación, ...)
+└── adapter/
+    ├── in/
+    │   ├── web/           # Controladores REST
+    │   └── amqp/          # Consumidores de mensajes (si aplica)
+    └── out/
+        ├── persistence/   # Adaptadores JPA/PostgreSQL
+        └── storage/       # Adaptadores de almacenamiento multimedia (MinIO/S3)
 ```
+
+`platform` **no va dentro de cada módulo**: es un paquete único al nivel de `com.somnguard`, junto a los módulos, y todos lo comparten:
+
+```text
+com.somnguard/
+├── security/
+├── parameterization/
+├── device-management/
+├── telemetry-service/
+├── monitoring/
+├── analytics/
+└── platform/              # Transversal, fuera de los módulos: errores, logging, observabilidad
+```
+
+Los módulos pueden depender de `platform`; `platform` no depende de ningún módulo.
 
 ### 8.1 Beneficios esperados
 
-- Separación de responsabilidades.
-- Menor acoplamiento entre dominios.
-- Mejor mantenibilidad.
-- Facilidad para escalar componentes si el proyecto lo requiere más adelante.
+- Separación de responsabilidades y regla de dependencia explícita hacia el dominio.
+- Testabilidad: los casos de uso se prueban con mocks de los puertos, sin base de datos.
+- Cambio tecnológico aislado: sustituir PostgreSQL, el almacenamiento multimedia o el transporte solo afecta a los adaptadores.
+- Fronteras claras entre módulos ("monolito modular"): un módulo solo usa los puertos de entrada de otro.
+- Camino evolutivo a microservicios si el proyecto lo requiere: cada módulo ya está aislado por sus puertos.
 
 ## 9. Datos y persistencia
 
@@ -242,15 +278,13 @@ Cada carpeta agrupa scripts relacionados por tipo de operación y facilita su ma
 
 ### 9.3 Entidades principales
 
-La arquitectura de datos se alinea con los módulos ya definidos en el proyecto:
+La arquitectura de datos se alinea con los módulos ya definidos en el proyecto y con el modelo vigente ([06-data-architecture](../06-data-architecture/)):
 
-- person, user, role, permission, module, form.
-- device, device_assignment, device_config.
-- event, evidence.
-- alert, notification.
-- status_catalog, media_type_catalog, severity_catalog, event_category_catalog, sound_pattern, event_type.
-
-> **Nota:** el modelo de datos vigente (con atributos) está en [06-data-architecture/](../06-data-architecture/). El listado anterior corresponde a la primera versión del modelo, archivada en `../99-archive/deprecated/data-model-v1/`.
+- **security:** user, role, module, feature, role_feature, user_role, password_reset_request, audit_login.
+- **parameterization:** event_category, severity, media_type, sound_pattern, event_type.
+- **device-management:** device, device_assignment, device_config.
+- **telemetry-service:** event, evidence, alert_log.
+- **monitoring:** notification.
 
 ## 10. Autenticación y autorización
 
