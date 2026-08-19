@@ -17,7 +17,7 @@
 
 </div>
 
-Estrategia de pruebas inicial del proyecto SomnGuard, alineada con la metodología adoptada (Scrum) y la arquitectura definida. Complementa la sección de calidad de `../00-documentation-governance/metodologia-adoptada.md`.
+Estrategia de pruebas inicial del proyecto SomnGuard, alineada con la metodología adoptada (Scrum) y la arquitectura definida. Complementa la sección de calidad de `../00-documentation-governance/adopted-methodology.md`.
 
 ## Objetivo
 

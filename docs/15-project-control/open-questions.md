@@ -40,5 +40,5 @@ Preguntas y decisiones pendientes del proyecto, recopiladas de actas, arquitectu
 
 | # | Pregunta | Decisión | Referencia | Fecha |
 |---|----------|----------|------------|-------|
-| R-001 | ¿Se orienta el backend a microservicios? | No; monolito modular | ADR de arquitectura, `../05-architecture/documento-arquitectura.md` | 2026-05-14 |
+| R-001 | ¿Se orienta el backend a microservicios? | No; monolito modular | ADR de arquitectura, `../05-architecture/architecture-document.md` | 2026-05-14 |
 | R-002 | ¿Qué lenguaje usa el backend? | Java 21 (Spring Boot 3.x, Maven) | [ADR-001](../05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md) | 2026-08-16 |

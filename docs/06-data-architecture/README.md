@@ -23,10 +23,10 @@ Modelo de datos vigente del sistema. Este modelo es la **fuente de verdad** para
 
 | Archivo | Descripción | Estado |
 |---------|-------------|--------|
-| [01-modelo-entidad-relacion.mmd](./01-modelo-entidad-relacion.mmd) | Diagrama entidad-relación vigente (20 entidades) | Estable |
-| [02-modulos-entidades.md](./02-modulos-entidades.md) | Módulos, entidades y atributos con convenciones | Estable |
-| [02-modelo-relacional.mmd](./02-modelo-relacional.mmd) | Esquema relacional implementable del modelo vigente | En progreso |
-| [03-diccionario-datos.md](./03-diccionario-datos.md) | Diccionario de datos del modelo vigente | En progreso |
+| [01-entity-relationship-model.mmd](./01-entity-relationship-model.mmd) | Diagrama entidad-relación vigente (20 entidades) | Estable |
+| [02-modules-entities.md](./02-modules-entities.md) | Módulos, entidades y atributos con convenciones | Estable |
+| [02-relational-model.mmd](./02-relational-model.mmd) | Esquema relacional implementable del modelo vigente | En progreso |
+| [03-data-dictionary.md](./03-data-dictionary.md) | Diccionario de datos del modelo vigente | En progreso |
 
 ## Convenciones del modelo
 

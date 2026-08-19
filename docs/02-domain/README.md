@@ -23,5 +23,5 @@ Documentación del dominio del negocio: procesos, actores y reglas del entorno d
 
 | Archivo | Descripción | Estado |
 |---------|-------------|--------|
-| [01-mapa-de-procesos/](./01-mapa-de-procesos/) | Mapa de procesos del negocio | Estable |
-| [glosario.md](./glosario.md) | Glosario de términos del dominio, técnicos y de proceso | En progreso |
+| [01-process-map/](./01-process-map/) | Mapa de procesos del negocio | Estable |
+| [glossary.md](./glossary.md) | Glosario de términos del dominio, técnicos y de proceso | En progreso |

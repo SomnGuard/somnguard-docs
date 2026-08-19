@@ -23,5 +23,5 @@ Seguimiento del proyecto: actas de reuniones, decisiones y preguntas abiertas.
 
 | Archivo | Descripción | Estado |
 |---------|-------------|--------|
-| [01-actas/](./01-actas/) | Actas de reuniones del proyecto (kick-off, sprint planning, sprint review) | En progreso |
+| [01-meeting-minutes/](./01-meeting-minutes/) | Actas de reuniones del proyecto (kick-off, sprint planning, sprint review) | En progreso |
 | [open-questions.md](./open-questions.md) | Preguntas abiertas y decisiones pendientes | En progreso |

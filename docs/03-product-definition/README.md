@@ -23,4 +23,4 @@ Definición del producto SomnGuard y la investigación que la sustenta: encuesta
 
 | Archivo | Descripción | Estado |
 |---------|-------------|--------|
-| [01-investigacion/](./01-investigacion/) | Instrumentos de recolección: encuesta y entrevistas a conductores | En progreso |
+| [01-research/](./01-research/) | Instrumentos de recolección: encuesta y entrevistas a conductores | En progreso |
