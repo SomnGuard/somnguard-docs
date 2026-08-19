@@ -17,7 +17,7 @@
 
 </div>
 
-Diccionario de datos del modelo vigente (v2), alineado con [02-modulos-entidades.md](./02-modulos-entidades.md) y [01-modelo-entidad-relacion.mmd](./01-modelo-entidad-relacion.mmd). La versión anterior del modelo quedó archivada en `../99-archive/deprecated/data-model-v1/`.
+Diccionario de datos del modelo vigente (v2), alineado con [02-modules-entities.md](./02-modules-entities.md) y [01-entity-relationship-model.mmd](./01-entity-relationship-model.mmd). La versión anterior del modelo quedó archivada en `../99-archive/deprecated/data-model-v1/`.
 
 ## Convenciones generales
 

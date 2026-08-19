@@ -179,8 +179,8 @@ hu-###-main → main (producción controlada)
 
 Mantener actualizados:
 
-- `metodologia-adoptada.md` — este documento
-- `docs/15-project-control/01-actas/` — actas de cada sprint
+- `adopted-methodology.md` — este documento
+- `docs/15-project-control/01-meeting-minutes/` — actas de cada sprint
 - `docs/05-architecture/` — decisiones técnicas y arquitectura
 
 ## 12. Herramientas

@@ -1,0 +1,19 @@
+sequenceDiagram
+    participant ADM as Usuario / Administrador
+    participant WEB as Portal Web
+    participant API as API Device Management
+    participant DB as PostgreSQL
+    participant DEV as Dispositivo SomnGuard
+
+    ADM->>WEB: Registra dispositivo (serial, modelo)
+    WEB->>API: POST /api/v1/devices
+    API->>DB: Crea device (estado: pendiente)
+    API-->>WEB: 201 (id + API key)
+    ADM->>WEB: Asigna dispositivo a su cuenta
+    WEB->>API: POST /api/v1/devices/{id}/assignment
+    API->>DB: Crea device_assignment
+    API->>DB: Inicializa device_config (sonido, sensibilidad)
+    API-->>WEB: 200 (asignación confirmada)
+
+    DEV->>API: GET /api/v1/devices/{id}/config (primera conexión)
+    API-->>DEV: Configuración básica y credenciales de dispositivo

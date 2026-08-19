@@ -48,7 +48,7 @@ docs/
 
 1. **Empieza por la gobernanza**: lee `docs/00-documentation-governance/README.md` para conocer las reglas de documentación, normativa y metodología.
 2. **Requisitos**: revisa el SRS y las funcionalidades en `docs/04-requeriments/`.
-3. **Arquitectura**: consulta `docs/05-architecture/documento-arquitectura.md` para el detalle técnico.
+3. **Arquitectura**: consulta `docs/05-architecture/architecture-document.md` para el detalle técnico.
 4. **Datos**: el modelo vigente está en `docs/06-data-architecture/` (MER y módulos/entidades).
 5. **Diagramas**: los casos de uso y sus exportaciones están en `docs/08-uml/`.
 6. **Módulos del backend**: consulta el catálogo en `docs/09-modules/module-catalog.md`.

@@ -17,7 +17,7 @@
 
 </div>
 
-Catálogo de los módulos del backend de SomnGuard. Fuente de verdad del listado de módulos; el detalle de entidades y atributos vive en `../06-data-architecture/02-modulos-entidades.md`.
+Catálogo de los módulos del backend de SomnGuard. Fuente de verdad del listado de módulos; el detalle de entidades y atributos vive en `../06-data-architecture/02-modules-entities.md`.
 
 | Módulo | Responsabilidad | Entidades |
 |--------|-----------------|-----------|

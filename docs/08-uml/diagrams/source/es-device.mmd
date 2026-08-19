@@ -1,0 +1,11 @@
+stateDiagram-v2
+    [*] --> Registrado: Alta en la plataforma
+    Registrado --> Asignado: Asignación a una cuenta
+    Asignado --> Activo: Primera conexión (configuración descargada)
+    Activo --> Offline: Pérdida de conectividad
+    Offline --> Activo: Se restablece la conectividad
+    Activo --> Suspendido: Administrador suspende
+    Suspendido --> Activo: Administrador reactiva
+    Suspendido --> Retirado: Fin del ciclo de vida
+    Registrado --> Retirado: Alta cancelada
+    Retirado --> [*]

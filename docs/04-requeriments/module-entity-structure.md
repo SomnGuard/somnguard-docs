@@ -17,7 +17,7 @@
 
 </div>
 
-> **Nota:** la versión vigente del modelo de datos (con atributos) está en [06-data-architecture/02-modulos-entidades.md](../06-data-architecture/02-modulos-entidades.md). Este documento es la versión preliminar sin atributos.
+> **Nota:** la versión vigente del modelo de datos (con atributos) está en [06-data-architecture/02-modules-entities.md](../06-data-architecture/02-modules-entities.md). Este documento es la versión preliminar sin atributos.
 
 ## 1. Seguridad, cuenta y autorizacion (Security)
 

@@ -23,5 +23,6 @@ Información de contexto del proyecto SomnGuard: propuesta inicial, objetivos y 
 
 | Archivo | Descripción | Estado |
 |---------|-------------|--------|
-| [01-anteproyecto/](./01-anteproyecto/) | Propuesta inicial y objetivos del proyecto | Estable |
-| [02-cronograma/](./02-cronograma/) | Planificación temporal y hitos del proyecto | Estable |
+| [software-technical-proposal.md](./software-technical-proposal.md) | Propuesta técnica del software: solución, stack, recursos, costos y riesgos | En progreso |
+| [01-project-proposal/](./01-project-proposal/) | Propuesta inicial y objetivos del proyecto | Estable |
+| [02-schedule/](./02-schedule/) | Planificación temporal y hitos del proyecto | Estable |

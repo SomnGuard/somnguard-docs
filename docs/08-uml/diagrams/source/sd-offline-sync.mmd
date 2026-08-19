@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant REG as Registro Local (Edge)
+    participant COL as Cola de Sincronización
+    participant AGT as Agente de Sincronización
+    participant API as API Backend (Telemetry Service)
+    participant DB as PostgreSQL
+    participant STO as Almacenamiento Multimedia
+
+    REG->>COL: Encola evento + evidencia
+    Note over AGT: Sin conectividad: el lote permanece en cola
+    AGT->>API: POST /api/v1/telemetry/events (lote, API key)
+    API->>API: Valida dispositivo e idempotencia (ID único)
+    API->>DB: Persiste evento
+    API->>STO: Almacena evidencia multimedia
+    API-->>AGT: 201 Created (ids de eventos)
+    AGT->>COL: Elimina eventos confirmados
+    AGT->>API: GET /api/v1/devices/{id}/config
+    API-->>AGT: Configuración básica vigente

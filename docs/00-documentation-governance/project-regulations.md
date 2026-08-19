@@ -272,7 +272,7 @@ Ejemplo: `somnguard-v1.0.0.zip`
 
 ### Mecanismos de registro
 
-- **Actas de reuniones:** `docs/15-project-control/01-actas/` — decisiones, acuerdos, compromisos
+- **Actas de reuniones:** `docs/15-project-control/01-meeting-minutes/` — decisiones, acuerdos, compromisos
 - **Commits:** Git log — cambios de código con referencias a tickets
 - **Pull Requests:** GitHub/GitLab — discusiones técnicas, revisiones
 
@@ -298,7 +298,7 @@ Ejemplo: `somnguard-v1.0.0.zip`
 
 Plantillas y referencias:
 
-- Acta de reuniones: `docs/15-project-control/01-actas/`
+- Acta de reuniones: `docs/15-project-control/01-meeting-minutes/`
 - SRS / Requisitos: `docs/04-requeriments/`
 - Template de PR: A definir en repositorio
 

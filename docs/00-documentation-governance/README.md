@@ -29,5 +29,5 @@ Reglas y lineamientos comunes para documentar con un criterio uniforme, mantener
 | [security-rules.md](./security-rules.md) | Reglas de seguridad y privacidad | En progreso |
 | [definition-of-ready.md](./definition-of-ready.md) | Checklist antes de elaborar un documento | En progreso |
 | [definition-of-done.md](./definition-of-done.md) | Checklist para considerar un documento completado | En progreso |
-| [normativa-del-proyecto.md](./normativa-del-proyecto.md) | Normas, políticas y estándares del proyecto | Estable |
-| [metodologia-adoptada.md](./metodologia-adoptada.md) | Metodología Scrum y proceso de trabajo | Estable |
+| [project-regulations.md](./project-regulations.md) | Normas, políticas y estándares del proyecto | Estable |
+| [adopted-methodology.md](./adopted-methodology.md) | Metodología Scrum y proceso de trabajo | Estable |
