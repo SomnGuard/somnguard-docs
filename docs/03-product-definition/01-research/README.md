@@ -1,6 +1,25 @@
-# Investigación
+<div style="display:flex; align-items:center; justify-content:space-between;">
 
-Instrumentos de recolección de requisitos:
+<div>
+<img src="../../../assets/icons/logo-somnguard.png" width="140"/>
+</div>
 
-- `01_safety_and_driver_fatigue_survey.pdf` — encuesta sobre seguridad vial y fatiga.
-- `02_driver_interviews.pdf` — entrevista a conductores.
+<div align="right">
+
+# SOMNGUARD
+
+## Investigación
+
+**Estado:** Estable
+**Fecha:** 2026-08-19
+
+</div>
+
+</div>
+
+Instrumentos de recolección de requisitos.
+
+| Archivo | Descripción | Estado |
+|---------|-------------|--------|
+| [01_safety_and_driver_fatigue_survey.pdf](./01_safety_and_driver_fatigue_survey.pdf) | Encuesta sobre seguridad vial y fatiga | Estable |
+| [02_driver_interviews.pdf](./02_driver_interviews.pdf) | Entrevista a conductores | Estable |

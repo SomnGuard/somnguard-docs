@@ -10,8 +10,8 @@
 
 ## Capacitación y adopción
 
-**Estado:** Pendiente
-**Fecha:** 2026-08-16
+**Estado:** En progreso
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -21,4 +21,6 @@
 
 Manuales de usuario, guías de capacitación y material de adopción del sistema.
 
-_Sección en preparación._
+| Archivo | Descripción | Estado |
+|---------|-------------|--------|
+| [technical-onboarding.md](./technical-onboarding.md) | Guía de onboarding técnico: repos, entorno local y convenciones | En progreso |

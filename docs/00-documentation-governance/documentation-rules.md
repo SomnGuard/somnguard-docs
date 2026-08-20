@@ -11,7 +11,7 @@
 ## Reglas de documentación
 
 **Estado:** Estable
-**Fecha:** 2026-06-16
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -57,7 +57,7 @@ Todo documento `.md` debe iniciar con:
 
 ## Título descriptivo
 
-**Estado:** Pendiente, 
+**Estado:** Pendiente
 **Fecha:** YYYY-MM-DD
 
 </div>
@@ -69,19 +69,20 @@ Todo documento `.md` debe iniciar con:
 
 | Estado | Uso |
 |--------|-----|
-|  Pendiente | Archivo creado, sin contenido validado. |
-|  En progreso | Contenido parcial o en revisión. |
-|  Estable | Revisado, aprobado y vigente. |
-|  Deprecado | Ya no aplica. |
+| Pendiente | Archivo creado, sin contenido validado. |
+| En progreso | Contenido parcial o en revisión. |
+| Estable | Revisado, aprobado y vigente. |
+| Deprecado | Ya no aplica. |
+| Plantilla | Archivo `_template-*.md` reutilizable; no es un documento vigente. |
 
 
-**Criterios para docuementos deprecados:**
+**Criterios para documentos deprecados:**
 
 | Situación | Acción |
 |-----------|--------|
 | Documento sustituido por otro | Cambiar estado a **Deprecado**, agregar `> Reemplazado por: [enlace al nuevo]` al inicio, dejar en su ubicación actual |
 | Documento de sección eliminada o reestructurada | Mover a `../99-archive/deprecated/`, registrar el movimiento en `../../CHANGELOG.md` |
-| ADR obsoleta | Nunca mover — cambiar estado a `DEPRECATED` en `records/` y agregar `> Reemplazada por: ADR-NNN-nueva.md` |
+| ADR obsoleta | Nunca mover — cambiar estado a `Deprecada` en `records/` y agregar `> Reemplazada por: ADR-NNN-nueva.md` |
 
 
 ## Índices obligatorios
@@ -116,8 +117,8 @@ No crear carpetas `misc/`, `otros/`, `temp/` ni carpetas con un solo documento.
 
 | Tipo de recurso | Dónde va |
 |----------------|----------|
-| Fuentes UML `.wsd` / `.puml` | `../08-uml/diagrams/source/` |
-| Exportaciones UML `.svg` / `.png` | `../08-uml/diagrams/exports/` |
+| Fuentes UML Mermaid `.mmd` | `../08-uml/diagrams/source/` |
+| Exportaciones UML `.png` (SVG solo si el renderizado lo requiere) | `../08-uml/diagrams/exports/` |
 | Logos | `../../assets/icons/` |
 | Capturas, mockups o imágenes no UML | `../../assets/images/` |
 | Diagramas UML referenciados por arquitectura | Fuente y export en `../08-uml/`, enlace desde `../05-architecture/` |
@@ -125,7 +126,7 @@ No crear carpetas `misc/`, `otros/`, `temp/` ni carpetas con un solo documento.
 Reglas:
 
 - Todo diagrama debe tener fuente editable.
-- SVG es preferido sobre PNG.
+- La exportación estándar es PNG (ver `../08-uml/diagrams/source/README.md`); SVG se puede usar si el renderizado lo requiere.
 - No subir solo la imagen exportada si existe fuente editable.
 - Registrar diagramas en `../08-uml/diagram-index.md`.
 

@@ -3,7 +3,7 @@
 > Este archivo es una PLANTILLA. Copiar con el nombre `ADR-NNN-titulo-corto.md`,
 > reemplazar todos los placeholders y eliminar esta línea antes de hacer commit.
 
-**Estado:** PROPOSED
+**Estado:** Pendiente
 **Fecha:** YYYY-MM-DD
 **Autores:** Nombre Apellido, Nombre Apellido
 **Equipos involucrados:** Arquitectura, [otros equipos afectados]

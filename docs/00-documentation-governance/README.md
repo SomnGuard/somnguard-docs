@@ -10,8 +10,8 @@
 
 ## Gobierno documental
 
-**Estado:** En Progreso
-**Fecha:** 2026-08-16
+**Estado:** En progreso
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -31,3 +31,5 @@ Reglas y lineamientos comunes para documentar con un criterio uniforme, mantener
 | [definition-of-done.md](./definition-of-done.md) | Checklist para considerar un documento completado | En progreso |
 | [project-regulations.md](./project-regulations.md) | Normas, políticas y estándares del proyecto | Estable |
 | [adopted-methodology.md](./adopted-methodology.md) | Metodología Scrum y proceso de trabajo | Estable |
+| [agile-conventions.md](./agile-conventions.md) | Convenciones ágiles: HU/AC/TC/RN/NFR/ADR, severidades y estados | En progreso |
+| [security-policy.md](./security-policy.md) | Política de seguridad: repos, secretos, Ley 1581 y respuesta a fugas | En progreso |

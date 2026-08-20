@@ -11,7 +11,7 @@
 ## Definición de hecho
 
 **Estado:** En progreso
-**Fecha:** 2026-06-19
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -20,10 +20,10 @@ Este documento define los criterios mínimos que debe cumplir un documento para 
 
 ---
 
-Un documento está **done** cuando:
+Un documento está **completado** cuando:
 
 - [ ] Está enlazado desde el `README.md` de su sección
 - [ ] El estado cambió a **Estable**
 - [ ] Los enlaces relativos funcionan
 - [ ] No contiene información sensible
-- [ ] El CHANGELOG fue actualizado si el cambio modifica gobernanza, estructura de carpetas, o un contrato compartido (API, modelo de datos, convenciones de Git)
+- [ ] El `CHANGELOG.md` (raíz) fue actualizado si el cambio modifica gobernanza, estructura de carpetas, o un contrato compartido (API, modelo de datos, convenciones de Git)

@@ -11,7 +11,7 @@
 ## Definición de listo
 
 **Estado:** En progreso
-**Fecha:** 2026-06-19
+**Fecha:** 2026-08-19
 
 </div>
 

@@ -1,4 +1,21 @@
-# Modulos entidades
+<div style="display:flex; align-items:center; justify-content:space-between;">
+
+<div>
+<img src="../../assets/icons/logo-somnguard.png" width="140"/>
+</div>
+
+<div align="right">
+
+# SOMNGUARD
+
+## Módulos y entidades
+
+**Estado:** Estable
+**Fecha:** 2026-08-19
+
+</div>
+
+</div>
 
 > **Proyecto:** SomnGuard
 > **Versión:** 1.0

@@ -10,7 +10,7 @@
 
 ## Acta #1 – Kick-off del Proyecto SomnGuard
 
-**Estado:** Completado
+**Estado:** Cerrado
 **Fecha:** 2026-02-10
 
 </div>
@@ -60,23 +60,27 @@ Se presentó la visión del proyecto **SomnGuard**: un sistema integral (softwar
 
 Se confirmó la disponibilidad de recursos (equipo 4 full-stack) y la fecha límite: **Agosto 2026** para entrega final.
 
+> **Nota histórica (2026-08-20):** el stack acordado en este kickoff fue C#/.NET. El 2026-08-16 se decidió migrar el backend a **Java 21 (Spring Boot 3.x, Maven)**, manteniendo el resto del stack sin cambios — ver [ADR-001](../../05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md).
+
+> **Nota histórica (2026-08-20):** el canal de coordinación se confirmó posteriormente como **Discord** (pregunta QR-007, RESUELTA — ver [open-questions.md](../open-questions.md)).
+
 ### Acuerdos
 
-- ✅ Stack tecnológico: **Java 21 (Spring Boot), Python, PostgreSQL, React JS, React Native**
-- ✅ Hardware: **Raspberry Pi + Cámara** como dispositivo de captura
-- ✅ Metodología: **Scrum con sprints de 1 semana**
-- ✅ Equipo: 4 desarrolladores full-stack bajo liderazgo de Cristian
-- ✅ Cloud: A definir posteriormente (pendiente evaluación AWS/Azure)
-- ✅ Reuniones semanales: Lunes 09:00 para seguimiento de sprint
-- ✅ Canal de coordinación: A confirmar (Slack/Teams)
-- ✅ Deadline: **Agosto 2026**
+- Stack tecnológico: **C#, Python, PostgreSQL, React JS, React Native**
+- Hardware: **Raspberry Pi + Cámara** como dispositivo de captura
+- Metodología: **Scrum con sprints de 1 semana**
+- Equipo: 4 desarrolladores full-stack bajo liderazgo de Cristian
+- Cloud: A definir posteriormente (pendiente evaluación AWS/Azure)
+- Reuniones semanales: Lunes 09:00 para seguimiento de sprint
+- Canal de coordinación: A confirmar (Slack/Teams)
+- Deadline: **Agosto 2026**
 
 ### Compromisos
 
 | Responsable | Compromiso | Fecha límite |
 |-------------|-----------|------------|
 | Cristian Javier Palma Sotto | Definir arquitectura base (servidor + device) | 2026-02-17 |
-| Juan Carlos Jurado Castañeda | Investigar stack Python/Java para análisis visual | 2026-02-17 |
+| Juan Carlos Jurado Castañeda | Investigar stack Python/C# para análisis visual | 2026-02-17 |
 | Johan Steven Rodriguez Charry | Configurar Raspberry Pi con cámara e integración | 2026-02-17 |
 | Brayan Alberto Perdomo | Diseño DB PostgreSQL inicial | 2026-02-17 |
 | Cristian Javier Palma Sotto | Crear backlog inicial y primeras user stories | 2026-02-24 |
@@ -93,4 +97,4 @@ Se confirmó la disponibilidad de recursos (equipo 4 full-stack) y la fecha lím
 
 ---
 
-_Última actualización: 2026-05-02_
+_Última actualización: 2026-08-20_

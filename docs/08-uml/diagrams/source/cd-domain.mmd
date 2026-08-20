@@ -4,7 +4,6 @@ classDiagram
         +String name
         +String email
         +String passwordHash
-        +boolean validated
         +login()
         +requestPasswordReset()
     }
@@ -35,8 +34,6 @@ classDiagram
     class Device {
         +String id
         +String serial
-        +String model
-        +String status
         +String apiKeyHash
     }
     class DeviceAssignment
@@ -47,8 +44,6 @@ classDiagram
     class Event {
         +String id
         +DateTime occurredAt
-        +String category
-        +String severity
         +int confidence
     }
     class Evidence {
@@ -77,15 +72,16 @@ classDiagram
     Role "1" --> "0..*" RoleFeature
     Feature "1" --> "0..*" RoleFeature
     Module "1" --> "0..*" Feature
-    User "1" --> "0..1" PasswordResetRequest
+    User "1" --> "0..*" PasswordResetRequest
     User "1" --> "0..*" AuditLogin
     User "1" --> "0..*" DeviceAssignment
     Device "1" --> "0..*" DeviceAssignment
     Device "1" --> "0..1" DeviceConfig
     Device "1" --> "0..*" Event
-    EventCategory "1" --> "0..*" Event
+    EventCategory "1" --> "0..*" EventType
     EventType "1" --> "0..*" Event
-    Severity "1" --> "0..*" Event
+    Severity "1" --> "0..*" EventType
+    SoundPattern "1" --> "0..*" EventType
     Event "1" --> "0..*" Evidence
     Event "1" --> "0..*" AlertLog
     SoundPattern "1" --> "0..*" AlertLog

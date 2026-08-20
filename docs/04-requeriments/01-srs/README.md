@@ -1,6 +1,25 @@
-# SRS
+<div style="display:flex; align-items:center; justify-content:space-between;">
 
-Documento de especificación de requisitos del software:
+<div>
+<img src="../../../assets/icons/logo-somnguard.png" width="140"/>
+</div>
 
-- `01_srs.pdf` — versión de consulta.
-- `01_srs.docx` — versión editable.
+<div align="right">
+
+# SOMNGUARD
+
+## SRS — Especificación de requisitos
+
+**Estado:** Estable
+**Fecha:** 2026-08-19
+
+</div>
+
+</div>
+
+Documento de especificación de requisitos del software.
+
+| Archivo | Descripción | Estado |
+|---------|-------------|--------|
+| [01_srs.pdf](./01_srs.pdf) | Versión de consulta | Estable |
+| [01_srs.docx](./01_srs.docx) | Versión editable | Estable |

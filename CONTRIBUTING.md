@@ -1,72 +1,95 @@
-# Contributing
+<div style="display:flex; align-items:center; justify-content:space-between;">
 
-Gracias por tu interés en contribuir a la documentación de SomnGuard.
+<div>
+<img src="assets/icons/logo-somnguard.png" width="140"/>
+</div>
 
-Este documento aplica al repositorio `somnguard-docs`. Las reglas de contribución de otros repositorios del proyecto pueden definirse por separado.
+<div align="right">
 
-Antes de comenzar, por favor revisa el README y el [Código de Conducta](CODE_OF_CONDUCT.md).
+# SOMNGUARD
 
-## Ramas principales
+## Guía de contribución
 
-Este repositorio usa dos ramas principales:
+**Estado:** En progreso
+**Fecha:** 2026-08-19
 
-* `develop`: rama base para preparar y revisar cambios de documentación.
-* `main`: rama estable con la documentación aprobada.
+</div>
 
-No se deben realizar cambios directamente sobre `main`. Los cambios deben prepararse desde `develop` y fusionarse mediante Pull Request.
+</div>
 
-## Flujo de trabajo
+Reglas para contribuir a la documentación del proyecto SomnGuard.
 
-El flujo general es:
+## Regla de oro
 
-1. Actualizar la rama `develop`.
-2. Crear una rama de trabajo desde `develop`.
-3. Realizar los cambios necesarios en la documentación.
-4. Crear commits descriptivos.
-5. Enviar un Pull Request hacia `develop` para revisión.
-6. Fusionar `develop` hacia `main` cuando la documentación esté aprobada y lista para publicarse.
+Todo cambio entra por **Pull Request**. No se commitea directo en `develop`, `qa` ni `main`.
 
-## Convención de ramas
+## Estructura del repositorio
 
-Utiliza nombres cortos y descriptivos para las ramas.
+```
+somnguard-docs/
+├── docs/
+│   ├── NN-seccion/          # Secciones numeradas (00-15)
+│   │   ├── README.md        # Índice obligatorio de la sección
+│   │   └── documento.md
+│   └── 99-archive/          # Historia documental (nunca se elimina)
+├── assets/
+│   └── icons/               # Logos
+├── .github/                 # Templates de PR
+└── CHANGELOG.md
+```
 
-Ejemplos:
+## Reglas por tema
 
-* `docs/actualizar-readme`
-* `docs/agregar-manual-instalacion`
-* `fix/corregir-enlaces`
+| Tema | Regla |
+|------|-------|
+| **Docs nuevos** | Registrar en el `README.md` de la sección y en `CHANGELOG.md` si cambia estructura o contratos |
+| **ADRs** | Crear desde `docs/05-architecture/decisions/_template-adr.md`; registrar en `docs/05-architecture/decisions/README.md` |
+| **Módulos** | No crear carpetas de módulo sin ADR aprobada (ver `docs/00-documentation-governance/structure-rules.md`) |
+| **Diagramas** | Fuente editable en `docs/08-uml/diagrams/source/` + exportación en `exports/`; registrar en `diagram-index.md` |
+| **Enlaces** | Siempre relativos; verificar antes del PR |
+| **Nombres** | `kebab-case` para archivos y carpetas; contenido en español, commits en inglés |
+| **Secretos** | Nunca commitear credenciales, tokens ni datos personales (ver `security-policy.md`) |
 
-## Convención de commits
+## Flujo rápido
 
-Se recomienda el uso de Conventional Commits.
+### Agregar un documento
 
-Ejemplos:
+1. Crear rama `feat/doc-<descripcion>` desde `develop`.
+2. Crear el archivo con la estructura mínima (logo, título, estado, fecha).
+3. Enlazarlo desde el `README.md` de la sección.
+4. Commit con Conventional Commits (`docs(NN-seccion): ...`).
+5. PR hacia `develop` con la plantilla de PR completada.
 
-* `docs(readme): actualizar guía de instalación`
-* `docs(manual): agregar pasos de configuración`
-* `fix(links): corregir enlaces rotos`
+### Agregar una carpeta de sección
 
-## Pull Requests
+1. Nombrarla `NN-nombre-en-ingles`.
+2. Crear `README.md` índice.
+3. Registrar en `CHANGELOG.md`.
 
-Cada Pull Request debe incluir:
+### Registrar una ADR
 
-* Descripción clara de los cambios realizados.
-* Relación con la historia de usuario, tarea o incidencia correspondiente, cuando aplique.
-* Evidencias cuando aplique, como capturas de pantalla, vistas previas o registros.
+1. Copiar `_template-adr.md` a `records/ADR-NNN-titulo-corto.md`.
+2. Completar contexto, decisión, consecuencias y alternativas.
+3. Registrar en `docs/05-architecture/decisions/README.md`.
 
-Los Pull Requests estarán sujetos a revisión antes de ser aprobados y fusionados.
+### Documentar un módulo del backend
 
-## Estándares de calidad
+1. Verificar que el módulo esté en `docs/09-modules/module-catalog.md`.
+2. Copiar la plantilla de módulo `docs/09-modules/modules/_template/module/` a `modules/<nombre-del-modulo>/`.
+3. Completar README, data-model, events, decisions y runbook.
 
-Antes de enviar una contribución:
+## Checklist pre-PR
 
-* Verifica que los enlaces funcionen correctamente.
-* Revisa ortografía, formato y consistencia de la documentación.
-* Mantén los archivos organizados según la estructura existente.
-* Evita incluir cambios no relacionados en un mismo Pull Request.
+- [ ] Encabezado estándar (logo, título, estado, fecha)
+- [ ] Enlazado desde el `README.md` de su sección
+- [ ] Enlaces relativos verificados
+- [ ] Diagramas con fuente editable si aplica
+- [ ] Sin credenciales ni datos personales
+- [ ] CHANGELOG actualizado si modifica gobernanza, estructura o contratos compartidos
 
-## Reporte de problemas
+## Ver también
 
-Si encuentras un error o deseas proponer una mejora, crea un Issue describiendo claramente el problema, la ubicación del documento afectado y cualquier información relevante.
-
-Gracias por contribuir a la documentación de SomnGuard.
+- [Reglas de documentación](docs/00-documentation-governance/documentation-rules.md)
+- [Convenciones de git](docs/00-documentation-governance/git-conventions.md)
+- [Política de seguridad](docs/00-documentation-governance/security-policy.md)
+- [Plantilla de PR](.github/pull_request_template.md)

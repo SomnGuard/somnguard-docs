@@ -11,7 +11,7 @@
 ## Diseño de API
 
 **Estado:** En progreso
-**Fecha:** 2026-08-16
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -26,11 +26,11 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 3.x). 
 | Estilo | REST |
 | Prefijo | `/api/v1` |
 | Formato | JSON (`application/json`) |
-| Errores | `{"code": "<codigo>", "message": "<descripcion>", "details": [...]}` |
-| Paginación | Parámetros `page` (0-based) y `size`; respuesta `{ "content": [...], "page": ..., "size": ..., "totalElements": ... }` |
+| Errores | `{"error": {"code", "message", "details", "trace_id"}}` — ver [guidelines.md](./guidelines.md) |
+| Paginación | Parámetros `page` (1-based) y `page_size` (máx. 100); respuesta `{ "data": [...], "pagination": { "page", "page_size", "total_items", "total_pages" } }` — ver [guidelines.md](./guidelines.md) |
 | Identificadores | UUID en rutas y cuerpo |
 | Fechas | ISO 8601 (`yyyy-MM-dd'T'HH:mm:ssXXX`) |
-| Autenticación | Pendiente de definición (JWT propuesto — ver open-questions) |
+| Autenticación | JWT RS256 + API keys por dispositivo — ver [authentication.md](./authentication.md) |
 | Documentación en vivo | SpringDoc/OpenAPI (`/swagger-ui.html`) |
 
 ### Códigos HTTP
@@ -89,7 +89,7 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 3.x). 
 |--------|----------|-------------|
 | GET | `/api/v1/notifications` | Listar notificaciones del usuario |
 | GET | `/api/v1/notifications/{id}` | Consultar notificación |
-| PATCH | `/api/v1/notifications/{id}/read` | Marcar como leída |
+| POST | `/api/v1/notifications/{id}/read` | Marcar como leída |
 
 ## Módulo parameterization
 
@@ -102,20 +102,32 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 3.x). 
 | GET | `/api/v1/catalogs/event-types` | Catálogo de tipos de evento |
 | POST/PUT/DELETE | `/api/v1/catalogs/...` | Administración de catálogos (acceso restringido) |
 
+## Módulo analytics
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/v1/analytics/timeline` | Línea de tiempo de eventos por dispositivo/rango |
+| GET | `/api/v1/analytics/metrics` | Métricas de comportamiento (sesiones de riesgo, duración) |
+| GET | `/api/v1/analytics/reports` | Reportes generados (resumen IA, descargables) |
+
 ## Modelo de respuesta de ejemplo
 
 ```json
 {
-  "code": "EVENT_NOT_FOUND",
-  "message": "El evento solicitado no existe",
-  "details": []
+  "error": {
+    "code": "EVENT_NOT_FOUND",
+    "message": "El evento solicitado no existe",
+    "details": [],
+    "trace_id": "b3f1c2a4-..."
+  }
 }
 ```
 
 ## Pendientes (no inventar contratos aún)
 
-- Mecanismo de autenticación y autorización (JWT vs sesiones; roles/perfiles).
 - Contrato de sincronización offline del dispositivo (formato de payload y archivos multimedia).
 - Formato de notificaciones push y estado de lectura.
 - Política de retención de datos al eliminar cuenta.
 - Respuestas de paginación y filtros definitivos por recurso.
+
+> Autenticación y autorización (JWT RS256 + API keys por dispositivo, RBAC por feature) están definidas en [authentication.md](./authentication.md).

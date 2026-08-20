@@ -11,7 +11,7 @@
 ## Glosario
 
 **Estado:** En progreso
-**Fecha:** 2026-08-16
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -37,7 +37,7 @@ Glosario de términos del dominio y técnicos utilizados en la documentación de
 | Dispositivo | Hardware Raspberry Pi con cámara instalado en el vehículo. |
 | Edge | Procesamiento local en el dispositivo (captura y preprocesamiento). |
 | Sincronización offline | Reenvío de eventos y evidencia almacenados localmente cuando vuelve la conectividad. |
-| Cuenta con retención | Baja de cuenta conservando datos según política definida. |
+| Cuenta con retención | Baja de cuenta conservando sus datos según la política de retención definida. |
 
 ## Términos técnicos
 
@@ -56,7 +56,7 @@ Glosario de términos del dominio y técnicos utilizados en la documentación de
 | JSONB | Tipo de datos JSON binario de PostgreSQL (usado en configuración de dispositivos). |
 | UUID | Identificador único universal usado como llave primaria. |
 | REST API | Estilo de API basado en recursos HTTP (prefijo `/api/v1`). |
-| JWT | Token JSON Web Token (autenticación propuesta, pendiente de decisión). |
+| JWT | Token JSON Web Token usado en la autenticación de la API (RS256, ver [`../07-api-design/authentication.md`](../07-api-design/authentication.md)). |
 | Raspberry Pi | Mini computadora usada como dispositivo edge de captura. |
 | React JS | Framework web del frontend de la plataforma. |
 | React Native | Framework móvil (Android/iOS) de la app del usuario final. |
@@ -68,7 +68,7 @@ Glosario de términos del dominio y técnicos utilizados en la documentación de
 | Término | Significado |
 |---------|-------------|
 | HU | Historia de Usuario; unidad de trabajo del backlog. |
-| Sprint | Iteración de trabajo Scrum (1 a 1.5 semanas). |
+| Sprint | Iteración de trabajo Scrum (1 semana estándar, ajustable). |
 | DoD | Definition of Done; criterios para considerar una historia completada. |
 | DoR | Definition of Ready; criterios para iniciar un documento o historia. |
 | SRS | Software Requirements Specification; especificación de requisitos del software. |

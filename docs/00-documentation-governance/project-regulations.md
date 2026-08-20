@@ -11,9 +11,9 @@
 ## Normativa del Proyecto
 
 **Autor:** Equipo SomnGuard
-**Estado:** Aprobado
-**Fecha:** 2026-04-12
-**Última actualización:** 2026-05-03
+**Estado:** Estable
+**Fecha:** 2026-08-19
+**Última actualización:** 2026-08-19
 
 </div>
 
@@ -40,7 +40,7 @@ Aplica a todo el equipo del proyecto:
 - **Documentación:** Español neutro. El contenido documental se redacta en español, evitando jerga local y explicando tecnicismos cuando sea necesario.
 - **Código y commits:** Inglés. Los nombres de ramas, mensajes de commit, identificadores técnicos y comentarios de código se escriben en inglés.
 - **Documentación:** Preferentemente en Markdown (`.md`). Cuando se necesite una versión de consulta sin vista previa, también puede exportarse a PDF; si se requiere un formato editable adicional, se admiten archivos tipo documento como `.docx`.
-- **Diagramas:** Solo en Mermaid (`.mmd`) por ahora, con exportación a `.png` para visualización o entrega.
+- **Diagramas:** Fuentes editables en Mermaid (`.mmd`) con convenciones UML, y exportación a `.png` para visualización o entrega.
 - **Codificación:** UTF-8 sin BOM, salvo que una herramienta o entorno específico indique otra necesidad.
 - **Fechas:** Formato `YYYY-MM-DD`
 
@@ -49,7 +49,7 @@ Aplica a todo el equipo del proyecto:
 ### Archivos y carpetas
 
 - **Nombres de archivos:** `kebab-case`, minúsculas y guiones para separar palabras  
-  Ejemplo: `plan-pruebas.md`, `arquitectura-inicial.md`
+  Ejemplo: `test-plan.md`, `initial-architecture.md`
 
 ### Código
 
@@ -65,7 +65,7 @@ Aplica a todo el equipo del proyecto:
 
 ### Diagramas
 
-- Usar convenciones estándar (UML)
+- Los diagramas usan convenciones estándar (UML) y se crean en Mermaid (`.mmd`) con exportación `.png` (ver `documentation-rules.md`).
 
 ## 5. Estructura documental
 
@@ -74,10 +74,10 @@ La documentación se organiza en secciones numeradas dentro de `docs/`:
 ```
 docs/
 ├── 00-documentation-governance/  # Normativa, metodología, reglas de documentación
-├── 01-project-context/           # Anteproyecto, cronograma, contexto del proyecto
+├── 01-project-context/           # Contexto del proyecto: perfil, alcance, propuesta
 ├── 02-domain/                    # Dominio del negocio: mapa de procesos
 ├── 03-product-definition/        # Definición del producto e investigación
-├── 04-requeriments/              # SRS, funcionalidades, estructura por módulo
+├── 04-requeriments/              # SRS, análisis y requisitos
 ├── 05-architecture/              # Arquitectura y decisiones (ADRs)
 ├── 06-data-architecture/         # Modelo de datos y diccionarios
 ├── 07-api-design/                # Diseño de API
@@ -122,7 +122,7 @@ Todo documento debe iniciar con el encabezado estándar (ver `documentation-rule
 ### Política de versionado
 
 - **Sin versionado formal** mientras el proyecto está en fase inicial.
-- Una vez estable, adoptar `vA.B` (ej: `v1.0`, `v1.1`).
+- Una vez estable, adoptar `v{MAJOR}.{MINOR}.{PATCH}` (ej: `v1.0.0`).
 
 ### Historial de cambios
 
@@ -130,7 +130,7 @@ Incluir tabla en cada documento importante:
 
 | Fecha | Estado | Autor | Cambios |
 |-------|--------|-------|---------|
-| 2026-04-12 | Aprobado | Cristian Javier Palma Sotto | Creación inicial |
+| 2026-04-12 | Estable | Cristian Javier Palma Sotto | Creación inicial |
 
 ## 7. Control de código y ramas
 
@@ -139,8 +139,8 @@ Incluir tabla en cada documento importante:
 - **`main`** — rama de producción, siempre estable y desplegable
 - **`develop`** — rama de integración, para cambios integrados
 - **`qa`** — rama de QA/pruebas antes de pasar a main
-- **`HU-###-descripcion-(ambiente: dev, qa, main)`** — desarrollo de historias de usuario
-- **`BUG-###-descripcion(ambiente: dev, qa, main)`** — correcciones de bugs
+- **`hu-<repo>-###-dev/qa/main`** — desarrollo de historias de usuario (REPO ∈ DEVICE, API, DB, APP, PORTAL; ver `agile-conventions.md`)
+- **`fix/doc-<descripcion>`** — correcciones urgentes sobre documentación estable
 
 ### Reglas de merge
 
@@ -166,6 +166,8 @@ Incluir tabla en cada documento importante:
 
 ### Tipos de commit
 
+Aplica a los repositorios de código (`somnguard-api` y demás):
+
 - `feat` — nueva característica
 - `fix` — corrección de bug
 - `refactor` — refactorización de código
@@ -173,20 +175,22 @@ Incluir tabla en cada documento importante:
 - `docs` — cambios en documentación
 - `chore` — tareas (dependencias, configuración)
 
+> En el repositorio documental (`somnguard-docs`) solo se usan `docs`, `fix`, `chore` y `refactor` (ver `git-conventions.md`).
+
 ### Ejemplos
 
 ```
-feat(auth): agregar login OAuth2
+feat(auth): add JWT-based login
 
-Implementa autenticación con OAuth2 para conductores.
-Refs: #HU-001
+Implements JWT authentication for drivers and admins.
+Refs: HU-API-001
 ```
 
 ```
-fix(sensor): corregir lectura de cámara
+fix(device): correct camera capture timeout
 
-Ajusta timeout de captura de imágenes en Raspberry Pi.
-Refs: #BUG-042
+Adjusts image capture timeout on Raspberry Pi.
+Refs: HU-DEVICE-007
 ```
 
 ## 9. Revisión y aprobación
@@ -204,7 +208,7 @@ Refs: #BUG-042
 ### Aprobación final
 
 - **Documentos finales:** Líder Técnico Cristian Javier Palma Sotto
-- **Estado:** Marcar como `Aprobado` en el encabezado y registrar en acta
+- **Estado:** Marcar como `Estable` en el encabezado y registrar en acta
 
 ## 10. Seguridad y privacidad
 
@@ -274,7 +278,7 @@ Ejemplo: `somnguard-v1.0.0.zip`
 
 - **Actas de reuniones:** `docs/15-project-control/01-meeting-minutes/` — decisiones, acuerdos, compromisos
 - **Commits:** Git log — cambios de código con referencias a tickets
-- **Pull Requests:** GitHub/GitLab — discusiones técnicas, revisiones
+- **Pull Requests:** GitHub — discusiones técnicas, revisiones
 
 ### Decisiones arquitectónicas
 
@@ -300,7 +304,7 @@ Plantillas y referencias:
 
 - Acta de reuniones: `docs/15-project-control/01-meeting-minutes/`
 - SRS / Requisitos: `docs/04-requeriments/`
-- Template de PR: A definir en repositorio
+- Template de PR: `.github/pull_request_template.md` del repositorio
 
 ## 17. Glosario
 
@@ -315,4 +319,4 @@ Plantillas y referencias:
 
 ---
 
-_Última actualización: 2026-05-03_
+_Última actualización: 2026-08-19_

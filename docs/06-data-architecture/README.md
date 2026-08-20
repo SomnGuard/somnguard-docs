@@ -11,7 +11,7 @@
 ## Arquitectura de datos
 
 **Estado:** En progreso
-**Fecha:** 2026-08-16
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -27,6 +27,7 @@ Modelo de datos vigente del sistema. Este modelo es la **fuente de verdad** para
 | [02-modules-entities.md](./02-modules-entities.md) | Módulos, entidades y atributos con convenciones | Estable |
 | [02-relational-model.mmd](./02-relational-model.mmd) | Esquema relacional implementable del modelo vigente | En progreso |
 | [03-data-dictionary.md](./03-data-dictionary.md) | Diccionario de datos del modelo vigente | En progreso |
+| [modeling-conventions.md](./modeling-conventions.md) | Convenciones de modelado: auditoría, estados, Liquibase | En progreso |
 
 ## Convenciones del modelo
 
