@@ -47,8 +47,8 @@ El análisis cubre los componentes de software de SomnGuard: plataforma cloud (b
 | Documento | Ubicación |
 |-----------|-----------|
 | SRS | [01-srs/](./01-srs/) |
-| Funcionalidades del sistema | [system-functionalities.md](./system-functionalities.md) |
-| Estructura módulo-entidad | [module-entity-structure.md](./module-entity-structure.md) |
+| Funcionalidades del sistema (épicas F-01..F-10) | [../03-product-definition/product-backlog.md](../03-product-definition/product-backlog.md) |
+| Estructura módulo-entidad | [../09-modules/module-catalog.md](../09-modules/module-catalog.md) |
 | Modelo de datos vigente | [../06-data-architecture/02-modules-entities.md](../06-data-architecture/02-modules-entities.md) |
 | Índice de diagramas | [../08-uml/diagram-index.md](../08-uml/diagram-index.md) |
 | Informe de diseño de software | [../05-architecture/software-design-report.md](../05-architecture/software-design-report.md) |
@@ -62,7 +62,7 @@ SomnGuard es un sistema de prevención de accidentes por fatiga o somnolencia al
 - **Dispositivo edge**: cámara y procesador embebido (Raspberry Pi) que monitorea al conductor, detecta estados de riesgo mediante visión por computadora (Python) y emite alertas sonoras inmediatas.
 - **Plataforma cloud**: backend monolito modular (Java 21 + Spring Boot 3.x), base de datos PostgreSQL, portal web (React JS) y app móvil (React Native), que almacenan los eventos sincronizados, permiten su consulta/análisis y gestionan cuentas, dispositivos y catálogos.
 
-Funcionalidades principales (detalle en [system-functionalities.md](./system-functionalities.md)):
+Funcionalidades principales (detalle en [product backlog](../03-product-definition/product-backlog.md)):
 
 | # | Funcionalidad |
 |---|---------------|

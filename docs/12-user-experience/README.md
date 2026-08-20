@@ -10,8 +10,8 @@
 
 ## Experiencia de usuario (UX/UI)
 
-**Estado:** Pendiente
-**Fecha:** 2026-08-16
+**Estado:** En progreso
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -19,6 +19,10 @@
 
 ## Contenido
 
-Prototipos, wireframes y guías de diseño de la plataforma web y la app móvil.
+Prototipos, wireframes y guías de diseño de la plataforma web y la app móvil. Herramienta de diseño: Figma.
 
-_Sección en preparación. Herramienta de diseño: Figma._
+| Archivo | Descripción | Estado |
+|---------|-------------|--------|
+| [_template-ux-flows.md](./_template-ux-flows.md) | Plantilla de flujos de UX por rol y pantalla | Plantilla |
+| [_template-design-system.md](./_template-design-system.md) | Plantilla de design system (paleta, tipografía, componentes) | Plantilla |
+| [_template-ui-spec.md](./_template-ui-spec.md) | Plantilla de especificación de UI por pantalla | Plantilla |

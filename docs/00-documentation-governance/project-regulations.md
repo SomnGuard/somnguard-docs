@@ -11,7 +11,7 @@
 ## Normativa del Proyecto
 
 **Autor:** Equipo SomnGuard
-**Estado:** Aprobado
+**Estado:** Estable
 **Fecha:** 2026-04-12
 **Última actualización:** 2026-05-03
 
@@ -139,8 +139,8 @@ Incluir tabla en cada documento importante:
 - **`main`** — rama de producción, siempre estable y desplegable
 - **`develop`** — rama de integración, para cambios integrados
 - **`qa`** — rama de QA/pruebas antes de pasar a main
-- **`HU-###-descripcion-(ambiente: dev, qa, main)`** — desarrollo de historias de usuario
-- **`BUG-###-descripcion(ambiente: dev, qa, main)`** — correcciones de bugs
+- **`hu-<repo>-###-dev/qa/main`** — desarrollo de historias de usuario (REPO ∈ DEVICE, API, DB, APP, PORTAL; ver `agile-conventions.md`)
+- **`fix/doc-<descripcion>`** — correcciones urgentes sobre documentación estable
 
 ### Reglas de merge
 
@@ -176,17 +176,17 @@ Incluir tabla en cada documento importante:
 ### Ejemplos
 
 ```
-feat(auth): agregar login OAuth2
+feat(auth): add JWT-based login
 
-Implementa autenticación con OAuth2 para conductores.
-Refs: #HU-001
+Implements JWT authentication for drivers and admins.
+Refs: HU-API-001
 ```
 
 ```
-fix(sensor): corregir lectura de cámara
+fix(device): correct camera capture timeout
 
-Ajusta timeout de captura de imágenes en Raspberry Pi.
-Refs: #BUG-042
+Adjusts image capture timeout on Raspberry Pi.
+Refs: HU-DEVICE-007
 ```
 
 ## 9. Revisión y aprobación
@@ -204,7 +204,7 @@ Refs: #BUG-042
 ### Aprobación final
 
 - **Documentos finales:** Líder Técnico Cristian Javier Palma Sotto
-- **Estado:** Marcar como `Aprobado` en el encabezado y registrar en acta
+- **Estado:** Marcar como `Estable` en el encabezado y registrar en acta
 
 ## 10. Seguridad y privacidad
 
@@ -274,7 +274,7 @@ Ejemplo: `somnguard-v1.0.0.zip`
 
 - **Actas de reuniones:** `docs/15-project-control/01-meeting-minutes/` — decisiones, acuerdos, compromisos
 - **Commits:** Git log — cambios de código con referencias a tickets
-- **Pull Requests:** GitHub/GitLab — discusiones técnicas, revisiones
+- **Pull Requests:** GitHub — discusiones técnicas, revisiones
 
 ### Decisiones arquitectónicas
 
@@ -300,7 +300,7 @@ Plantillas y referencias:
 
 - Acta de reuniones: `docs/15-project-control/01-meeting-minutes/`
 - SRS / Requisitos: `docs/04-requeriments/`
-- Template de PR: A definir en repositorio
+- Template de PR: `.github/pull_request_template.md` del repositorio
 
 ## 17. Glosario
 
@@ -315,4 +315,4 @@ Plantillas y referencias:
 
 ---
 
-_Última actualización: 2026-05-03_
+_Última actualización: 2026-08-19_

@@ -11,7 +11,7 @@
 ## Convenciones de git
 
 **Estado:** En progreso
-**Fecha:** 2026-06-19
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -23,9 +23,9 @@
 
 | Rama | Propósito | Regla |
 |------|-----------|-------|
-| `develop` | Integración de trabajo en desarrollo | Recibe PRs desde ramas hijas (`hu-<numero>-dev`) |
-| `qa` | Validación de pruebas antes de producción | Recibe PRs desde `hu-<numero>-qa` |
-| `main` | Producción / documentación estable | Recibe solo PRs desde `hu-<numero>-main` |
+| `develop` | Integración de trabajo en desarrollo | Recibe PRs desde ramas hijas (`hu-<repo>-###-dev`) |
+| `qa` | Validación de pruebas antes de producción | Recibe PRs desde `hu-<repo>-###-qa` |
+| `main` | Producción / documentación estable | Recibe solo PRs desde `hu-<repo>-###-main` |
 
 ## Ramas documentales
 
@@ -44,11 +44,11 @@ Cada historia usa una rama por ambiente. Los cambios se propagan entre ambientes
 
 | Caso | Rama base | Formato | Ejemplo |
 |------|-----------|---------|---------|
-| Desarrollo de HU | `develop` | `hu-<numero>-dev` | `hu-01-dev` |
-| Validación en QA | `qa` | `hu-<numero>-qa` | `hu-01-qa` |
-| Publicación a producción | `main` | `hu-<numero>-main` | `hu-01-main` |
+| Desarrollo de HU | `develop` | `hu-<repo>-###-dev` | `hu-api-012-dev` |
+| Validación en QA | `qa` | `hu-<repo>-###-qa` | `hu-api-012-qa` |
+| Publicación a producción | `main` | `hu-<repo>-###-main` | `hu-api-012-main` |
 
-Las ramas `hu-*` son un caso especial para trazabilidad por historia. No siguen el formato `<tipo>/doc-*`.
+El prefijo `<repo>` corresponde a la HU (DEVICE, API, DB, APP, PORTAL — ver `agile-conventions.md`). Las ramas `hu-*` son un caso especial para trazabilidad por historia. No siguen el formato `<tipo>/doc-*`.
 
 
 ## Flujo hacia develop
@@ -56,14 +56,14 @@ Las ramas `hu-*` son un caso especial para trazabilidad por historia. No siguen 
 ```bash
 git switch develop
 git pull origin develop
-git switch -c hu-01-dev
+git switch -c hu-api-012-dev
 
 git add <archivos>
-git commit -m "docs(04-requirements): add scheduling availability user story"
-git push origin hu-01-dev
+git commit -m "docs(04-requeriments): add user story for event ingestion"
+git push origin hu-api-012-dev
 ```
 
-Abrir PR de `hu-01-dev` hacia `develop`.
+Abrir PR de `hu-api-012-dev` hacia `develop`.
 
 
 ## Propagación hacia qa y main
@@ -72,21 +72,21 @@ Para mover una historia al siguiente ambiente, copiar los cambios o usar `cherry
 
 ```bash
 git switch develop
-git switch -c hu-01-qa
-git cherry-pick <commit-hu-01-dev>
-git push origin hu-01-qa
+git switch -c hu-api-012-qa
+git cherry-pick <commit-hu-api-012-dev>
+git push origin hu-api-012-qa
 ```
 
-Abrir PR de `hu-01-qa` hacia `qa`. Repetir el mismo procedimiento para producción:
+Abrir PR de `hu-api-012-qa` hacia `qa`. Repetir el mismo procedimiento para producción:
 
 ```bash
 git switch qa
-git switch -c hu-01-main
-git cherry-pick <commit-hu-01-qa>
-git push origin hu-01-main
+git switch -c hu-api-012-main
+git cherry-pick <commit-hu-api-012-qa>
+git push origin hu-api-012-main
 ```
 
-Abrir PR de `hu-01-main` hacia `main`.
+Abrir PR de `hu-api-012-main` hacia `main`.
 
 
 ## Conventional Commits
@@ -111,7 +111,7 @@ No usar `feat`, `style`, `test`, `perf`, `build` ni `ci` para commits de este re
 Ejemplos:
 
 ```bash
-docs(04-requirements): add scheduling user stories
+docs(04-requeriments): add traceability matrix
 docs(09-modules): register auth module
 fix(01-context): clarify project scope
 chore(08-uml): export sequence diagrams to SVG

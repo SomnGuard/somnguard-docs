@@ -11,7 +11,7 @@
 ## Metodología Adoptada
 
 **Autor:** Equipo SomnGuard
-**Estado:** Aprobado
+**Estado:** Estable
 **Fecha:** 2026-04-12
 **Última actualización:** 2026-05-03
 
@@ -77,7 +77,7 @@ El proyecto SomnGuard adopta **Scrum** como metodología ágil de trabajo. El en
 ### Formato de HU
 
 ```
-Código: HU-###
+Código: HU-<REPO>### - Nombre/Descripción
 Título: [Descripción breve]
 
 Como <persona/rol>, quiero <acción>, para <beneficio>.
@@ -101,7 +101,7 @@ Notas:
 
 Cada HU puede desglosarse en subtareas para facilitar el seguimiento:
 
-- Ejemplo: HU-001 Backend Modular
+- Ejemplo: HU-API-001 Backend modular
   - [ ] Estructura de proyecto Java (Spring Boot) inicializada
   - [ ] Configuración de dependencias principales
   - [ ] Primera clase/módulo de ejemplo
@@ -111,11 +111,11 @@ Cada HU puede desglosarse en subtareas para facilitar el seguimiento:
 
 Una historia se considera **completada** cuando cumple todos los siguientes criterios:
 
-- ✅ Subtareas/criterios de aceptación cerrados
-- ✅ Pull Request creada y revisada por Líder Técnico
-- ✅ Cambios integrados a rama `develop` o rama destino
-- ✅ Documentación mínima actualizada
-- ✅ Verificación básica en entorno local
+- Subtareas/criterios de aceptación cerrados
+- Pull Request creada y revisada por Líder Técnico
+- Cambios integrados a rama `develop` o rama destino
+- Documentación mínima actualizada
+- Verificación básica en entorno local
 
 **Nota:** Las pruebas automatizadas se agregarán a DoD en sprints posteriores, según capacidad del equipo.
 
@@ -140,14 +140,14 @@ Una historia se considera **completada** cuando cumple todos los siguientes crit
 ### Flujo de despliegue
 
 ```
-hu-###-dev → develop (PR + review)
+hu-<repo>-###-dev → develop (PR + review)
      ↓  (copiar cambios / cherry-pick)
-hu-###-qa → qa (pruebas manuales/automáticas)
+hu-<repo>-###-qa → qa (pruebas manuales/automáticas)
      ↓  (copiar cambios / cherry-pick)
-hu-###-main → main (producción controlada)
+hu-<repo>-###-main → main (producción controlada)
 ```
 
-- Cada ambiente tiene su rama de historia (`hu-###-dev`, `hu-###-qa`, `hu-###-main`).
+- Cada ambiente tiene su rama de historia (`hu-<repo>-###-dev`, `hu-<repo>-###-qa`, `hu-<repo>-###-main`).
 - Los cambios se propagan al siguiente ambiente copiándolos o con `cherry-pick`; nunca se fusionan `develop`, `qa` y `main` entre sí.
 - Merge a `develop`: aprobación de 1 revisor
 - Merge a `qa`: validación de tester/QA
@@ -187,10 +187,10 @@ Mantener actualizados:
 
 | Función | Herramienta |
 |---------|------------|
-| Gestión de backlog y tracking | ClickUp |
+| Gestión de backlog y tracking | GitHub Projects (board: https://github.com/orgs/SomnGuard/projects/1) |
 | Repositorio y control de versiones | GitHub |
 | CI/CD | GitHub Actions |
-| Comunicación | Discord o ClickUp |
+| Comunicación | Discord |
 | Diseño y prototipos | Figma |
 | Documentación | Markdown y otros formatos de texto compatibles |
 
@@ -209,4 +209,4 @@ Se formalizará seguimiento automático cuando CI/CD esté maduro.
 
 **Vigencia:** A partir del 2026-04-12
 
-_Última actualización: 2026-05-03_
+_Última actualización: 2026-08-19_

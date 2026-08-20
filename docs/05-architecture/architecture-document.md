@@ -11,7 +11,7 @@
 ## Documento de Arquitectura
 
 **Autor:** Equipo SomnGuard
-**Estado:** Aprobado
+**Estado:** Estable
 **Fecha:** 2026-05-14
 **Última actualización:** 2026-08-19
 
@@ -160,7 +160,7 @@ Responsable de asociar, desasociar y configurar dispositivos.
 
 ### 7.4 telemetry-service
 
-Responsable de registrar eventos, evidencia y alertas desde el dispositivo (corresponde al módulo EventIngestion de la versión anterior de este documento).
+Responsable de registrar eventos, evidencia y alertas desde el dispositivo (corresponde al módulo de ingesta de eventos de la versión anterior de este documento).
 
 ### 7.5 monitoring
 

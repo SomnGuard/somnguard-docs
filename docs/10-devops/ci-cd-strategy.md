@@ -11,7 +11,7 @@
 ## Estrategia de CI/CD
 
 **Estado:** En progreso
-**Fecha:** 2026-08-16
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -27,17 +27,17 @@ Estrategia de integración y despliegue continuo del proyecto, alineada con la m
 
 ## Flujo de ramas
 
-Cada historia se despliega por ambiente con su propia rama `hu-###-<ambiente>`. Los cambios se propagan entre ambientes copiándolos o con `cherry-pick` (nunca por merge directo entre `develop`, `qa` y `main`):
+Cada historia se despliega por ambiente con su propia rama `hu-<repo>-###-<ambiente>`. Los cambios se propagan entre ambientes copiándolos o con `cherry-pick` (nunca por merge directo entre `develop`, `qa` y `main`):
 
 ```
-hu-###-dev → develop (PR + review)
+hu-<repo>-###-dev → develop (PR + review)
      ↓  (copiar cambios / cherry-pick)
-hu-###-qa → qa (pruebas manuales/automatizadas)
+hu-<repo>-###-qa → qa (pruebas manuales/automatizadas)
      ↓  (copiar cambios / cherry-pick)
-hu-###-main → main (producción controlada)
+hu-<repo>-###-main → main (producción controlada)
 ```
 
-- `develop`, `qa` y `main` no se trabajan directamente: solo reciben PRs desde las ramas `hu-###-<ambiente>`.
+- `develop`, `qa` y `main` no se trabajan directamente: solo reciben PRs desde las ramas `hu-<repo>-###-<ambiente>`.
 - Los PRs hacia `qa` y `main` deben incluir los mismos cambios ya validados en el ambiente anterior.
 
 ## Pipeline propuesto
@@ -61,10 +61,10 @@ hu-###-main → main (producción controlada)
 - Despliegue del backend a entorno `qa`.
 - Ejecución de pruebas E2E (Playwright web) cuando estén disponibles.
 
-### Job 4: Publicación a main (PR de `hu-###-main` hacia `main`)
+### Job 4: Publicación a main (PR de `hu-<repo>-###-main` hacia `main`)
 
-- Los cambios validados en `qa` se copian a la rama `hu-###-main` (copiar cambios o `cherry-pick`).
-- PR de `hu-###-main` hacia `main` con checks en verde y aprobación explícita del Líder Técnico.
+- Los cambios validados en `qa` se copian a la rama `hu-<repo>-###-main` (copiar cambios o `cherry-pick`).
+- PR de `hu-<repo>-###-main` hacia `main` con checks en verde y aprobación explícita del Líder Técnico.
 - Empaquetado de artefactos (`somnguard-v{MAJOR}.{MINOR}.{PATCH}.zip`).
 - Publicación del release con changelog desde commits (Conventional Commits).
 - Despliegue a producción controlado.
@@ -74,8 +74,8 @@ hu-###-main → main (producción controlada)
 | Rama | Regla |
 |------|-------|
 | `develop` | PR con revisión (1 aprobación) y checks del pipeline en verde |
-| `qa` | PR desde `hu-###-qa` con validación de tester/QA |
-| `main` | PR desde `hu-###-main`, checks en verde y aprobación explícita del Líder Técnico |
+| `qa` | PR desde `hu-<repo>-###-qa` con validación de tester/QA |
+| `main` | PR desde `hu-<repo>-###-main`, checks en verde y aprobación explícita del Líder Técnico |
 
 ## Releases
 
@@ -88,3 +88,11 @@ hu-###-main → main (producción controlada)
 - Definir infraestructura de despliegue (local/nube) — ver preguntas abiertas.
 - Definir estrategia de contenedores (Docker) si aplica.
 - Definir secretos y configuraciones por entorno.
+
+## Ver también
+
+- [Ambientes](./environments.md) — ramas, BD y reglas por ambiente
+- [Setup local](./local-setup.md) — entorno de desarrollo en local
+- [Plan de despliegue](./_template-deployment-plan.md) — plantilla de despliegue por release
+- [Release checklist](./_template-release-checklist.md) — gates de salida de un release
+- [Plan de rollback](./_template-rollback-plan.md) — contingencia ante fallos

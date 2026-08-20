@@ -27,10 +27,10 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 3.x). 
 | Prefijo | `/api/v1` |
 | Formato | JSON (`application/json`) |
 | Errores | `{"code": "<codigo>", "message": "<descripcion>", "details": [...]}` |
-| Paginación | Parámetros `page` (0-based) y `size`; respuesta `{ "content": [...], "page": ..., "size": ..., "totalElements": ... }` |
+| Paginación | Parámetros `page` (1-based) y `page_size` (máx. 100); respuesta `{ "data": [...], "pagination": { "page", "page_size", "total_items", "total_pages" } }` — ver [guidelines.md](./guidelines.md) |
 | Identificadores | UUID en rutas y cuerpo |
 | Fechas | ISO 8601 (`yyyy-MM-dd'T'HH:mm:ssXXX`) |
-| Autenticación | Pendiente de definición (JWT propuesto — ver open-questions) |
+| Autenticación | JWT RS256 + API keys por dispositivo — ver [authentication.md](./authentication.md) |
 | Documentación en vivo | SpringDoc/OpenAPI (`/swagger-ui.html`) |
 
 ### Códigos HTTP

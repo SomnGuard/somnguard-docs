@@ -10,7 +10,7 @@
 
 ## Acta #1 – Kick-off del Proyecto SomnGuard
 
-**Estado:** Completado
+**Estado:** Cerrado
 **Fecha:** 2026-02-10
 
 </div>
@@ -62,14 +62,14 @@ Se confirmó la disponibilidad de recursos (equipo 4 full-stack) y la fecha lím
 
 ### Acuerdos
 
-- ✅ Stack tecnológico: **Java 21 (Spring Boot), Python, PostgreSQL, React JS, React Native**
-- ✅ Hardware: **Raspberry Pi + Cámara** como dispositivo de captura
-- ✅ Metodología: **Scrum con sprints de 1 semana**
-- ✅ Equipo: 4 desarrolladores full-stack bajo liderazgo de Cristian
-- ✅ Cloud: A definir posteriormente (pendiente evaluación AWS/Azure)
-- ✅ Reuniones semanales: Lunes 09:00 para seguimiento de sprint
-- ✅ Canal de coordinación: A confirmar (Slack/Teams)
-- ✅ Deadline: **Agosto 2026**
+- Stack tecnológico: **Java 21 (Spring Boot), Python, PostgreSQL, React JS, React Native**
+- Hardware: **Raspberry Pi + Cámara** como dispositivo de captura
+- Metodología: **Scrum con sprints de 1 semana**
+- Equipo: 4 desarrolladores full-stack bajo liderazgo de Cristian
+- Cloud: A definir posteriormente (pendiente evaluación AWS/Azure)
+- Reuniones semanales: Lunes 09:00 para seguimiento de sprint
+- Canal de coordinación: A confirmar (Slack/Teams)
+- Deadline: **Agosto 2026**
 
 ### Compromisos
 

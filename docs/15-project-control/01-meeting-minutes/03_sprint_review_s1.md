@@ -46,15 +46,15 @@
 
 ### Historias (detalle)
 
-- **HU-001** — Definir base común del proyecto (Repositorio: Cross). Prioridad: Alta. Dependencias: Ninguna. Estado: Completada.
-- **HU-002** — Crear base del backend por módulos (Repositorio: Back). Prioridad: Alta. Dependencias: HU-001. Estado: Completada.
+- **HU-001** — Definir base común del proyecto (Repositorio: Cross). Prioridad: Alta. Dependencias: Ninguna. Estado: Cerrada.
+- **HU-002** — Crear base del backend por módulos (Repositorio: Back). Prioridad: Alta. Dependencias: HU-001. Estado: Cerrada.
 - **HU-003** — Estructura del repositorio de BD y soporte de migraciones (Liquibase) (Repositorio: BD). Prioridad: Alta. Dependencias: HU-001. Estado: En progreso (≈50%).
 - **HU-004** — CI/CD básicos para integración continua (Repositorio: Cross). Prioridad: Alta. Dependencias: HU-002, HU-003. Estado: En progreso.
 
 ### Causas de desviación
 
 - Falta de estandarización inicial en procesos y entregables.
-- Dependencias entre hu que retrasaron tareas.
+- Dependencias entre HUs que retrasaron tareas.
 
 
 
@@ -84,7 +84,7 @@
 
 1. Mover HUs incompletas a Sprint #2 y actualizar backlog.
 2. Agendar Sprint #2 Planning — Fecha propuesta: 2026-05-16 09:00
-3. Registrar checklist pre-sprint y compartir con el equipo (doc en repo / ClickUp).
+3. Registrar checklist pre-sprint y compartir con el equipo (doc en repo / GitHub Projects).
 
 
 ---

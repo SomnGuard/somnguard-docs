@@ -56,7 +56,7 @@ Glosario de términos del dominio y técnicos utilizados en la documentación de
 | JSONB | Tipo de datos JSON binario de PostgreSQL (usado en configuración de dispositivos). |
 | UUID | Identificador único universal usado como llave primaria. |
 | REST API | Estilo de API basado en recursos HTTP (prefijo `/api/v1`). |
-| JWT | Token JSON Web Token (autenticación propuesta, pendiente de decisión). |
+| JWT | Token JSON Web Token usado en la autenticación de la API (RS256, ver `07-api-design/authentication.md`). |
 | Raspberry Pi | Mini computadora usada como dispositivo edge de captura. |
 | React JS | Framework web del frontend de la plataforma. |
 | React Native | Framework móvil (Android/iOS) de la app del usuario final. |

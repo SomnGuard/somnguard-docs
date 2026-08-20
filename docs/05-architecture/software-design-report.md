@@ -293,7 +293,7 @@ Los diagramas de casos de uso están publicados en [../08-uml/diagram-index.md](
 | `cu-general` | Actores generales y relación dispositivo ↔ plataforma. |
 | `cu-device` | Ciclo de vida del dispositivo, captura, alertas y sincronización. |
 | `cu-local-management` | Operaciones locales del dispositivo (configuración, pruebas). |
-| `cu-cuenta` | Gestión de cuenta, autenticación y recuperación. |
+| `cu-account-device` | Gestión de cuenta, autenticación y recuperación. |
 | `cu-plataforma` | Gestión de dispositivos, eventos y notificaciones desde la plataforma. |
 | `cu-analytics-visualization` | Módulo analítico: línea de tiempo, evidencia, métricas, resumen IA y reportes. |
 
@@ -371,7 +371,7 @@ Las entidades del dominio y sus relaciones principales se modelan en [cd-domain.
 
 ### 6.1 Modelo de datos
 
-El modelo de datos vigente está compuesto por **20 entidades** agrupadas en 5 módulos. El modelo conceptual y relacional se publican en:
+El modelo de datos vigente está compuesto por **20 entidades** agrupadas en 5 de los 6 módulos del backend (analytics no agrega entidades transaccionales). El modelo conceptual y relacional se publican en:
 
 - [Modelo entidad-relación (Mermaid)](../06-data-architecture/01-entity-relationship-model.mmd)
 - [Módulos y entidades](../06-data-architecture/02-modules-entities.md)

@@ -261,7 +261,7 @@ Las duraciones y fechas por fase se detallan en el cronograma del proyecto y se 
 | Licencias de software | USD 0 | Sin licencias propietarias en el stack propuesto |
 | Capacitación y soporte | Incluido en el desarrollo | Transferencia de conocimiento en cada fase |
 
-Los costos de recurso humano dependen de la modalidad (académica, pasantía o contratación) y se cuantifican en el plan de negocio del proyecto.
+Los costos de recurso humano dependen de la modalidad de vinculación (pasantía, contratación u otra) y se cuantifican en el plan de negocio del proyecto.
 
 ---
 

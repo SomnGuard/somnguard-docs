@@ -75,7 +75,7 @@ Todo documento `.md` debe iniciar con:
 |  Deprecado | Ya no aplica. |
 
 
-**Criterios para docuementos deprecados:**
+**Criterios para documentos deprecados:**
 
 | Situación | Acción |
 |-----------|--------|

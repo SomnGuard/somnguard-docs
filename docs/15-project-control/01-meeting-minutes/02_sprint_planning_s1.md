@@ -55,9 +55,9 @@ Se priorizaron historias iniciales orientadas a la estructura del proyecto, back
 
 ### Acuerdos
 
-- ✅ Crear una rama por cada HU para trabajar de forma ordenada.
-- ✅ Iniciar el sprint con foco en la base técnica del sistema.
-- ✅ Mantener seguimiento interno del progreso de cada historia.
+- Crear una rama por cada HU para trabajar de forma ordenada.
+- Iniciar el sprint con foco en la base técnica del sistema.
+- Mantener seguimiento interno del progreso de cada historia.
 
 ### Compromisos
 

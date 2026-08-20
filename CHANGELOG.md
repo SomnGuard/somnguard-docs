@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+### Added
+- **Estructura documental ampliada con gobernanza y documentos de proceso (2026-08-19):** se incorporaron documentos de proceso y gobernanza alineados con el monolito modular hexagonal y las convenciones del proyecto:
+  - Raíz: `CONTRIBUTING.md`, `.github/pull_request_template.md`.
+  - `00-documentation-governance`: `agile-conventions.md` (convenciones HU/AC/TC/RN/NFR/ADR con compatibilidad F-/RB-) y `security-policy.md`.
+  - `01-project-context`: `overview.md`, `project-profile.md` y `scope-declaration.md`.
+  - `02-domain`: `domain-map.md`, `entities-and-rules.md` (RN-01..RN-10 ↔ RB-01..RB-10) y `domain-events.md`.
+  - `03-product-definition`: `product-backlog.md` (épicas desde F-01..F-10) y `_template-backlog.md`.
+  - `04-requeriments`: `non-functional.md` (NFR-01..NFR-07), `traceability-matrix.md` y `_template-hu.md`.
+  - `05-architecture`: `security-threat-model.md` (STRIDE), `pattern-guide.md` y `_template-adr.md`.
+  - `06-data-architecture`: `modeling-conventions.md` (auditoría, estados, orden DDL Liquibase).
+  - `07-api-design`: `guidelines.md`, `authentication.md` (JWT/RBAC/API keys) y `contracts/` (destino de OpenAPI por módulo).
+  - `09-modules`: plantilla de módulo completa en `modules/_template/` (README, data-model, events, decisions, runbook) adaptada a monolito hexagonal.
+  - `10-devops`: `local-setup.md`, `environments.md` y 3 plantillas (despliegue, release, rollback); `ci-cd-strategy.md` enriquecido.
+  - `11-quality-assurance`: `code-review.md` y plantillas de QA report y test evidence; `test-strategy.md` con identificación de casos `TC-`.
+  - `12-user-experience`: 3 plantillas (UX flows, design system, UI spec).
+  - `13-operations`: `observability.md`, `incident-management.md`, `backup-and-recovery.md` y 4 plantillas (observabilidad, SLA/SLO/SLI, runbook, postmortem).
+  - `14-training-and-adoption`: `technical-onboarding.md`.
+  - `15-project-control`: `risks.md`, `dependencies.md`, `technical-backlog.md`, `_template-sprint-plan.md` y preguntas abiertas ampliadas (Q-013..Q-017).
+  - READMEs de sección actualizados con el inventario de archivos.
+
 ### Changed
 - **Arquitectura hexagonal formalizada (2026-08-19):** la arquitectura limpia del backend se formaliza como hexagonal (puertos y adaptadores) en `architecture-document.md` (sección 8) y `software-design-report.md` (sección 3.2.1 y 8), con la estructura de paquetes `com.somnguard.<modulo>` (`application/port/{in,out}`, `application/usecase`, `domain/{model,service}`, `adapter/in/{web,amqp}`, `adapter/out/{persistence,storage}`, `platform`):
   - Nuevas ADRs: [ADR-002](docs/05-architecture/decisions/records/ADR-002-hexagonal-architecture.md) (arquitectura hexagonal) y [ADR-003](docs/05-architecture/decisions/records/ADR-003-analytics-module.md) (módulo analítico).

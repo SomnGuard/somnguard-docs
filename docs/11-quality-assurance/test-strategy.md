@@ -11,7 +11,7 @@
 ## Estrategia de pruebas
 
 **Estado:** En progreso
-**Fecha:** 2026-08-16
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -35,6 +35,16 @@ Garantizar la calidad del sistema desde el inicio, con un enfoque incremental: c
 | E2E | Flujos críticos completos | Playwright (web) | Baja (sprints posteriores) |
 | Manual | Aceptación de historias de usuario | Checklist + entorno `qa` | Alta |
 
+## Identificación de casos de prueba
+
+Los casos de prueba se identifican con el prefijo **`TC-`** (convención en [agile-conventions.md](../00-documentation-governance/agile-conventions.md)) y se registran:
+
+- En la evidencia por historia: [_template-test-evidence.md](./_template-test-evidence.md) (formato `test-evidence-HU-<REPO>-NNN.md`).
+- En el reporte por sprint/release: [_template-qa-report.md](./_template-qa-report.md).
+- En la [matriz de trazabilidad](../04-requeriments/traceability-matrix.md), vinculando HU → AC → TC.
+
+Cada caso de prueba declara: precondición, pasos, resultado esperado y trazabilidad al criterio de aceptación (AC) que verifica.
+
 ## Criterios de cobertura
 
 - Los módulos críticos (análisis visual en edge, ingesta de eventos, alertas) tendrán prioridad de cobertura.
@@ -43,11 +53,11 @@ Garantizar la calidad del sistema desde el inicio, con un enfoque incremental: c
 
 ## Estrategia por módulo
 
-- **Security**: pruebas de autenticación, roles y permisos; uso de datos ficticios (nunca datos reales).
-- **DeviceManagement**: asignación/desasignación, historial y configuración JSONB.
-- **Telemetry**: ingesta de eventos, deduplicación por sincronización offline e integridad de evidencia.
-- **Monitoring**: generación de notificaciones y transición de estados (emitida, leída, cerrada).
-- **Parameterization**: validación de catálogos y reglas de referencia (FK).
+- **security**: pruebas de autenticación, roles y permisos; uso de datos ficticios (nunca datos reales).
+- **device-management**: asignación/desasignación, historial y configuración JSONB.
+- **telemetry-service**: ingesta de eventos, deduplicación por sincronización offline e integridad de evidencia.
+- **monitoring**: generación de notificaciones y transición de estados (emitida, leída, cerrada).
+- **parameterization**: validación de catálogos y reglas de referencia (FK).
 
 ## Datos de prueba
 
@@ -67,6 +77,10 @@ Una historia se considera probada cuando (aplica a la HU):
 ## Relación con CI/CD
 
 Las pruebas se ejecutan en GitHub Actions (ver `../10-devops/ci-cd-strategy.md`): unitarias e integración en cada push, E2E en release. El pipeline debe bloquear el merge si las pruebas fallan.
+
+## Requisitos no funcionales
+
+La estrategia verifica los requisitos no funcionales del catálogo (ver [`../04-requeriments/non-functional.md`](../04-requeriments/non-functional.md)): rendimiento (NFR-04) y escalabilidad (NFR-05) se cubren con pruebas de carga en QA; disponibilidad (NFR-08) se monitorea vía SLOs en observabilidad.
 
 ## Pendientes
 

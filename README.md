@@ -11,7 +11,7 @@
 ## Repositorio de documentación
 
 **Estado:** En progreso
-**Fecha:** 2026-08-16
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -29,7 +29,7 @@ docs/
 ├── 01-project-context/            # Anteproyecto y cronograma
 ├── 02-domain/                     # Dominio del negocio: mapa de procesos
 ├── 03-product-definition/         # Definición del producto e investigación
-├── 04-requeriments/               # SRS, funcionalidades, estructura por módulo
+├── 04-requeriments/               # SRS, análisis y requisitos
 ├── 05-architecture/               # Arquitectura y decisiones (ADRs)
 ├── 06-data-architecture/          # Modelo de datos y diccionarios
 ├── 07-api-design/                 # Diseño de API
@@ -62,6 +62,7 @@ docs/
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | Guía para contribuir |
 | [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) | Código de conducta |
 | [LICENSE](./LICENSE) | Licencia del proyecto |
+| [.github/pull_request_template.md](./.github/pull_request_template.md) | Plantilla de pull request |
 | [templates/](./templates/) | Plantillas reutilizables de documentos |
 | [assets/](./assets/) | Recursos estáticos (logo, imágenes, exportaciones) |
 
@@ -73,4 +74,5 @@ docs/
 
 ## Historial
 
+- **2026-08-19**: estructura ampliada con plantillas reutilizables y documentos de proceso (gobernanza, dominio, producto, requisitos, operaciones, control de proyecto), alineados con la arquitectura hexagonal y las convenciones ágiles.
 - **2026-08-16**: unificación de las estructuras anteriores en una sola, organizada por secciones y sin orientación a microservicios.
