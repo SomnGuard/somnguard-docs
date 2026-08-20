@@ -33,7 +33,7 @@
 | Alerta | Condición | Severidad | Acción inmediata |
 |--------|-----------|-----------|------------------|
 | BD no responde | Timeout > 5 s | P0 | Verificar conexión y reiniciar |
-| Error rate > 5 % | En ventana de 5 min | P1 | Revisar logs y escalar |
+| Error rate > 1 % | En ventana de 5 min | P1 | Revisar logs y escalar |
 
 ## Reinicio del módulo
 
