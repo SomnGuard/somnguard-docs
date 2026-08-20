@@ -8,7 +8,7 @@
 
 # SOMNGUARD
 
-## Evidencia de pruebas — SOMNGUARD — [HU-<REPO>### / Sprint NN]
+## Evidencia de pruebas — SOMNGUARD — [HU-<REPO>-NNN / Sprint NN]
 
 **Estado:** Plantilla
 **Fecha:** 2026-08-19

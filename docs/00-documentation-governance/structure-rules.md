@@ -8,7 +8,7 @@
 
 # SOMNGUARD
 
-## Documentación de módulos del backend
+## Reglas de estructura de la documentación de módulos
 
 **Estado:** En progreso
 **Fecha:** 2026-08-19

@@ -51,7 +51,9 @@ Se priorizaron historias iniciales orientadas a la estructura del proyecto, back
 - HU-003: Base BD inicial — Asignado: Cristian Javier Palma Sotto
 - HU-004: CI/CD básico — Asignado: Cristian Javier Palma Sotto
 
-**Capacidad del sprint:** Por definir
+**Capacidad del sprint:** No registrada (el acta se cerró sin definirla)
+
+> **Nota histórica (2026-08-20):** las HU-001..004 de los sprints iniciales usan la nomenclatura anterior (`HU-###`); el formato vigente es `HU-<REPO>-NNN` (ver [agile-conventions.md](../../00-documentation-governance/agile-conventions.md)). Los repos "Cross", "Back" y "BD" eran nombres de trabajo; el listado oficial de repositorios está en [security-policy.md](../../00-documentation-governance/security-policy.md).
 
 ### Acuerdos
 

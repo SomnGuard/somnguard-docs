@@ -1,7 +1,9 @@
+> **Deprecado** — Reemplazado por la estructura mínima de [documentation-rules.md](../../../00-documentation-governance/documentation-rules.md) y las plantillas por sección (`_template-*.md`).
+
 <div style="display:flex; align-items:center; justify-content:space-between;">
 
 <div>
-<img src="../assets/icons/logo-somnguard.png" width="140"/>
+<img src="../../../../assets/icons/logo-somnguard.png" width="140"/>
 </div>
 
 <div align="right">
@@ -11,7 +13,7 @@
 ## [Título descriptivo]
 
 **Autor:** [Nombre/Rol]
-**Estado:** Pendiente
+**Estado:** Deprecado
 **Fecha:** YYYY-MM-DD
 
 </div>

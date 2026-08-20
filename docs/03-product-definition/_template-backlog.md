@@ -30,7 +30,7 @@
 
 ## Backlog
 
-| HU ID | Título (formato `HU-<REPO>### - Nombre/Descripción`) | Repo | Prioridad MoSCoW | Estado | Sprint |
+| HU ID | Título (formato `HU-<REPO>-NNN - Nombre/Descripción`) | Repo | Prioridad MoSCoW | Estado | Sprint |
 |-------|-----------------------------------------------------|------|------------------|--------|--------|
 | `HU-<REPO>-NNN` | | DEVICE / API / DB / APP / PORTAL | Must | Backlog | — |
 | `HU-<REPO>-NNN` | | | Should | En progreso | Sprint 1 |

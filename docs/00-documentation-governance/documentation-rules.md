@@ -117,7 +117,7 @@ No crear carpetas `misc/`, `otros/`, `temp/` ni carpetas con un solo documento.
 
 | Tipo de recurso | Dónde va |
 |----------------|----------|
-| Fuentes UML `.wsd` / `.puml` | `../08-uml/diagrams/source/` |
+| Fuentes UML Mermaid `.mmd` | `../08-uml/diagrams/source/` |
 | Exportaciones UML `.svg` / `.png` | `../08-uml/diagrams/exports/` |
 | Logos | `../../assets/icons/` |
 | Capturas, mockups o imágenes no UML | `../../assets/images/` |
@@ -126,7 +126,7 @@ No crear carpetas `misc/`, `otros/`, `temp/` ni carpetas con un solo documento.
 Reglas:
 
 - Todo diagrama debe tener fuente editable.
-- SVG es preferido sobre PNG.
+- La exportación estándar es PNG (ver `../08-uml/diagrams/source/README.md`); SVG se puede usar si el renderizado lo requiere.
 - No subir solo la imagen exportada si existe fuente editable.
 - Registrar diagramas en `../08-uml/diagram-index.md`.
 

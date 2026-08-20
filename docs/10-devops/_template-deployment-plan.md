@@ -65,6 +65,8 @@
 - [ ] Pruebas de smoke en ambiente destino
 - [ ] Dashboard de observabilidad sin anomalías
 
+> **Nota:** este es un gate de éxito del despliegue; el umbral de alerta operativa es error rate > 1% por 5 min (ver `../13-operations/_template-observability.md`).
+
 ## Plan de rollback
 
 | Condición | Acción | Tiempo estimado |

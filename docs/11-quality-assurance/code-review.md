@@ -42,7 +42,7 @@ Alineado con las [convenciones de Git](../00-documentation-governance/git-conven
 ## Checklist de documentación
 
 - [ ] Encabezado estándar SomnGuard presente (logo, título, estado, fecha).
-- [ ] IDs coherentes con la convención (HU-<REPO>###/AC-/TC-/RN-/NFR-/ADR-) — ver [agile-conventions.md](../00-documentation-governance/agile-conventions.md).
+- [ ] IDs coherentes con la convención (HU-<REPO>-NNN/AC-/TC-/RN-/NFR-/ADR-) — ver [agile-conventions.md](../00-documentation-governance/agile-conventions.md).
 - [ ] Fechas en `YYYY-MM-DD`; referencias a módulos y ADRs vigentes.
 
 ## Checklist de cambios de datos (Liquibase / DDL)

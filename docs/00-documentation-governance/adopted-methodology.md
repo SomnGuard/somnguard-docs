@@ -77,7 +77,7 @@ El proyecto SomnGuard adopta **Scrum** como metodología ágil de trabajo. El en
 ### Formato de HU
 
 ```
-Código: HU-<REPO>### - Nombre/Descripción
+Código: HU-<REPO>-NNN - Nombre/Descripción
 Título: [Descripción breve]
 
 Como <persona/rol>, quiero <acción>, para <beneficio>.
@@ -118,6 +118,8 @@ Una historia se considera **completada** cuando cumple todos los siguientes crit
 - Verificación básica en entorno local
 
 **Nota:** Las pruebas automatizadas se agregarán a DoD en sprints posteriores, según capacidad del equipo.
+
+> Checklist detallada de completitud de documentos en [definition-of-done.md](./definition-of-done.md).
 
 ## 8. Calidad y pruebas
 

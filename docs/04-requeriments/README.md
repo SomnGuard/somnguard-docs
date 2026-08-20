@@ -27,4 +27,4 @@ Especificación de requisitos y requerimientos funcionales del sistema SomnGuard
 | [01-srs/](./01-srs/) | Documento de especificación de requisitos del software | Estable |
 | [non-functional.md](./non-functional.md) | Requisitos no funcionales (NFR-*) | En progreso |
 | [traceability-matrix.md](./traceability-matrix.md) | Matriz de trazabilidad: funcionalidades → casos de uso → módulos → pruebas | En progreso |
-| [_template-hu.md](./_template-hu.md) | Plantilla de historia de usuario (HU-<REPO>###) | Plantilla |
+| [_template-hu.md](./_template-hu.md) | Plantilla de historia de usuario (HU-<REPO>-NNN) | Plantilla |

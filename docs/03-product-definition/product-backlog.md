@@ -17,7 +17,7 @@
 
 </div>
 
-Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01..F-10` del análisis de software), el catálogo de módulos y el plan de trabajo de la propuesta técnica. Las historias de usuario (HU) se gestionan en GitHub Projects con el formato `HU-<REPO>### - Nombre/Descripción` (ver [convenciones ágiles](../00-documentation-governance/agile-conventions.md)).
+Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01..F-10` del análisis de software), el catálogo de módulos y el plan de trabajo de la propuesta técnica. Las historias de usuario (HU) se gestionan en GitHub Projects con el formato `HU-<REPO>-NNN - Nombre/Descripción` (ver [convenciones ágiles](../00-documentation-governance/agile-conventions.md)).
 
 ## Épicas (agrupaciones de trabajo)
 
@@ -36,14 +36,14 @@ Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01.
 |-----------|--------|
 | Must | Seguridad y cuentas, Gestión de dispositivos, Telemetría y sincronización, Monitoreo y notificaciones, Parametrización |
 | Should | Analítica y reportes |
-| Could | Resumen IA (dentro de Analítica) |
+| Could | Resumen IA (dentro de Analítica) — se incluye, pero con la menor prioridad: se entrega al final del MVP |
 | Won't | Funcionalidades fuera del alcance definido |
 
 ## Estado por épica
 
 | Épica | Estado | Nota |
 |-------|--------|------|
-| Seguridad y cuentas | En progreso | Base para el resto del sistema |
+| Seguridad y cuentas | Pendiente | Base para el resto del sistema; capa de aplicación aún no construida (TD-002) |
 | Gestión de dispositivos | Backlog | Depende de Seguridad (roles) |
 | Telemetría y sincronización | Backlog | Depende de Gestión de dispositivos |
 | Monitoreo y notificaciones | Backlog | Depende de Telemetría (eventos) |

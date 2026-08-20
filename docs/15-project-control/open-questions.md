@@ -11,7 +11,7 @@
 ## Preguntas abiertas
 
 **Estado:** En progreso
-**Fecha:** 2026-08-19
+**Fecha:** 2026-08-20
 
 </div>
 
@@ -24,7 +24,6 @@ Preguntas y decisiones pendientes del proyecto, recopiladas de actas, arquitectu
 | # | Pregunta | Origen | Responsable sugerido |
 |---|----------|--------|---------------------|
 | Q-001 | ¿Qué proveedor de nube se usa (AWS/Azure) o se despliega en infraestructura local? | Acta kick-off 2026-02-10 | Líder Técnico |
-| Q-002 | ¿Cuál es el canal oficial de coordinación (Slack/Teams/otro)? | Acta kick-off 2026-02-10 | Equipo |
 | Q-003 | ¿Se designa un Product Owner formal? | Metodología adoptada | Líder Técnico |
 | Q-006 | ¿Cuál es la política de retención de datos al eliminar cuenta? | Funcionalidades del sistema | Líder Técnico |
 | Q-007 | ¿Qué formato tiene el payload de sincronización offline (JSON + multimedia)? | Arquitectura, sección 11 | Arquitectura |
@@ -47,3 +46,5 @@ Preguntas y decisiones pendientes del proyecto, recopiladas de actas, arquitectu
 | QR-003 | ¿Qué mecanismo de autenticación usa la API? | JWT RS256 + RBAC, con renovación de tokens | [authentication.md](../07-api-design/authentication.md) | 2026-08-19 |
 | QR-004 | ¿Cómo se autentica el dispositivo contra la API? | API key por dispositivo, con hash y rotación | [authentication.md](../07-api-design/authentication.md) | 2026-08-19 |
 | QR-005 | ¿Qué proveedor de almacenamiento multimedia se usa? | MinIO (S3-compatible) | [dependencies.md](./dependencies.md), [backup-and-recovery.md](../13-operations/backup-and-recovery.md) | 2026-08-19 |
+| QR-006 | ¿Están aprobados los módulos base del monolito (security, parameterization, device-management, telemetry-service, monitoring)? | Sí; aprobados como parte de la arquitectura vigente del monolito modular, junto con analytics (ADR-003) | [ADR-001](../05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md), [ADR-002](../05-architecture/decisions/records/ADR-002-hexagonal-architecture.md), [catálogo de módulos](../09-modules/module-catalog.md) | 2026-08-20 |
+| QR-007 | ¿Cuál es el canal oficial de coordinación (Slack/Teams/otro)? | Discord | [adopted-methodology.md](../00-documentation-governance/adopted-methodology.md) §12 | 2026-08-20 |

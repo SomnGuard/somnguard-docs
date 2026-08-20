@@ -40,7 +40,7 @@ Vista de negocio de los eventos de dominio del sistema: disparador, cambio de es
 ```json
 {
   "event_id": "uuid-v4",
-  "event_type": "<modulo>.<entidad>.<accion>",
+  "event_type": "<entidad>.<accion>",
   "version": "1.0",
   "timestamp": "2026-01-01T00:00:00Z",
   "source_module": "<nombre-modulo>",
@@ -56,7 +56,7 @@ El envelope es el **sobre** y el `payload` el **contenido**: los campos de cabec
 ```json
 {
   "event_id": "a1b2c3d4-1111-2222-3333-444455556666",
-  "event_type": "telemetry.event.recorded",
+  "event_type": "event.recorded",
   "version": "1.0",
   "timestamp": "2026-01-01T00:00:00Z",
   "source_module": "telemetry-service",
@@ -76,7 +76,7 @@ El `correlation_id` une los eventos de una misma operación (p. ej. el lote sinc
 
 ## Reglas
 
-- Los eventos se nombran `<modulo>.<entidad>.<accion>` en inglés.
+- Los eventos se nombran `<entidad>.<accion>` en inglés; el módulo emisor se identifica con `source_module` del envelope.
 - La idempotencia se garantiza con `event_id` (RN-08).
 - **Hoy el payload viaja por HTTP** (dispositivo → API, POST /events). **Entre módulos no hay mensajería**: el monolito hexagonal se comunica por puertos (interfaces de entrada/salida en Java), no por eventos. El envelope solo se materializa como mensaje si se adopta una cola (p. ej. `adapter/in/amqp`) para desacoplar procesos como analytics.
 

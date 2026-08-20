@@ -56,7 +56,7 @@ Cada caso de prueba declara: precondición, pasos, resultado esperado y trazabil
 - **security**: pruebas de autenticación, roles y permisos; uso de datos ficticios (nunca datos reales).
 - **device-management**: asignación/desasignación, historial y configuración JSONB.
 - **telemetry-service**: ingesta de eventos, deduplicación por sincronización offline e integridad de evidencia.
-- **monitoring**: generación de notificaciones y transición de estados (emitida, leída, cerrada).
+- **monitoring**: generación de notificaciones y transición de estados (emitida, leída).
 - **parameterization**: validación de catálogos y reglas de referencia (FK).
 
 ## Datos de prueba

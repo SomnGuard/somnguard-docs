@@ -43,7 +43,7 @@ somnguard-docs/
 | Tema | Regla |
 |------|-------|
 | **Docs nuevos** | Registrar en el `README.md` de la sección y en `CHANGELOG.md` si cambia estructura o contratos |
-| **ADRs** | Crear desde `docs/05-architecture/decisions/_template-adr.md`; registrar en `records/README.md` |
+| **ADRs** | Crear desde `docs/05-architecture/decisions/_template-adr.md`; registrar en `docs/05-architecture/decisions/README.md` |
 | **Módulos** | No crear carpetas de módulo sin ADR aprobada (ver `docs/00-documentation-governance/structure-rules.md`) |
 | **Diagramas** | Fuente editable en `docs/08-uml/diagrams/source/` + exportación en `exports/`; registrar en `diagram-index.md` |
 | **Enlaces** | Siempre relativos; verificar antes del PR |

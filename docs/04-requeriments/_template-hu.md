@@ -8,7 +8,7 @@
 
 # SOMNGUARD
 
-## Historia de usuario — HU-<REPO>###
+## Historia de usuario — HU-<REPO>-NNN
 
 **Estado:** Plantilla
 **Fecha:** 2026-08-19
@@ -17,7 +17,7 @@
 
 </div>
 
-> **PLANTILLA** — El item se crea y gestiona en GitHub Projects con el título `HU-<REPO>### - Nombre/Descripción` (REPO ∈ DEVICE, API, DB, APP, PORTAL). Este archivo documenta la HU en el repo de docs. Eliminar esta línea antes de hacer commit.
+> **PLANTILLA** — El item se crea y gestiona en GitHub Projects con el título `HU-<REPO>-NNN - Nombre/Descripción` (REPO ∈ DEVICE, API, DB, APP, PORTAL). Este archivo documenta la HU en el repo de docs. Eliminar esta línea antes de hacer commit.
 
 > Repo: `<REPO>` | Sprint: Sprint NN
 > Tracker: [Ver en GitHub Projects](https://github.com/orgs/SomnGuard/projects/1)
@@ -46,7 +46,7 @@
 
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
-| `HU-<REPO>###` | Bloqueante | [por qué debe completarse antes] |
+| `HU-<REPO>-NNN` | Bloqueante | [por qué debe completarse antes] |
 | `ADR-###` | Referencia | [decisión que aplica a esta historia] |
 
 ## Estimación

@@ -119,8 +119,8 @@ Los casos de uso están modelados en [08-uml](../08-uml/diagram-index.md):
 com.somnguard
 ├── security
 ├── parameterization
-├── device-management
-├── telemetry-service
+├── device_management
+├── telemetry_service
 ├── monitoring
 ├── analytics
 └── platform        # Transversal, fuera de los módulos: errores, logging, observabilidad

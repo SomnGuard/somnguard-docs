@@ -44,8 +44,8 @@ workspace/
         └── src/main/java/com/somnguard/
             ├── security/            # Autenticación, RBAC, auditoría
             ├── parameterization/    # Catálogos configurables
-            ├── device-management/   # Dispositivos, asignaciones, configuración
-            ├── telemetry-service/   # Eventos, evidencia, alertas
+            ├── device_management/   # Dispositivos, asignaciones, configuración
+            ├── telemetry_service/   # Eventos, evidencia, alertas
             ├── monitoring/          # Notificaciones
             ├── analytics/           # Métricas, resumen IA, reportes
             └── platform/            # Transversal: errores, logging, observabilidad
@@ -89,7 +89,7 @@ docker compose --env-file .env.develop down -v       # reinicio limpio
 - **Arquitectura hexagonal:** las dependencias apuntan al centro (`domain` ← `application` ← `adapter/*`); `platform` es transversal y no depende de módulos ([structure-rules.md](../00-documentation-governance/structure-rules.md)).
 - **Una BD, un schema por módulo:** ningún módulo escribe en `public` ni en el schema de otro ([modeling-conventions.md](../06-data-architecture/modeling-conventions.md)).
 - **Columnas de auditoría obligatorias** en tablas transaccionales (`created_at`, `updated_at`, `deleted_at`, `created_by`, `updated_by`, `deleted_by`, `is_active`).
-- **Identificadores**: HUs `HU-<REPO>###` (DEVICE/API/DB/APP/PORTAL, en GitHub Projects), criterios `AC-`, casos `TC-`, reglas `RN-`, NFR `NFR-`, ADRs en `05-architecture/decisions/records/` ([agile-conventions.md](../00-documentation-governance/agile-conventions.md)).
+- **Identificadores**: HUs `HU-<REPO>-NNN` (DEVICE/API/DB/APP/PORTAL, en GitHub Projects), criterios `AC-`, casos `TC-`, reglas `RN-`, NFR `NFR-`, ADRs en `05-architecture/decisions/records/` ([agile-conventions.md](../00-documentation-governance/agile-conventions.md)).
 - **Cada changeset** Liquibase declara `id` + `author` únicos y su `rollback` espejo en `05_rollbacks/`.
 - **Seeds idempotentes** (`INSERT ... ON CONFLICT DO NOTHING`); separar catálogos de datos de prueba con `context`/`labels`.
 - **Secretos fuera de git:** los `.env.*` no versionan contraseñas reales; usar `.env.example` ([security-policy.md](../00-documentation-governance/security-policy.md)).

@@ -32,6 +32,9 @@ Dependencias internas (entre módulos) y externas (infraestructura y terceros) d
 ```mermaid
 flowchart LR
     SEC[security] --> TEL[telemetry-service]
+    SEC --> DEV[device-management]
+    SEC --> MON[monitoring]
+    SEC --> ANL[analytics]
     PAR[parameterization] --> DEV[device-management]
     PAR --> TEL
     DEV --> TEL

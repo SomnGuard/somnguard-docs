@@ -30,11 +30,11 @@ Detectar patrones de fatiga, somnolencia y microsueños en el conductor mediante
 - Backend: autenticación, dispositivos, telemetría, notificaciones, parametrización
 - Portal web: login, dashboard, administración
 - App móvil: notificaciones y consulta
+- Resumen generado por IA de eventos (de menor prioridad; se entrega al final del MVP)
 
 ## Fuera de alcance
 
 - Transmisión de video en tiempo real al backend (la detección es local en el edge)
-- Resumen generado por IA de eventos (queda como *Could* en el backlog)
 - Integración con sistemas externos de gestión de flotas (FMS) o terceros
 - Facturación, planes de suscripción o pagos
 - Desarrollo de hardware propio (se usa Raspberry Pi + cámara comercial)

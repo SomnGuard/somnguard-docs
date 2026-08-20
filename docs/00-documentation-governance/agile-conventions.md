@@ -23,7 +23,7 @@ Convenciones para la gestión de requerimientos y trabajo ágil del proyecto: id
 
 | Tipo | ID | Descripción | Dónde vive |
 |------|----|-------------|------------|
-| Historia de usuario | `HU-<REPO>###` | Requerimiento accionable con criterios de aceptación | **GitHub Projects** (board del proyecto) |
+| Historia de usuario | `HU-<REPO>-NNN` | Requerimiento accionable con criterios de aceptación | **GitHub Projects** (board del proyecto) |
 | Criterio de aceptación | `AC-###` | Condición verificable de una HU | Dentro de la HU |
 | Caso de prueba | `TC-###` | Prueba trazada a una HU/AC | `../11-quality-assurance/test-strategy.md` |
 | Defecto | `BUG-###` | Defecto registrado en reporte/evidencia de QA | `../11-quality-assurance/_template-qa-report.md` |
@@ -38,7 +38,7 @@ Convenciones para la gestión de requerimientos y trabajo ágil del proyecto: id
 Las HU se gestionan exclusivamente en **GitHub Projects**:
 
 - **Board:** [github.com/orgs/SomnGuard/projects/1](https://github.com/orgs/SomnGuard/projects/1)
-- **Formato del título:** `HU-<REPO>### - Nombre/Descripción`
+- **Formato del título:** `HU-<REPO>-NNN - Nombre/Descripción`
 - **Repo del prefijo** según el componente afectado:
 
 | Prefijo | Repo / componente |

@@ -72,7 +72,7 @@
 |---------|-------------|-----------------|
 | Rate | Requests por segundo | — (informativo) |
 | Errors | % de respuestas 5xx | > 1% por 5 min |
-| Duration p95 | Latencia percentil 95 | > [200ms] por 5 min |
+| Duration p95 | Latencia percentil 95 | > [200ms] por 10 min |
 
 ### Métricas USE (por recurso)
 

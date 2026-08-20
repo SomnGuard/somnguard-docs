@@ -211,14 +211,16 @@ com.somnguard.<modulo>/
 com.somnguard/
 ├── security/
 ├── parameterization/
-├── device-management/
-├── telemetry-service/
+├── device_management/
+├── telemetry_service/
 ├── monitoring/
 ├── analytics/
 └── platform/              # Transversal, fuera de los módulos: errores, logging, observabilidad
 ```
 
 Los módulos pueden depender de `platform`; `platform` no depende de ningún módulo.
+
+> **Convención de nombres:** en el catálogo y en la documentación los módulos se nombran en kebab-case (`device-management`, `telemetry-service`); en los **paquetes Java** se usa snake_case (`com.somnguard.device_management`, `com.somnguard.telemetry_service`), porque los guiones no son válidos en identificadores de paquete.
 
 ### 8.1 Beneficios esperados
 
@@ -288,7 +290,7 @@ La arquitectura de datos se alinea con los módulos ya definidos en el proyecto 
 
 ## 10. Autenticación y autorización
 
-El mecanismo de autenticación y autorización está decidido: JWT RS256 para usuarios (registro, inicio y cierre de sesión, gestión de perfil, asignación de roles y permisos por funcionalidad/módulo) y API keys para dispositivos. El detalle contractual está en [`../07-api-design/authentication.md`](../07-api-design/authentication.md) (ver ADR-001 y ADR-003).
+El mecanismo de autenticación y autorización está decidido: JWT RS256 para usuarios (registro, inicio y cierre de sesión, gestión de perfil, asignación de roles y permisos por funcionalidad/módulo) y API keys para dispositivos. El detalle contractual está en [`../07-api-design/authentication.md`](../07-api-design/authentication.md) (ver ADR-001 y QR-003).
 
 La arquitectura debe permitir distinguir al menos entre usuario final y administrador de plataforma, aunque el modelo de roles pueda crecer después.
 

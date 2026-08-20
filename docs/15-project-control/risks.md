@@ -54,7 +54,7 @@ Riesgos del proyecto SomnGuard: técnicos, de alcance, de equipo, externos y de 
 
 | ID | Riesgo | Justificación |
 |----|--------|---------------|
-| RA-001 | En el MVP, el edge envía telemetría con API key del dispositivo en lugar de un flujo M2M más robusto. | Simplicidad del MVP; la clave es rotable y revocable (T-002 mitigado). |
+| RA-001 | En el MVP, el edge envía telemetría con API key del dispositivo en lugar de un flujo M2M más robusto. | Simplicidad del MVP; la clave es rotable y revocable (amenaza T-002 del modelo de amenazas, mitigada). |
 
 ## Riesgos resueltos
 

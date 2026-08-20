@@ -44,6 +44,8 @@
 | Tasa de errores | < 0.5% | Rolling 24 horas | — |
 | Tiempo de recuperación (MTTR) | < [30 min] | Por incidente | — |
 
+> **Nota:** los SLO son objetivos de producto; los umbrales de alerta operativa están en `_template-observability.md` (error rate > 1% por 5 min, p95 > [200ms] por 10 min).
+
 ## Error budget
 
 | Componente | SLO disponibilidad | Error budget mensual | Consumido (mes actual) |

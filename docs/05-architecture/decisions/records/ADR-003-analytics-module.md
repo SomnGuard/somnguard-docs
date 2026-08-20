@@ -20,6 +20,8 @@ Se decide incorporar el módulo **analytics** al catálogo de módulos del backe
 - Resumen descriptivo del comportamiento con asistencia de IA.
 - Generación de reportes para el portal web.
 
+> **Nota (2026-08-20):** el resumen IA es parte del módulo analytics, pero es la funcionalidad de **menor prioridad** del MVP: se entrega al final (ver [scope-declaration](../../../01-project-context/scope-declaration.md)).
+
 El módulo **no agrega entidades transaccionales**: consulta datos de otros módulos (principalmente telemetry-service y device-management) a través de sus puertos de entrada y expone consultas y reportes. Sigue la misma estructura hexagonal definida en el ADR-002.
 
 ## Consecuencias

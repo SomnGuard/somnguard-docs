@@ -221,6 +221,8 @@ El plan se organiza en fases alineadas a la planificación del proyecto ([cronog
 | 8. Edge (visión) | Detección de fatiga/somnolencia y alertas locales | Prototipo funcional del dispositivo |
 | 9. Calidad y despliegue | Pruebas de integración, QA, despliegue qa/main | Sistema desplegado y documentación final |
 
+> **Nota (2026-08-20):** el resumen IA se entrega al final del MVP, con la menor prioridad dentro del módulo analítico (ver [scope-declaration](./scope-declaration.md)).
+
 Las duraciones y fechas por fase se detallan en el cronograma del proyecto y se ajustan en cada sprint.
 
 ---

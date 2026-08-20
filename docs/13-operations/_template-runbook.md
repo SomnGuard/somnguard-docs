@@ -51,7 +51,7 @@
 
 ### Alta tasa de errores 5xx
 
-**Síntoma:** Error rate > 2% durante 5 minutos.
+**Síntoma:** Error rate > 1% durante 5 minutos.
 
 **Acciones:**
 1. Revisar logs recientes del backend (JSON estructurado).

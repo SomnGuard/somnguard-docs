@@ -40,6 +40,7 @@ flowchart LR
     SEC[security] -.-> TEL
     SEC -.-> DEV
     SEC -.-> MON[monitoring]
+    SEC -.-> ANL[analytics]
     TEL --> MON
     TEL --> ANL[analytics]
     DEV --> ANL
@@ -52,6 +53,10 @@ flowchart LR
 | `parameterization` → `telemetry-service` | CS (customer-supplier) | Catálogos validan eventos (categoría, severidad) |
 | `security` → resto | ACL (anticorruption layer) | JWT y RBAC en la frontera |
 | `telemetry-service` → `monitoring` | U | Eventos críticos disparan notificaciones |
+| `parameterization` → `device-management` | CS (customer-supplier) | Catálogos para la configuración del dispositivo |
+| `telemetry-service` → `analytics` | U | Eventos como insumo de métricas y reportes |
+| `device-management` → `analytics` | U | Datos de dispositivo en reportes |
+| `security` → `analytics` | ACL | JWT y RBAC en consultas analíticas |
 
 ## Lenguaje ubicuo
 

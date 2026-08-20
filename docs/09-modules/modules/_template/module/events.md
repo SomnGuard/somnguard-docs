@@ -25,13 +25,13 @@
 
 | Evento | Canal / destino | Payload principal | Consumidores conocidos |
 |--------|-----------------|-------------------|------------------------|
-| `[modulo].[entidad].[accion]` | [puerto in de otro módulo / AMQP] | `{ id, ... }` | `[modulo-consumidor]` |
+| `[entidad].[accion]` | [puerto in de otro módulo / AMQP] | `{ id, ... }` | `[modulo-consumidor]` |
 
 ## Eventos consumidos
 
 | Evento | Módulo fuente | Acción que dispara |
 |--------|---------------|--------------------|
-| `[modulo].[entidad].[accion]` | `[modulo]` | [qué hace este módulo al recibirlo] |
+| `[entidad].[accion]` | `[modulo]` | [qué hace este módulo al recibirlo] |
 
 ## Formato de envelope
 
@@ -40,7 +40,7 @@ Todos los eventos siguen el envelope estándar:
 ```json
 {
   "event_id": "uuid-v4",
-  "event_type": "<modulo>.<entidad>.<accion>",
+  "event_type": "<entidad>.<accion>",
   "version": "1.0",
   "timestamp": "2026-01-01T00:00:00Z",
   "source_module": "<nombre-modulo>",

@@ -31,6 +31,8 @@
 | SLO violado por más de 15 min | Rollback + postmortem | Tech Lead |
 | P0 detectado en `main` | Rollback inmediato | Tech Lead |
 
+> **Nota:** este es un umbral de gate de rollback (despliegue); el umbral de alerta operativa es error rate > 1% por 5 min (ver `../13-operations/_template-observability.md`).
+
 ## Procedimiento por componente
 
 ### Backend (`backend-java`)

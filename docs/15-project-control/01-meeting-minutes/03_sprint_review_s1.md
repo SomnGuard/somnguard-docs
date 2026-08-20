@@ -51,6 +51,8 @@
 - **HU-003** — Estructura del repositorio de BD y soporte de migraciones (Liquibase) (Repositorio: BD). Prioridad: Alta. Dependencias: HU-001. Estado: En progreso (≈50%).
 - **HU-004** — CI/CD básicos para integración continua (Repositorio: Cross). Prioridad: Alta. Dependencias: HU-002, HU-003. Estado: En progreso.
 
+> **Nota histórica (2026-08-20):** las HU-001..004 usan la nomenclatura anterior (`HU-###`); el formato vigente es `HU-<REPO>-NNN` (ver [agile-conventions.md](../../00-documentation-governance/agile-conventions.md)). Los repos "Cross", "Back" y "BD" eran nombres de trabajo; el listado oficial de repositorios está en [security-policy.md](../../00-documentation-governance/security-policy.md). El Sprint #1 duró 18 días (2026-04-27 → 2026-05-15); la metodología permite ajustar la duración (ver [adopted-methodology.md](../../00-documentation-governance/adopted-methodology.md) §3).
+
 ### Causas de desviación
 
 - Falta de estandarización inicial en procesos y entregables.
@@ -85,6 +87,8 @@
 1. Mover HUs incompletas a Sprint #2 y actualizar backlog.
 2. Agendar Sprint #2 Planning — Fecha propuesta: 2026-05-16 09:00
 3. Registrar checklist pre-sprint y compartir con el equipo (doc en repo / GitHub Projects).
+
+> **Nota histórica (2026-08-20):** la fecha propuesta para el Sprint #2 Planning (2026-05-16) cayó en sábado; a la fecha no existe acta registrada del Sprint #2 (ver `01-meeting-minutes/README.md`).
 
 
 ---

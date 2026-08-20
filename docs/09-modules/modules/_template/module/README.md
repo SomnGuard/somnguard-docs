@@ -17,7 +17,7 @@
 
 </div>
 
-> **PLANTILLA** — Copiar esta carpeta a `modules/<nn>-<nombre-modulo>/` y completar. Ver instrucciones en [la guía de uso](../README.md). Eliminar esta línea antes de hacer commit.
+> **PLANTILLA** — Copiar esta carpeta a `modules/<nombre-modulo>/` y completar. Ver instrucciones en [la guía de uso](../README.md). Eliminar esta línea antes de hacer commit.
 
 > Última actualización: YYYY-MM-DD
 > Autor: Por definir | Equipo: [backend]

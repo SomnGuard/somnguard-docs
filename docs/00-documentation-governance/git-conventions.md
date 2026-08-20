@@ -113,9 +113,9 @@ Ejemplos:
 ```bash
 docs(04-requeriments): add traceability matrix
 docs(09-modules): register auth module
-fix(01-context): clarify project scope
-chore(08-uml): export sequence diagrams to SVG
-refactor(00-governance): split contribution rules by topic
+fix(01-project-context): clarify project scope
+chore(08-uml): export sequence diagrams to PNG
+refactor(00-documentation-governance): split contribution rules by topic
 ```
 
 ## Reglas de commits

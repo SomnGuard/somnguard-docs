@@ -42,14 +42,16 @@ Además, existe un paquete transversal **fuera de los módulos**, al nivel de `c
 com.somnguard/
 ├── security/
 ├── parameterization/
-├── device-management/
-├── telemetry-service/
+├── device_management/
+├── telemetry_service/
 ├── monitoring/
 ├── analytics/
 └── platform/              # Transversal, fuera de los módulos: errores, logging, observabilidad
 ```
 
 `platform` no va dentro de cada módulo: es un paquete único que todos comparten; los módulos pueden depender de `platform` y `platform` no depende de ningún módulo.
+
+> **Convención de nombres:** los módulos se nombran en kebab-case en el catálogo (`telemetry-service`, `device-management`); en los **paquetes Java** se usa snake_case (`com.somnguard.telemetry_service`, `com.somnguard.device_management`) porque los guiones no son válidos en identificadores de paquete.
 
 Reglas de dependencia: el dominio no conoce Spring, JPA, HTTP ni la base de datos; los adaptadores dependen de los puertos; un módulo solo se comunica con otros módulos a través de sus puertos de entrada.
 

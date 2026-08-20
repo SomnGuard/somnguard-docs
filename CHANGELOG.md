@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Fixed (2026-08-20)
+- **Acta de kick-off fiel al stack original (C#/.NET)** con nota histórica de migración a Java (ADR-001); fecha de última actualización corregida.
+- **Paquetes Java en snake_case** (`com.somnguard.telemetry_service`, `com.somnguard.device_management`) en arquitectura, diseño, ADR-002, análisis y onboarding, con nota de convención (módulos kebab-case en catálogo).
+- **Reglas y gobernanza alineadas:** título de `structure-rules.md`; fuentes UML en Mermaid (`.mmd`, no `.wsd/.puml`); exportación estándar PNG; registro de ADR consolidado en `decisions/README.md` (sin tabla duplicada en `records/`); plantilla de PR con ramas `feat/*`; scopes de ejemplo con carpetas reales; formato HU unificado a `HU-<REPO>-NNN`; formato de eventos de dominio a `<entidad>.<accion>`.
+- **Registro de decisiones:** QR-006 (módulos base aprobados) y QR-007 (canal de coordinación: Discord).
+- **Actas de sprint con notas históricas:** nomenclatura HU anterior, repos "Cross/Back/BD" como nombres de trabajo, Sprint #1 de 18 días, Sprint #2 pendiente de registrar.
+- **Contenido alineado:** estados de notificación (emitida, leída) según modelo de datos; épica "Seguridad y cuentas" en Pendiente (TD-002); resumen IA como funcionalidad de menor prioridad (se entrega al final del MVP); umbrales de alerta unificados (error rate 1%/5 min, p95 [200ms]/10 min) con notas de contexto para SLO y gates de deploy/rollback; referencia de autenticación corregida (ADR-001 y QR-003); diagrama de dependencias con aristas `SEC → DEV/MON/ANL`; contexto de `domain-map.md` completado.
+- **Referencias y archivos:** enlaces de CHANGELOG a nombres reales; `08-uml/README.md` creado y enlazado; plantilla general movida a `99-archive/deprecated/templates/`; fecha del README de archivo alineada.
+
 ### Added (2026-08-19)
 - **Estructura documental ampliada con gobernanza y documentos de proceso:** se incorporaron documentos de proceso y gobernanza alineados con el monolito modular hexagonal y las convenciones del proyecto:
   - Raíz: `CONTRIBUTING.md`, `.github/pull_request_template.md`.
@@ -19,9 +28,9 @@
   - `12-user-experience`: 3 plantillas (UX flows, design system, UI spec).
   - `13-operations`: `observability.md`, `incident-management.md`, `backup-and-recovery.md` y 4 plantillas (observabilidad, SLA/SLO/SLI, runbook, postmortem).
   - `14-training-and-adoption`: `technical-onboarding.md`.
-  - `15-project-control`: `risks.md`, `dependencies.md`, `technical-backlog.md`, `_template-sprint-plan.md` y preguntas abiertas ampliadas (Q-013..Q-017).
+  - `15-project-control`: `risks.md`, `dependencies.md`, `technical-backlog.md`, `_template-sprint-plan.md` y preguntas abiertas ampliadas (Q-013, Q-015..Q-017).
   - READMEs de sección actualizados con el inventario de archivos.
-- **Estructura del backend Java:** `somnguard-api/backend-java/` con el árbol de carpetas completo del backend hexagonal (solo estructura, con `.gitkeep`), alineado a docs y ADRs: 6 módulos (security, parameterization, device-management, telemetry-service, monitoring, analytics) × `application/port/{in,out}`, `application/usecase`, `domain/{model,service}`, `adapter/in/{web,amqp}`, `adapter/out/{persistence,storage}`, más `platform/{error-handling,logging,observability}`.
+- **Estructura del backend Java:** `somnguard-api/backend-java/` (repositorio aparte, aún en borrador) con el árbol de carpetas completo del backend hexagonal (solo estructura, con `.gitkeep`), alineado a docs y ADRs: 6 módulos (security, parameterization, device-management, telemetry-service, monitoring, analytics) × `application/port/{in,out}`, `application/usecase`, `domain/{model,service}`, `adapter/in/{web,amqp}`, `adapter/out/{persistence,storage}`, más `platform/{error-handling,logging,observability}`.
 - **Diagramas UML:** 8 diagramas de secuencia en `docs/08-uml/diagrams/source/` (detección y alerta, sincronización offline, autenticación, restablecimiento de contraseña, alta de dispositivo, consulta de eventos, notificación crítica y generación de reportes) con sus exportaciones en `exports/`; 1 diagrama de clases de dominio (`cd-domain.mmd`).
 - **Propuesta técnica:** `docs/01-project-context/software-technical-proposal.md` — solución propuesta, arquitectura, stack tecnológico, diseño, metodología, plan de trabajo, recursos, costos referenciales, riesgos y entregables.
 - **Análisis del software:** `docs/04-requeriments/software-analysis.md` — modelo de dominio, casos de uso, vistas estáticas y vistas dinámicas (secuencia, actividades y estados) con trazabilidad funcionalidad → caso de uso → módulo → pruebas.
@@ -38,7 +47,7 @@
 - **Unificación de estructuras:** se consolidaron las estructuras anteriores en una sola, organizada por secciones numeradas (`docs/NN-seccion`), manteniendo la gobernanza documental y sin orientación a microservicios:
   - La sección `09-microservices` se renombró a `09-modules` (monolito modular) con su catálogo de módulos.
   - Se corrigieron los nombres `06-data-arquitecture` → `06-data-architecture` y `07-api-desing` → `07-api-design`.
-  - Se incorporaron los documentos actualizados del modelo de datos (`mer.mmd` y `modulos-entidades.md`) como fuente de verdad en `06-data-architecture/`.
+  - Se incorporaron los documentos actualizados del modelo de datos (`01-entity-relationship-model.mmd` y `02-modules-entities.md`) como fuente de verdad en `06-data-architecture/`.
   - La documentación anterior por fases (00-08) se conservó completa en `docs/99-archive/deprecated/previous-structure/`.
   - La primera versión del modelo de datos (ER conceptual, ER relacional y diccionario) se archivó en `docs/99-archive/deprecated/data-model-v1/`.
   - Se estandarizaron los encabezados de los documentos migrados y se actualizaron referencias de rutas en normativa, metodología, arquitectura y actas.

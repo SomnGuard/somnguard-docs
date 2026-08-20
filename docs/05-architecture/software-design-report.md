@@ -174,7 +174,7 @@ La arquitectura limpia se formaliza como **hexagonal (puertos y adaptadores)**, 
 Estructura de paquetes de referencia (Java/Spring Boot):
 
 ```text
-com.somnguard.telemetry-service/
+com.somnguard.telemetry_service/
 ├── application/
 │   ├── port/
 │   │   ├── in/            # IngestEventUseCase, GetEventQuery, ...

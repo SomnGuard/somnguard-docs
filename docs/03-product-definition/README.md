@@ -23,6 +23,6 @@ Definición del producto SomnGuard y la investigación que la sustenta: encuesta
 
 | Archivo | Descripción | Estado |
 |---------|-------------|--------|
-| [01-research/](./01-research/) | Instrumentos de recolección: encuesta y entrevistas a conductores | En progreso |
+| [01-research/](./01-research/) | Instrumentos de recolección: encuesta y entrevistas a conductores | Estable |
 | [product-backlog.md](./product-backlog.md) | Backlog de producto inicial por épicas y funcionalidades | En progreso |
 | [_template-backlog.md](./_template-backlog.md) | Plantilla de backlog de producto | Plantilla |

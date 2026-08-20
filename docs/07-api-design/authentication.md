@@ -55,7 +55,7 @@ Mecanismos de autenticación y autorización de la API de SomnGuard. Alineado co
 
 ## 4. API keys de dispositivo
 
-- Emitidas al registrar el dispositivo; rotables y revocables por el administrador (T-002).
+- Emitidas al registrar el dispositivo; rotables y revocables por el administrador (mitiga la amenaza T-002 del modelo de amenazas).
 - Envío de telemetría: `POST /api/v1/telemetry/events` con header `X-API-Key: <key>`.
 - La clave identifica el dispositivo y habilita las reglas RN-03 y RN-08 (validación de dispositivo activo + idempotencia).
 - Nunca se expone la clave en respuestas ni logs.

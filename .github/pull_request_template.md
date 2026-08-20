@@ -24,7 +24,7 @@
 
 ## Relación con el proyecto
 
-<!-- Historia de usuario (HU-<REPO>###), pregunta abierta (Q-###) o deuda técnica (TD-###) relacionada, si aplica -->
+<!-- Historia de usuario (HU-<REPO>-NNN), pregunta abierta (Q-###) o deuda técnica (TD-###) relacionada, si aplica -->
 
 ## Evidencias
 
@@ -32,4 +32,4 @@
 
 ---
 
-_Recordatorio: ramas del repo documental `docs/*`, `fix/*` o `chore/*` hacia `develop` (ver [git-conventions](../docs/00-documentation-governance/git-conventions.md))._
+_Recordatorio: ramas del repo documental `docs/*`, `feat/*`, `fix/*` o `chore/*` hacia `develop` (ver [git-conventions](../docs/00-documentation-governance/git-conventions.md))._
