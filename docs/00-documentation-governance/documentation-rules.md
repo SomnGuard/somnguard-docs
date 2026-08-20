@@ -11,7 +11,7 @@
 ## Reglas de documentación
 
 **Estado:** Estable
-**Fecha:** 2026-06-16
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -57,7 +57,7 @@ Todo documento `.md` debe iniciar con:
 
 ## Título descriptivo
 
-**Estado:** Pendiente, 
+**Estado:** Pendiente
 **Fecha:** YYYY-MM-DD
 
 </div>
@@ -69,10 +69,11 @@ Todo documento `.md` debe iniciar con:
 
 | Estado | Uso |
 |--------|-----|
-|  Pendiente | Archivo creado, sin contenido validado. |
-|  En progreso | Contenido parcial o en revisión. |
-|  Estable | Revisado, aprobado y vigente. |
-|  Deprecado | Ya no aplica. |
+| Pendiente | Archivo creado, sin contenido validado. |
+| En progreso | Contenido parcial o en revisión. |
+| Estable | Revisado, aprobado y vigente. |
+| Deprecado | Ya no aplica. |
+| Plantilla | Archivo `_template-*.md` reutilizable; no es un documento vigente. |
 
 
 **Criterios para documentos deprecados:**
@@ -81,7 +82,7 @@ Todo documento `.md` debe iniciar con:
 |-----------|--------|
 | Documento sustituido por otro | Cambiar estado a **Deprecado**, agregar `> Reemplazado por: [enlace al nuevo]` al inicio, dejar en su ubicación actual |
 | Documento de sección eliminada o reestructurada | Mover a `../99-archive/deprecated/`, registrar el movimiento en `../../CHANGELOG.md` |
-| ADR obsoleta | Nunca mover — cambiar estado a `DEPRECATED` en `records/` y agregar `> Reemplazada por: ADR-NNN-nueva.md` |
+| ADR obsoleta | Nunca mover — cambiar estado a `Deprecada` en `records/` y agregar `> Reemplazada por: ADR-NNN-nueva.md` |
 
 
 ## Índices obligatorios

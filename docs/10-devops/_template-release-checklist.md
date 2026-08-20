@@ -17,7 +17,7 @@
 
 </div>
 
-> **PLANTILLA** — Copiar como `release-checklist-vX.X.X.md` y completar. Eliminar esta línea antes de hacer commit.
+> **PLANTILLA** — Copiar como `release-checklist-v{MAJOR}.{MINOR}.{PATCH}.md` y completar. Eliminar esta línea antes de hacer commit.
 
 > Última actualización: YYYY-MM-DD
 > Autor: Por definir | Equipo: DevOps + QA
@@ -26,7 +26,7 @@
 
 | Campo | Valor |
 |-------|-------|
-| Versión | v[X.X.X] |
+| Versión | v{MAJOR}.{MINOR}.{PATCH} |
 | Fecha objetivo | YYYY-MM-DD |
 | Release manager | |
 
@@ -34,7 +34,7 @@
 
 - [ ] Todas las HUs comprometidas están en estado `Hecho`
 - [ ] Sin PRs pendientes de merge para este release
-- [ ] Rama `release/vX.X.X` creada y estable
+- [ ] Rama `hu-<repo>-###-main` creada y estable (por release)
 - [ ] Code review completado en todos los cambios
 
 ## Gate de calidad (QA)
@@ -55,7 +55,7 @@
 ## Gate de infraestructura
 
 - [ ] Migraciones de BD probadas en `qa`
-- [ ] Variables de entorno configuradas en producción
+- [ ] Variables de entorno configuradas en `main`
 - [ ] Backups verificados
 - [ ] Plan de rollback preparado y probado
 - [ ] Runbook actualizado

@@ -28,7 +28,7 @@
 |-------|-------|
 | HU / Sprint | |
 | Tester | |
-| Ambiente | dev / qa / main |
+| Ambiente | develop / qa / main |
 | Fecha de ejecución | YYYY-MM-DD |
 
 ## Casos de prueba ejecutados

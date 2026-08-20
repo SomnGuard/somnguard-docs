@@ -139,7 +139,7 @@ El sistema opera en dos entornos complementarios:
 
 ### 3.1 Estilo arquitectónico
 
-SomnGuard combina dos estilos complementarios (ver ADR-001):
+SomnGuard combina dos estilos complementarios (ver ADR-001, ADR-002 y ADR-003):
 
 1. **Arquitectura híbrida edge-cloud**: el dispositivo a bordo es responsable del procesamiento en tiempo real (detección y alertas inmediatas), mientras que la plataforma cloud es responsable del almacenamiento, análisis, administración y notificaciones. El edge funciona de forma autónoma y sincroniza de forma asíncrona.
 2. **Monolito modular en el backend**: la plataforma cloud se desarrolla como una única aplicación Java/Spring Boot desplegada como un solo artefacto, organizada internamente en módulos independientes con sus propias entidades y casos de uso. Se descarta la arquitectura de microservicios por su complejidad operativa innecesaria para un sistema de tamaño medio.
@@ -524,7 +524,7 @@ El dispositivo a bordo no posee interfaz gráfica en esta versión; su interfaz 
 | Lenguaje | Java 21 (LTS) |
 | Framework | Spring Boot 3.x |
 | Build | Maven |
-| Arquitectura | Monolito modular, arquitectura limpia en capas |
+| Arquitectura | Monolito modular con arquitectura hexagonal por módulo (ADR-002) |
 | Base de datos | PostgreSQL |
 | Migraciones | Liquibase |
 | Autenticación | JWT (Spring Security) |
@@ -561,11 +561,11 @@ El dispositivo a bordo no posee interfaz gráfica en esta versión; su interfaz 
 
 - **Orden de implementación sugerido**: módulo Security (base de cuentas y permisos) → Parameterization (catálogos) → Device Management (alta y asignación) → Telemetry Service (ingesta de eventos y evidencia) → Monitoring (notificaciones) → Módulo analítico (línea de tiempo, métricas, reportes, resumen IA).
 - **Estructura de paquetes** (por módulo): `com.somnguard.<modulo>.application.port.{in,out}`, `.application.usecase`, `.domain.{model,service}`, `.adapter.in.{web,amqp}`, `.adapter.out.{persistence,storage}`; `com.somnguard.platform` (transversal: errores, logging, observabilidad) va **fuera de los módulos**, al nivel de `com.somnguard` (ver sección 3.2.1 y ADR-002).
-- **Convenciones**: nombres kebab-case para documentación; Conventional Commits en los repositorios; ramas `hu-###-<ambiente>` hacia `develop`/`qa`/`main`.
+- **Convenciones**: nombres kebab-case para documentación; Conventional Commits en los repositorios; ramas `hu-<repo>-###-<ambiente>` hacia `develop`/`qa`/`main`.
 - **Calidad**: cobertura de pruebas por capa de aplicación e infraestructura; integración con el pipeline de CI; verificación de enlaces y estructura de la documentación en cada PR.
 - **Riesgos a gestionar**: conectividad intermitente en el vehículo (mitigado con cola offline e idempotencia), precisión del algoritmo de detección (mitigado con calibración vía `device_config` y evaluación con datos reales), y retención de evidencia (política definida por el administrador).
 - **Evolución**: este documento se mantiene alineado con la arquitectura vigente y el modelo de datos; cualquier cambio de diseño requiere actualizar el ADR correspondiente y este informe.
 
 ---
 
-*Documento alineado con el documento de arquitectura, el ADR-001 y el modelo de datos vigente (20 entidades).*
+*Documento alineado con el documento de arquitectura, los ADRs vigentes (ADR-001/002/003) y el modelo de datos vigente (20 entidades).*

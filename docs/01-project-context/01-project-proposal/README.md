@@ -8,7 +8,7 @@
 
 # SOMNGUARD
 
-## Anteproyecto
+## Propuesta del proyecto
 
 **Estado:** Estable
 **Fecha:** 2026-08-19

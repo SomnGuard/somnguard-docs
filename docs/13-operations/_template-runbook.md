@@ -27,7 +27,7 @@
 | Campo | Valor |
 |-------|-------|
 | Repositorio | [url] |
-| Ambiente producción | [url / namespace] |
+| Ambiente `main` | [url / namespace] |
 | Dashboard principal | [url Grafana / Datadog] |
 | Canal de alertas | [Slack #canal / PagerDuty] |
 | Contacto de escalamiento | [nombre / handle] |

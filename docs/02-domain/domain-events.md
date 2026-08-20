@@ -17,7 +17,7 @@
 
 </div>
 
-Vista de negocio de los eventos de dominio del sistema: disparador, cambio de estado y consumidores. Complementa el registro por módulo (ver `09-modules/`). El formato técnico del envelope se define en la plantilla de módulo (`events.md`).
+Vista de negocio de los eventos de dominio del sistema: disparador, cambio de estado y consumidores. Complementa el registro por módulo (ver [`../09-modules/`](../09-modules/)). El formato técnico del envelope se define en la plantilla de módulo ([`events.md`](../09-modules/modules/_template/module/events.md)).
 
 ## Catálogo de eventos
 

@@ -126,7 +126,7 @@ Cuerpo de error uniforme en toda la plataforma (alineado con `platform/error-han
 | parameterization | CRUD de catálogos: `/api/v1/catalogs/event-categories`, `/severities`, `/media-types`, `/sound-patterns`, `/event-types` |
 | analytics | `GET /api/v1/analytics/timeline`, `/metrics`, `/reports` |
 
-> Los ejemplos son ilustrativos; el contrato definitivo por módulo se publica como OpenAPI en `07-api-design/contracts/openapi/`.
+> Los ejemplos son ilustrativos; el contrato definitivo por módulo se publica como OpenAPI en [`../contracts/openapi/`](../contracts/openapi/) (ver nota en `contracts/README.md`).
 
 ## 10. Convenciones transversales
 

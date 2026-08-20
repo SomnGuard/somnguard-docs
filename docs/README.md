@@ -24,7 +24,7 @@
 | Sección | Contenido |
 |---------|-----------|
 | [00-documentation-governance](./00-documentation-governance/README.md) | Normativa, metodología, reglas de documentación, convenciones de git |
-| [01-project-context](./01-project-context/README.md) | Anteproyecto y cronograma |
+| [01-project-context](./01-project-context/README.md) | Contexto del proyecto y cronograma |
 | [02-domain](./02-domain/README.md) | Dominio del negocio: mapa de procesos |
 | [03-product-definition](./03-product-definition/README.md) | Definición del producto e investigación |
 | [04-requeriments](./04-requeriments/README.md) | SRS, funcionalidades, estructura por módulo |

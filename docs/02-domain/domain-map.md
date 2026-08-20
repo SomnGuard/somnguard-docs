@@ -17,7 +17,7 @@
 
 </div>
 
-Mapa de dominio del sistema: módulos del backend (bounded contexts), su clasificación y relaciones. El backend es un monolito modular hexagonal, por lo que los "bounded contexts" se materializan como módulos (ver `09-modules/module-catalog.md` y ADR-002).
+Mapa de dominio del sistema: módulos del backend (bounded contexts), su clasificación y relaciones. El backend es un monolito modular hexagonal, por lo que los "bounded contexts" se materializan como módulos (ver [`../09-modules/module-catalog.md`](../09-modules/module-catalog.md) y ADR-002).
 
 ## Clasificación de dominios
 

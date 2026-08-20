@@ -1,4 +1,21 @@
-# Exportaciones de diagramas
+<div style="display:flex; align-items:center; justify-content:space-between;">
+
+<div>
+<img src="../../../assets/icons/logo-somnguard.png" width="140"/>
+</div>
+
+<div align="right">
+
+# SOMNGUARD
+
+## Exportaciones de diagramas
+
+**Estado:** En progreso
+**Fecha:** 2026-08-19
+
+</div>
+
+</div>
 
 Exportaciones (`.png`) generadas desde las fuentes en `../source/`.
 

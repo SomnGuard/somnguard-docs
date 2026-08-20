@@ -33,9 +33,9 @@ Ficha técnica del proyecto SomnGuard: identificación, dimensiones de complejid
 
 | Dimensión | Valor | Implicancia |
 |-----------|-------|-------------|
-| Tiene interfaz de usuario | sí | Activa diseño UX en `12-user-experience/` |
+| Tiene interfaz de usuario | sí | Activa diseño UX en [`../12-user-experience/`](../12-user-experience/) |
 | Canal UI | web + móvil | Portal React JS y app React Native |
-| Persistencia | sql | Activa diseño de datos en `06-data-architecture/` |
+| Persistencia | sql | Activa diseño de datos en [`../06-data-architecture/`](../06-data-architecture/) |
 | Complejidad de dominio | media | Detección en edge + gestión de eventos y notificaciones |
 | Volumen esperado | < 10k usuarios | |
 | PII / compliance | básico | Ley 1581/2012: datos personales y evidencia multimedia |

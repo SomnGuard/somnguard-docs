@@ -17,7 +17,7 @@
 
 </div>
 
-Dependencias internas (entre módulos) y externas (infraestructura y terceros) del proyecto SomnGuard. Vista de gestión de proyecto; el detalle técnico vive en `02-domain/domain-map.md` y `09-modules/`.
+Dependencias internas (entre módulos) y externas (infraestructura y terceros) del proyecto SomnGuard. Vista de gestión de proyecto; el detalle técnico vive en [`../02-domain/domain-map.md`](../02-domain/domain-map.md) y [`../09-modules/`](../09-modules/).
 
 ## Principios
 
@@ -57,14 +57,14 @@ flowchart LR
 | monitoring | telemetry-service, security, platform | Eventos críticos, RBAC, transversal |
 | analytics | telemetry-service, device-management, security, platform | Eventos y evidencia, dispositivos, RBAC, transversal |
 
-> Regla: los módulos solo se comunican a través de puertos de entrada de `application/port/in` (ver `structure-rules.md`); `platform` no depende de ningún módulo.
+> Regla: los módulos solo se comunican a través de puertos de entrada de `application/port/in` (ver [`../00-documentation-governance/structure-rules.md`](../00-documentation-governance/structure-rules.md)); `platform` no depende de ningún módulo.
 
 ## Dependencias externas
 
 | Dependencia | Tipo | Uso | Estado | Riesgo asociado |
 |-------------|------|-----|--------|-----------------|
 | **PostgreSQL 16** | Base de datos | Motor relacional; esquema versionado con Liquibase | Definido (ADR-001) | — |
-| **Liquibase** | Migraciones | Versionado del esquema | Definido | QR-002 |
+| **Liquibase** | Migraciones | Versionado del esquema | Definido (ADR-001) | — |
 | **MinIO/S3** | Object storage | Evidencia multimedia (solo referencia en BD) | Definido (QR-005) | R-006 |
 | **Notificaciones push (FCM/APNs)** | Servicio externo | Notificaciones de eventos críticos | Sin decidir (Q-008) | R-008 |
 | **Modelo IA (resumen)** | Servicio externo | Resumen de eventos en analytics | Sin decidir | R-010 |

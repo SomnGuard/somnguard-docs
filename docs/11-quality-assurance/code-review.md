@@ -23,7 +23,7 @@ Criterios y flujo para revisar los cambios de SomnGuard (somnguard-docs y somngu
 
 Alineado con las [convenciones de Git](../00-documentation-governance/git-conventions.md) (`develop → qa → main`):
 
-1. El autor abre PR desde su rama hija (`hu-###-<ambiente>`, `feat/*`, `fix/*`, etc.) hacia la rama padre correspondiente.
+1. El autor abre PR desde su rama hija (`hu-<repo>-###-<ambiente>`, `feat/*`, `fix/*`, etc.) hacia la rama padre correspondiente.
 2. El PR cumple la [Definition of Ready](../00-documentation-governance/definition-of-ready.md) antes de solicitar revisión.
 3. Se asignan revisores manualmente según el área del cambio (gobernanza → Arquitectura, módulos/API → Backend, etc.). Mínimo **1 aprobación**; para cambios en contratos compartidos (API, modelo de datos, eventos, convenciones) se recomiendan **2**.
 4. El revisor aplica el checklist correspondiente y deja comentarios accionables.

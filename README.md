@@ -26,7 +26,7 @@ Este repositorio centraliza toda la documentación del proyecto, organizada en s
 ```
 docs/
 ├── 00-documentation-governance/   # Normativa, metodología y reglas de documentación
-├── 01-project-context/            # Anteproyecto y cronograma
+├── 01-project-context/            # Contexto y cronograma
 ├── 02-domain/                     # Dominio del negocio: mapa de procesos
 ├── 03-product-definition/         # Definición del producto e investigación
 ├── 04-requeriments/               # SRS, análisis y requisitos

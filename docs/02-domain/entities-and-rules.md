@@ -47,7 +47,7 @@ Reglas de negocio del sistema. Fuente de verdad de las reglas `RN-*`; consolidan
 | monitoring | notification |
 | analytics | vistas/reportes derivados (sin entidades transaccionales) |
 
-Detalle de atributos en `06-data-architecture/02-modules-entities.md`.
+Detalle de atributos en [`../06-data-architecture/02-modules-entities.md`](../06-data-architecture/02-modules-entities.md).
 
 ## Ver también
 

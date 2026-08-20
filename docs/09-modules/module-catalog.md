@@ -11,7 +11,7 @@
 ## Catálogo de módulos
 
 **Estado:** En progreso
-**Fecha:** 2026-08-16
+**Fecha:** 2026-08-19
 
 </div>
 
@@ -30,5 +30,5 @@ Catálogo de los módulos del backend de SomnGuard. Fuente de verdad del listado
 
 ## Reglas
 
-- No documentar módulos ficticios: un módulo solo se registra aquí cuando existe en el código o tiene ADR aprobada (ver `../00-documentation-governance/structure-rules.md`).
+- No documentar módulos ficticios: un módulo solo se registra aquí cuando existe en el código o tiene ADR aceptada (ver `../00-documentation-governance/structure-rules.md`).
 - La documentación detallada de un módulo se ubica en `modules/<nombre-del-modulo>/`.

@@ -43,7 +43,7 @@
 
 El propósito de este documento es presentar la propuesta técnica para el desarrollo del software **SomnGuard**: la solución propuesta, la arquitectura, el stack tecnológico, el diseño de la solución, la metodología de trabajo, los recursos y costos estimados, los riesgos y los entregables.
 
-Esta propuesta constituye la base técnica sobre la cual se desarrollará el proyecto y se alinea con el anteproyecto, el documento de arquitectura, el informe de diseño de software y el SRS.
+Esta propuesta constituye la base técnica sobre la cual se desarrollará el proyecto y se alinea con la propuesta inicial, el documento de arquitectura, el informe de diseño de software y el SRS.
 
 ### 1.2 Alcance
 
@@ -59,7 +59,7 @@ Quedan fuera del alcance de esta propuesta: el diseño de hardware del dispositi
 
 | Documento | Ubicación |
 |-----------|-----------|
-| Anteproyecto | [01-project-proposal/](./01-project-proposal/) |
+| Propuesta inicial | [01-project-proposal/](./01-project-proposal/) |
 | Documento de arquitectura | [../05-architecture/architecture-document.md](../05-architecture/architecture-document.md) |
 | Informe de diseño de software | [../05-architecture/software-design-report.md](../05-architecture/software-design-report.md) |
 | ADR-001 (stack del backend) | [../05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md](../05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md) |
@@ -140,7 +140,7 @@ La propuesta contempla el desarrollo completo de ambos entornos, la integración
 | Backend | Liquibase | 4.x | Migraciones de base de datos |
 | Base de datos | PostgreSQL | 16+ | Almacenamiento relacional |
 | Portal web | React JS | 18+ | Aplicación web (SPA) |
-| App móvil | React Native | 0.7x | Aplicación móvil multiplataforma |
+| App móvil | React Native | 0.7x | Aplicación móvil multiplataforma (versión a fijar en la iteración técnica) |
 | Edge | Python | 3.11+ | Análisis de visión y agente de sincronización |
 | Edge | OpenCV / bibliotecas de visión | — | Procesamiento de imágenes (a validar en iteración de edge) |
 | Edge | Raspberry Pi OS | — | Sistema operativo del dispositivo |
@@ -198,7 +198,7 @@ Detalle en [informe de diseño](../05-architecture/software-design-report.md) se
 ## 6. Metodología de desarrollo
 
 - **Metodología ágil (SCRUM adaptado)**, según [adopted-methodology.md](../00-documentation-governance/adopted-methodology.md): historias de usuario, iteraciones (sprints) y reuniones de planificación/revisión documentadas en actas.
-- **Flujo de ramas**: `hu-###-dev → develop`, `hu-###-qa → qa`, `hu-###-main → main`; propagación de cambios entre entornos por copia/cherry-pick, sin merges directos entre `develop`/`qa`/`main`.
+- **Flujo de ramas**: `hu-<repo>-###-dev → develop`, `hu-<repo>-###-qa → qa`, `hu-<repo>-###-main → main`; propagación de cambios entre entornos por copia/cherry-pick, sin merges directos entre `develop`/`qa`/`main`.
 - **CI/CD**: pipeline de integración continua y despliegue por entorno ([ci-cd-strategy.md](../10-devops/ci-cd-strategy.md)).
 - **Calidad**: estrategia de pruebas por nivel ([test-strategy.md](../11-quality-assurance/test-strategy.md)) y verificación de documentación en cada PR.
 - **Convenciones**: Conventional Commits y kebab-case en documentación.
@@ -251,7 +251,7 @@ Las duraciones y fechas por fase se detallan en el cronograma del proyecto y se 
 
 ## 9. Estimación de costos
 
-> Los montos son **referenciales y a validar** según el contexto del proyecto (académico o comercial), la región y el proveedor de nube. No constituyen una cotización cerrada.
+> Los montos son **referenciales y a validar** según el contexto del proyecto, la región y el proveedor de nube. No constituyen una cotización cerrada.
 
 | Concepto | Estimación referencial | Supuestos |
 |----------|------------------------|-----------|
@@ -261,7 +261,7 @@ Las duraciones y fechas por fase se detallan en el cronograma del proyecto y se 
 | Licencias de software | USD 0 | Sin licencias propietarias en el stack propuesto |
 | Capacitación y soporte | Incluido en el desarrollo | Transferencia de conocimiento en cada fase |
 
-Los costos de recurso humano dependen de la modalidad de vinculación (pasantía, contratación u otra) y se cuantifican en el plan de negocio del proyecto.
+Los costos de recurso humano dependen de la modalidad de vinculación del equipo y se cuantifican en el plan de negocio del proyecto.
 
 ---
 
@@ -309,4 +309,4 @@ Los costos de recurso humano dependen de la modalidad de vinculación (pasantía
 
 ---
 
-*Propuesta técnica alineada con el anteproyecto, la arquitectura vigente (ADR-001) y el modelo de datos (20 entidades).*
+*Propuesta técnica alineada con la propuesta inicial, la arquitectura vigente (ADR-001/002/003) y el modelo de datos (20 entidades).*

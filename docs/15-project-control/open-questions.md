@@ -26,8 +26,6 @@ Preguntas y decisiones pendientes del proyecto, recopiladas de actas, arquitectu
 | Q-001 | ¿Qué proveedor de nube se usa (AWS/Azure) o se despliega en infraestructura local? | Acta kick-off 2026-02-10 | Líder Técnico |
 | Q-002 | ¿Cuál es el canal oficial de coordinación (Slack/Teams/otro)? | Acta kick-off 2026-02-10 | Equipo |
 | Q-003 | ¿Se designa un Product Owner formal? | Metodología adoptada | Líder Técnico |
-| Q-004 | ¿Qué mecanismo de autenticación usa la API (JWT propuesto)? | Diseño de API | Arquitectura |
-| Q-005 | ¿Cómo se autentica el dispositivo contra la API (API key con hash ya modelado)? | Modelo de datos | Arquitectura |
 | Q-006 | ¿Cuál es la política de retención de datos al eliminar cuenta? | Funcionalidades del sistema | Líder Técnico |
 | Q-007 | ¿Qué formato tiene el payload de sincronización offline (JSON + multimedia)? | Arquitectura, sección 11 | Arquitectura |
 | Q-008 | ¿Qué canal usa la notificación push (FCM/APNs) y cómo se maneja el estado de lectura? | Arquitectura, sección 12 | Arquitectura |
@@ -36,7 +34,6 @@ Preguntas y decisiones pendientes del proyecto, recopiladas de actas, arquitectu
 | Q-011 | ¿Cómo se versiona y documenta la API en vivo (OpenAPI/Swagger)? | Diseño de API | Arquitectura |
 | Q-012 | ¿Cuándo se incorporan las pruebas automatizadas al DoD formal? | Metodología adoptada | Equipo |
 | Q-013 | ¿Los estados de negocio (dispositivo, evento) usan catálogo parametrizable genérico o `VARCHAR + CHECK`? | Convenciones de modelado | Arquitectura de Datos |
-| Q-014 | ¿Qué proveedor de almacenamiento multimedia se usa (MinIO local / S3 AWS)? | Dependencias del proyecto | Líder Técnico |
 | Q-015 | ¿Qué modelo externo alimenta el resumen IA de `analytics` (costo/latencia)? | Módulo analítico | Arquitectura |
 | Q-016 | ¿Qué stack de observabilidad se adopta (logs, métricas, trazas, alertas)? | Operaciones | Líder Técnico |
 | Q-017 | ¿Valores definitivos de RTO/RPO y configuración de PITR para producción? | Respaldo y recuperación | Líder Técnico |

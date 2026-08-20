@@ -4,7 +4,6 @@ classDiagram
         +String name
         +String email
         +String passwordHash
-        +boolean validated
         +login()
         +requestPasswordReset()
     }
@@ -35,8 +34,6 @@ classDiagram
     class Device {
         +String id
         +String serial
-        +String model
-        +String status
         +String apiKeyHash
     }
     class DeviceAssignment

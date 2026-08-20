@@ -12,7 +12,7 @@
 
 **Autor:** Equipo SomnGuard
 **Estado:** Estable
-**Fecha:** 2026-05-14
+**Fecha:** 2026-08-19
 **Última actualización:** 2026-08-19
 
 </div>
@@ -89,7 +89,7 @@ La forma de trabajo recomendada para el backend es un monolito modular con princ
 
 ### 5.1 Backend
 
-El backend se define como un monolito modular en Java 21 con Spring Boot 3.x, organizado por dominios funcionales y con separación clara entre capa de presentación, aplicación, dominio e infraestructura.
+El backend se define como un monolito modular en Java 21 con Spring Boot 3.x, organizado por dominios funcionales con arquitectura hexagonal (puertos y adaptadores) por módulo (ver ADR-002).
 
 ### 5.2 Frontend
 
@@ -160,7 +160,7 @@ Responsable de asociar, desasociar y configurar dispositivos.
 
 ### 7.4 telemetry-service
 
-Responsable de registrar eventos, evidencia y alertas desde el dispositivo (corresponde al módulo de ingesta de eventos de la versión anterior de este documento).
+Responsable de registrar eventos, evidencia y alertas desde el dispositivo.
 
 ### 7.5 monitoring
 
@@ -241,18 +241,18 @@ Se emplea Liquibase para controlar cambios de esquema y versionado de base de da
 La estructura prevista por carpetas para scripts de base de datos puede organizarse así:
 
 ```text
-somnguar-db/
+somnguard-db/
 ├── 01_ddl/
 │   ├── 00_extensions/
 │   ├── 01_schemas/
 │   ├── 02_types/
 │   ├── 03_tables/
-│   ├── 04_views/
-│   ├── 05_materialized_views/
+│   ├── 04_alter/
+│   ├── 05_views/
 │   ├── 06_functions/
 │   ├── 07_procedures/
 │   ├── 08_triggers/
-│   └── 09_indexes/
+│   └── 10_indexes/
 ├── 02_dml/
 │   ├── 00_inserts/
 │   ├── 01_updates/
@@ -288,14 +288,7 @@ La arquitectura de datos se alinea con los módulos ya definidos en el proyecto 
 
 ## 10. Autenticación y autorización
 
-El sistema debe contemplar:
-
-- Registro y validación de cuenta.
-- Inicio y cierre de sesión.
-- Gestión de perfil.
-- Asignación de roles a usuarios.
-- Permisos por funcionalidad o formulario.
-- Control de acceso por módulo.
+El mecanismo de autenticación y autorización está decidido: JWT RS256 para usuarios (registro, inicio y cierre de sesión, gestión de perfil, asignación de roles y permisos por funcionalidad/módulo) y API keys para dispositivos. El detalle contractual está en [`../07-api-design/authentication.md`](../07-api-design/authentication.md) (ver ADR-001 y ADR-003).
 
 La arquitectura debe permitir distinguir al menos entre usuario final y administrador de plataforma, aunque el modelo de roles pueda crecer después.
 
@@ -405,5 +398,5 @@ La arquitectura parte de los siguientes supuestos:
 
 ---
 
-**Vigencia:** A partir del 2026-05-14
+**Vigencia:** A partir del 2026-08-19
 

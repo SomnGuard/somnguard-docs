@@ -60,9 +60,9 @@
 
 | Ambiente | Retención |
 |----------|-----------|
-| Producción | [90 días] |
-| QA | [30 días] |
-| Dev | [7 días] |
+| `main` | [90 días] |
+| `qa` | [30 días] |
+| `develop` | [7 días] |
 
 ## Métricas
 

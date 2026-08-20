@@ -12,8 +12,8 @@
 
 **Autor:** Equipo SomnGuard
 **Estado:** Estable
-**Fecha:** 2026-04-12
-**Última actualización:** 2026-05-03
+**Fecha:** 2026-08-19
+**Última actualización:** 2026-08-19
 
 </div>
 
@@ -23,7 +23,7 @@
 
 ## 1. Resumen ejecutivo
 
-El proyecto SomnGuard adopta **Scrum** como metodología ágil de trabajo. El enfoque se centra en entregas iterativas cada sprint (1 a 1.5 semanas), validación frecuente con el equipo, y mejora continua a través de ceremonias esenciales: Sprint Planning y Sprint Review.
+El proyecto SomnGuard adopta **Scrum** como metodología ágil de trabajo. El enfoque se centra en entregas iterativas cada sprint (1 semana, ajustable según necesidad), validación frecuente con el equipo, y mejora continua a través de ceremonias esenciales: Sprint Planning y Sprint Review.
 
 ## 2. Principios
 
@@ -37,9 +37,9 @@ El proyecto SomnGuard adopta **Scrum** como metodología ágil de trabajo. El en
 
 ### Duración del sprint
 
-- **Estándar:** 1 a 1.5 semanas (flexible según necesidad).
-- **Inicio:** Martes de cada semana.
-- **Fin:** Lunes de la semana de conclusión.
+- **Estándar:** 1 semana (flexible según necesidad).
+- **Inicio:** Lunes (Sprint Planning).
+- **Fin:** Viernes de la misma semana (Sprint Review).
 
 ### Eventos principales por sprint
 
@@ -52,7 +52,7 @@ El proyecto SomnGuard adopta **Scrum** como metodología ágil de trabajo. El en
 
 2. **Sprint Review (Fin del sprint)**
    - Duración: 1 hora
-  - Participantes: equipo
+   - Participantes: equipo
    - Objetivo: demostrar las HUs completadas, recoger feedback y definir acciones de mejora
    - Output: feedback y acciones de mejora para el siguiente sprint
 
@@ -63,7 +63,7 @@ El proyecto SomnGuard adopta **Scrum** como metodología ágil de trabajo. El en
 | **Líder Técnico** | Cristian Javier Palma Sotto | Coordinación, decisiones técnicas, revisión de PRs, eliminación de blockers |
 | **Desarrollador Full-Stack** | Cristian Javier Palma Sotto, Juan Carlos Jurado Castañeda, Johan Steven Rodriguez Charry, Brayan Alberto Perdomo | Implementación de HUs, pruebas locales, estimaciones, feedback técnico |
 
-**Nota:** No hay Product Owner formal aún ni stakeholders formales definidos. El Líder Técnico actúa como coordinador central, el equipo participa en decisiones sobre priorización y Cristian Javier Palma Sotto también participa como desarrollador full-stack.
+**Nota:** No hay Product Owner formal aún (pregunta abierta Q-003 en `15-project-control/open-questions.md`). El Líder Técnico actúa como coordinador central, el equipo participa en decisiones sobre priorización y Cristian Javier Palma Sotto también participa como desarrollador full-stack.
 
 ## 5. Artefactos
 
@@ -121,10 +121,9 @@ Una historia se considera **completada** cuando cumple todos los siguientes crit
 
 ## 8. Calidad y pruebas
 
-**Estado:** Por definir en sprints posteriores.
+La estrategia de pruebas por nivel y sus criterios están definidos en [`../11-quality-assurance/test-strategy.md`](../11-quality-assurance/test-strategy.md).
 
 - Se iniciarán con pruebas unitarias básicas en módulos críticos (análisis visual, base de datos).
-- Cobertura objetivo: a definir en sprint de calidad.
 - La integración de CI/CD con GitHub Actions facilitará validaciones automáticas.
 
 ## 9. Integración y despliegue continuo

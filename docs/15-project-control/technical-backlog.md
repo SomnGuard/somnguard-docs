@@ -34,7 +34,7 @@ Deuda técnica conocida y pendientes de construcción del proyecto SomnGuard. El
 | TD-003 | **Contratos OpenAPI no publicados**: la API se documenta en `07-api-design/` pero sin especificación OpenAPI versionable. | Medio | P2 | Todos los módulos | Abierto |
 | TD-004 | **Plantilla de módulo sin instanciar**: `09-modules/modules/_template/` está lista pero ningún módulo tiene aún su documentación por módulo. | Medio | P2 | 09-modules | Abierto |
 | TD-005 | **Catálogos sin semillas definidas**: los valores iniciales de `parameterization` (categorías, severidades, sonidos) no están fijados. | Medio | P2 | parameterization | Abierto |
-| TD-006 | **Estados de negocio sin decisión**: si usar catálogo parametrizable genérico o `VARCHAR + CHECK` para estados de dispositivo/evento (ver [modeling-conventions](../06-data-architecture/modeling-conventions.md) y Q en open-questions). | Medio | P2 | telemetry-service, device-management | Abierto |
+| TD-006 | **Estados de negocio sin decisión**: si usar catálogo parametrizable genérico o `VARCHAR + CHECK` para estados de dispositivo/evento (ver [modeling-conventions](../06-data-architecture/modeling-conventions.md) y Q-013 en [open-questions](./open-questions.md)). | Medio | P2 | telemetry-service, device-management | Abierto |
 | TD-007 | **Driver JDBC / dependencias de build sin fijar**: el `pom.xml` del backend aún no está definido. | Medio | P1 | backend-java | Abierto |
 
 ## Trabajo estructural pendiente (capa de aplicación)

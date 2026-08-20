@@ -27,7 +27,7 @@
 | Campo | Valor |
 |-------|-------|
 | Versión / Release | |
-| Ambiente destino | dev / qa / producción |
+| Ambiente destino | develop / qa / main |
 | Fecha planificada | YYYY-MM-DD HH:MM |
 | Responsable | |
 | Ventana de despliegue | [duración estimada] |

@@ -30,6 +30,8 @@
 | SLO | Objetivo interno de nivel de servicio — meta técnica que el equipo se compromete a mantener |
 | SLI | Indicador de nivel de servicio — métrica real medida que evalúa el SLO |
 
+> Los valores definitivos de RTO/RPO y la configuración de PITR son una pregunta abierta ([Q-017](../15-project-control/open-questions.md)); registrarlos aquí una vez decididos.
+
 ## SLOs por componente
 
 ### Componente: [backend / edge / portal / app móvil]

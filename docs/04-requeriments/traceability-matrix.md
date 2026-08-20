@@ -38,9 +38,9 @@ Matriz que relaciona funcionalidades (`F-*`), casos de uso, vistas dinámicas, m
 
 | Origen | Destino | Referencia |
 |--------|---------|------------|
-| HU (nueva) | F-* / RN-* / NFR / ADR / TC | Plantilla `04-requeriments/_template-hu.md` |
-| Épica | Funcionalidades | `03-product-definition/product-backlog.md` |
-| NFR | Componentes | `04-requeriments/non-functional.md` |
+| HU (nueva) | F-* / RN-* / NFR / ADR / TC | Plantilla [`./_template-hu.md`](./_template-hu.md) |
+| Épica | Funcionalidades | [`../03-product-definition/product-backlog.md`](../03-product-definition/product-backlog.md) |
+| NFR | Componentes | [`./non-functional.md`](./non-functional.md) |
 
 ## Ver también
 

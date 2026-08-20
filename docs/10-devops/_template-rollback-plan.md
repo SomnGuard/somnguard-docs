@@ -29,7 +29,7 @@
 | Error rate > 5% por más de 5 min | Rollback inmediato | DevOps + Tech Lead |
 | Migración de BD fallida | Rollback inmediato | Equipo BD + Tech Lead |
 | SLO violado por más de 15 min | Rollback + postmortem | Tech Lead |
-| P0 detectado en producción | Rollback inmediato | Tech Lead |
+| P0 detectado en `main` | Rollback inmediato | Tech Lead |
 
 ## Procedimiento por componente
 
@@ -61,7 +61,7 @@ git checkout v[X.X.X-1] && mvn clean package
 
 - [ ] Healthcheck OK
 - [ ] Error rate < 1% por 10 minutos consecutivos
-- [ ] Smoke tests pasan en producción
+- [ ] Smoke tests pasan en `main`
 - [ ] Stakeholders notificados
 
 ## Comunicación

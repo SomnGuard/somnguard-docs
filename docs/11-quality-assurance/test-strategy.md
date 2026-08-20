@@ -62,7 +62,7 @@ Cada caso de prueba declara: precondición, pasos, resultado esperado y trazabil
 ## Datos de prueba
 
 - Usar siempre datos ficticios (normativa del proyecto).
-- Entornos: `local`, `develop`, `qa`.
+- Entornos: `local`, `develop`, `qa`, `main`.
 - El entorno `qa` es el punto de validación antes de `main`.
 
 ## Criterios de aceptación (DoD)

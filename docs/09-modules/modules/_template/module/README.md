@@ -66,7 +66,7 @@
 
 | Recurso | Nota |
 |---------|------|
-| `[GET /api/v1/...]` | Ver contrato en `07-api-design/contracts/` |
+| `[GET /api/v1/...]` | Ver contrato en [`../../../../07-api-design/contracts/`](../../../../07-api-design/contracts/) |
 
 ## Links
 

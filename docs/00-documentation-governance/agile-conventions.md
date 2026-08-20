@@ -25,10 +25,11 @@ Convenciones para la gestión de requerimientos y trabajo ágil del proyecto: id
 |------|----|-------------|------------|
 | Historia de usuario | `HU-<REPO>###` | Requerimiento accionable con criterios de aceptación | **GitHub Projects** (board del proyecto) |
 | Criterio de aceptación | `AC-###` | Condición verificable de una HU | Dentro de la HU |
-| Caso de prueba | `TC-###` | Prueba trazada a una HU/AC | `11-quality-assurance/test-strategy.md` |
-| Regla de negocio | `RN-##` | Regla del negocio (las ya publicadas usan `RB-##`) | `02-domain/entities-and-rules.md` |
-| Requisito no funcional | `NFR-##` | Requisito de calidad/operación | `04-requeriments/non-functional.md` |
-| Decisión de arquitectura | `ADR-###` | Decisión registrada | `05-architecture/decisions/records/` |
+| Caso de prueba | `TC-###` | Prueba trazada a una HU/AC | `../11-quality-assurance/test-strategy.md` |
+| Defecto | `BUG-###` | Defecto registrado en reporte/evidencia de QA | `../11-quality-assurance/_template-qa-report.md` |
+| Regla de negocio | `RN-##` | Regla del negocio (las ya publicadas usan `RB-##`) | `../02-domain/entities-and-rules.md` |
+| Requisito no funcional | `NFR-##` | Requisito de calidad/operación | `../04-requeriments/non-functional.md` |
+| Decisión de arquitectura | `ADR-###` | Decisión registrada | `../05-architecture/decisions/records/` |
 
 > **IDs ya publicados:** `F-01..F-10` (funcionalidades del sistema) y `RB-01..RB-10` (reglas de negocio) se conservan sin renumerar. `RB-*` equivale a `RN-*`.
 
@@ -59,11 +60,11 @@ Ejemplos:
 
 ## Criterios de aceptación (AC)
 
-Cada HU declara sus criterios `AC-###` (numerados por HU) en el campo de descripción del item de GitHub Projects. Ver la plantilla en `04-requeriments/_template-hu.md`.
+Cada HU declara sus criterios `AC-###` (numerados por HU) en el campo de descripción del item de GitHub Projects. Ver la plantilla en `../04-requeriments/_template-hu.md`.
 
 ## Casos de prueba (TC)
 
-Los casos de prueba se identifican `TC-###` y se registran en `11-quality-assurance/` (estrategia, evidencia y reportes), trazados a HU → AC → TC.
+Los casos de prueba se identifican `TC-###` y se registran en `../11-quality-assurance/` (estrategia, evidencia y reportes), trazados a HU → AC → TC.
 
 ## Severidades de incidentes y defectos
 
@@ -82,7 +83,7 @@ Los estados se manejan en GitHub Projects:
 |--------|-------------|
 | Backlog | Aceptada por producto, aún no planificada |
 | Ready | Cumple Definition of Ready |
-| In Progress | Desarrollo en curso (rama `hu-<repo>-###`) |
+| In Progress | Desarrollo en curso (rama `hu-<repo>-###-dev`) |
 | In Review | PR abierto o revisión de código |
 | In QA | Validación en ambiente `qa` |
 | Approved | Validada por QA y producto |
@@ -92,7 +93,7 @@ Los estados se manejan en GitHub Projects:
 
 Cada HU debe trazar: Funcionalidad (`F-*`) → Módulo → Reglas de negocio (`RN-*`) → Pruebas (`TC-*`) → ADR cuando aplique.
 
-Fuente de verdad de la matriz: `04-requeriments/traceability-matrix.md`.
+Fuente de verdad de la matriz: `../04-requeriments/traceability-matrix.md`.
 
 ## Ver también
 

@@ -57,7 +57,7 @@
 - [ ] Sin defectos P0 o P1 abiertos
 - [ ] Documentación actualizada
 - [ ] CHANGELOG actualizado si aplica
-- [ ] Código en rama `release/` o mergeado a `develop`
+- [ ] Código en rama `hu-<repo>-###-<ambiente>` o mergeado a `develop`
 
 ## Referencias
 

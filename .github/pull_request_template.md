@@ -24,8 +24,12 @@
 
 ## Relación con el proyecto
 
-<!-- Historia de usuario, tarea o incidencia relacionada, si aplica -->
+<!-- Historia de usuario (HU-<REPO>###), pregunta abierta (Q-###) o deuda técnica (TD-###) relacionada, si aplica -->
 
 ## Evidencias
 
 <!-- Capturas de pantalla o vistas previas, si aplica -->
+
+---
+
+_Recordatorio: ramas del repo documental `docs/*`, `fix/*` o `chore/*` hacia `develop` (ver [git-conventions](../docs/00-documentation-governance/git-conventions.md))._

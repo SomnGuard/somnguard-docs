@@ -87,7 +87,7 @@ hu-<repo>-###-main → main (producción controlada)
 
 - Definir infraestructura de despliegue (local/nube) — ver preguntas abiertas.
 - Definir estrategia de contenedores (Docker) si aplica.
-- Definir secretos y configuraciones por entorno.
+- Mover secretos a un Secret Manager cuando exista la capa de despliegue (hoy se manejan con `.env.*` fuera de git, ver [environments.md](./environments.md)).
 
 ## Ver también
 

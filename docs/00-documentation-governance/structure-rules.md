@@ -11,7 +11,7 @@
 ## Documentación de módulos del backend
 
 **Estado:** En progreso
-**Fecha:** 2026-08-16
+**Fecha:** 2026-08-19
 
 </div>
 

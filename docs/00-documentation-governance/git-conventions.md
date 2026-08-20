@@ -36,7 +36,7 @@
 | `chore` | Reorganización o renombrado | `chore/doc-move-adr-003` | `chore` |
 | `docs` | Actualización de documento existente | `docs/doc-module-catalog` | `docs` |
 
-El tipo de rama describe intención. El tipo del commit sigue Conventional Commits.
+El tipo de rama describe intención. El tipo del commit sigue Conventional Commits: aunque la rama se llame `feat/*`, los commits dentro del repositorio documental usan `docs` (no `feat`), según los tipos permitidos más abajo.
 
 ## Ramas por historia de usuario
 
