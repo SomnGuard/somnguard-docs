@@ -118,7 +118,7 @@ No crear carpetas `misc/`, `otros/`, `temp/` ni carpetas con un solo documento.
 | Tipo de recurso | Dónde va |
 |----------------|----------|
 | Fuentes UML Mermaid `.mmd` | `../08-uml/diagrams/source/` |
-| Exportaciones UML `.svg` / `.png` | `../08-uml/diagrams/exports/` |
+| Exportaciones UML `.png` (SVG solo si el renderizado lo requiere) | `../08-uml/diagrams/exports/` |
 | Logos | `../../assets/icons/` |
 | Capturas, mockups o imágenes no UML | `../../assets/images/` |
 | Diagramas UML referenciados por arquitectura | Fuente y export en `../08-uml/`, enlace desde `../05-architecture/` |
