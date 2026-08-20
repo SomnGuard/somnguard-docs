@@ -70,7 +70,7 @@ somnguard-docs/
 
 1. Copiar `_template-adr.md` a `records/ADR-NNN-titulo-corto.md`.
 2. Completar contexto, decisión, consecuencias y alternativas.
-3. Registrar en `records/README.md`.
+3. Registrar en `docs/05-architecture/decisions/README.md`.
 
 ### Documentar un módulo del backend
 
