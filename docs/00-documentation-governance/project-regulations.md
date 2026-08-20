@@ -49,7 +49,7 @@ Aplica a todo el equipo del proyecto:
 ### Archivos y carpetas
 
 - **Nombres de archivos:** `kebab-case`, minúsculas y guiones para separar palabras  
-  Ejemplo: `plan-pruebas.md`, `arquitectura-inicial.md`
+  Ejemplo: `test-plan.md`, `initial-architecture.md`
 
 ### Código
 
