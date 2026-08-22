@@ -153,7 +153,7 @@ El backend sigue una **arquitectura limpia en capas**, donde cada capa tiene una
 | **Interfaces (API)** | Recibe peticiones HTTP/REST, valida entrada, expone DTOs y respuestas. | Controladores REST, validación de solicitudes, versionado. |
 | **Application** | Orquesta los casos de uso: procesa solicitudes, aplica reglas de negocio y coordina los repositorios. | Servicios de aplicación, comandos/consultas, DTOs de entrada/salida. |
 | **Domain** | Núcleo del sistema: entidades de dominio, reglas del negocio e interfaces (contratos) independientes de tecnología. | Entidades (Usuario, Dispositivo, Evento, Alerta), interfaces de repositorio, servicios de dominio. |
-| **Infrastructure** | Implementa el acceso a datos y la integración con tecnologías externas. | Repositorios (Spring Data JPA), migraciones (Liquibase), cliente de almacenamiento multimedia, envío de notificaciones push. |
+| **Infrastructure** | Implementa el acceso a datos y la integración con tecnologías externas. | Repositorios (Spring Data JPA), cliente de almacenamiento multimedia, envío de notificaciones push. Las migraciones del esquema se gestionan con Liquibase desde el repositorio `somnguard-db`, separadas del backend. |
 
 Regla de dependencia: **las capas externas pueden depender de las internas, nunca al revés**; el dominio no conoce Spring, HTTP, JPA ni la base de datos. El mapeo de estas capas a la estructura hexagonal de paquetes está en la sección 3.2.1.
 
@@ -276,7 +276,7 @@ El backend (monolito modular) se organiza en **seis** módulos que replican la e
 | Edge | Análisis | Python | Detección de patrones de fatiga/somnolencia por visión. |
 | Edge | Alertas | Altavoz / Python | Reproducción de alertas sonoras configuradas. |
 | Edge | Sincronización | Agente (Python/HTTP) | Cola local y envío asíncrono de eventos y evidencia. |
-| Cloud | API | Java 21 / Spring Boot 3.x | Exposición REST, aplicación de reglas de negocio y persistencia. |
+| Cloud | API | Java 21 / Spring Boot 4.1.1 | Exposición REST, aplicación de reglas de negocio y persistencia. |
 | Cloud | Base de datos | PostgreSQL + Liquibase | Almacenamiento relacional versionado. |
 | Cloud | Multimedia | Almacenamiento de objetos | Persistencia de imágenes/videos de evidencia. |
 | Cloud | Portal web | React JS | Gestión de cuentas, dispositivos, consulta de eventos y reportes. |
@@ -522,7 +522,7 @@ El dispositivo a bordo no posee interfaz gráfica en esta versión; su interfaz 
 | Aspecto | Especificación |
 |---------|----------------|
 | Lenguaje | Java 21 (LTS) |
-| Framework | Spring Boot 3.x |
+| Framework | Spring Boot 4.1.1 |
 | Build | Maven |
 | Arquitectura | Monolito modular con arquitectura hexagonal por módulo (ADR-002) |
 | Base de datos | PostgreSQL |

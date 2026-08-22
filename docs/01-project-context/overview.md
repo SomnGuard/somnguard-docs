@@ -36,7 +36,7 @@ Un sistema integral edge-cloud: el dispositivo detecta en el vehículo (sin depe
 | Componente | Tecnología | Rol |
 |------------|------------|-----|
 | Dispositivo (edge) | Raspberry Pi + cámara + Python | Captura, detección, alerta sonora, buffer offline |
-| Backend | Java 21 + Spring Boot 3.x (Maven) | API central, monolito modular hexagonal |
+| Backend | Java 21 + Spring Boot 4.1.1 (Maven) | API central, monolito modular hexagonal |
 | Base de datos | PostgreSQL + Liquibase | Persistencia estructurada |
 | Multimedia | MinIO/S3 | Evidencia multimedia (fuera de la BD) |
 | Portal web | React JS | Descarga de app, administración, dashboard |

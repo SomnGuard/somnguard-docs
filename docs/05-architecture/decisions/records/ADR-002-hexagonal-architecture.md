@@ -9,7 +9,7 @@
 
 ## Contexto
 
-El ADR-001 define el backend como un monolito modular en Java 21 + Spring Boot 3.x con principios de clean architecture, pero sin formalizar cómo se estructuran los módulos ni cómo se organizan los paquetes. El documento de arquitectura proponía una división genérica por capas (`interfaces`, `application`, `domain`, `infrastructure`), que en la práctica no garantiza que el dominio quede aislado de Spring, JPA o HTTP.
+El ADR-001 define el backend como un monolito modular en Java 21 + Spring Boot 4.1.1 con principios de clean architecture, pero sin formalizar cómo se estructuran los módulos ni cómo se organizan los paquetes. El documento de arquitectura proponía una división genérica por capas (`interfaces`, `application`, `domain`, `infrastructure`), que en la práctica no garantiza que el dominio quede aislado de Spring, JPA o HTTP.
 
 Además, el proyecto cuenta con una referencia de microservicio Go (`internal/`) que ya usa una estructura de puertos y adaptadores explícita (`application/port/in`, `application/port/out`, `application/usecase`, `domain/model`, `domain/service`, `adapter/in`, `adapter/out`, `platform`), lo que genera dos convenciones distintas para el mismo concepto.
 

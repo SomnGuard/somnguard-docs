@@ -60,7 +60,7 @@ Se presentó la visión del proyecto **SomnGuard**: un sistema integral (softwar
 
 Se confirmó la disponibilidad de recursos (equipo 4 full-stack) y la fecha límite: **Agosto 2026** para entrega final.
 
-> **Nota histórica (2026-08-20):** el stack acordado en este kickoff fue C#/.NET. El 2026-08-16 se decidió migrar el backend a **Java 21 (Spring Boot 3.x, Maven)**, manteniendo el resto del stack sin cambios — ver [ADR-001](../../05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md).
+> **Nota histórica (2026-08-20):** el stack acordado en este kickoff fue C#/.NET. El 2026-08-16 se decidió migrar el backend a **Java 21 (Spring Boot 4.1.1, Maven)**, manteniendo el resto del stack sin cambios — ver [ADR-001](../../05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md).
 
 > **Nota histórica (2026-08-20):** el canal de coordinación se confirmó posteriormente como **Discord** (pregunta QR-007, RESUELTA — ver [open-questions.md](../open-questions.md)).
 

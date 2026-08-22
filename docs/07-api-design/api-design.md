@@ -17,7 +17,7 @@
 
 </div>
 
-Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 3.x). Documento de trabajo: los contratos definitivos se validarán con las decisiones registradas en `../05-architecture/decisions/` y las preguntas abiertas de `../15-project-control/open-questions.md`.
+Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1). Documento de trabajo: los contratos definitivos se validarán con las decisiones registradas en `../05-architecture/decisions/` y las preguntas abiertas de `../15-project-control/open-questions.md`.
 
 ## Convenciones generales
 
@@ -49,6 +49,7 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 3.x). 
 | POST | `/api/v1/auth/password-reset` | Solicitar recuperación de contraseña |
 | POST | `/api/v1/auth/password-reset/confirm` | Confirmar recuperación con token |
 | POST | `/api/v1/users` | Crear usuario |
+| GET | `/api/v1/users` | Listar usuarios |
 | GET | `/api/v1/users/{id}` | Consultar usuario |
 | PUT | `/api/v1/users/{id}` | Actualizar usuario |
 | DELETE | `/api/v1/users/{id}` | Eliminar cuenta (con retención) |

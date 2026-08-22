@@ -68,7 +68,7 @@ Toda query de lectura sobre tablas transaccionales filtra por defecto `WHERE del
 
 - **Sin `ENUM` nativo de Postgres** (dificulta migraciones).
 - **Acciones referenciales**: cada FK declara `ON UPDATE`/`ON DELETE`. Por defecto: catálogo/padre → `RESTRICT`; hijo de agregado (composición) → `CASCADE`; FK opcional → `SET NULL`.
-- **Nomenclatura de constraints**: `pk_<tabla>`, `uq_<tabla>_<cols>`, `fk_<tabla>_<ref>`, `ck_<tabla>_<regla>`, `ix_<tabla>_<cols>`.
+- **Nomenclatura de constraints**: `pk_<tabla>` o el nombre automático de PostgreSQL (`<tabla>_pkey`), `uq_<tabla>_<cols>`, `fk_<tabla>_<ref>`, `ck_<tabla>_<regla>`, `ix_<tabla>_<cols>`.
 - **PK**: UUID v4 en todas las tablas.
 - **Timestamps**: siempre `TIMESTAMPTZ` (UTC); la conversión a hora local es de la capa de presentación.
 
@@ -78,19 +78,20 @@ Los changelogs se organizan en carpetas numeradas que definen el orden de ejecuc
 
 ```
 01_ddl/
-  00_extensions/   -- CREATE EXTENSION (pgcrypto / gen_random_uuid)
+  00_extensions/   -- (no extensiones requeridas; gen_random_uuid() es nativa en PostgreSQL 16)
   01_schemas/      -- CREATE SCHEMA del módulo
   02_types/        -- DOMAIN / tipos (si aplica)
   03_tables/       -- CREATE TABLE (SIN llaves foráneas)
   04_alter/        -- ALTER TABLE ... ADD CONSTRAINT (llaves foráneas)
   05_views/        -- vistas
-  06_functions/    -- funciones
-  07_procedures/   -- procedimientos
-  08_triggers/     -- triggers
+  06_materialized_views/  -- vistas materializadas
+  07_functions/    -- funciones
+  08_procedures/   -- procedimientos
+  09_triggers/     -- triggers
   10_indexes/      -- índices (incluye un índice por cada FK)
 02_dml/            -- datos semilla (seeds), con control de duplicados
 03_dcl/            -- roles y GRANT/REVOKE (least-privilege)
-04_tcl/            -- tags de versión / release
+04_tcl/            -- bloques transaccionales y recuperaciones manuales
 05_rollbacks/      -- rollbacks espejo de cada changeset
 ```
 

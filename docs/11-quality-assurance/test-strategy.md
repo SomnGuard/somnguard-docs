@@ -28,7 +28,7 @@ Garantizar la calidad del sistema desde el inicio, con un enfoque incremental: c
 | Nivel | Alcance | Herramienta propuesta | Prioridad |
 |-------|---------|----------------------|-----------|
 | Unitarias | Lógica de dominio y casos de uso del backend | JUnit 5 + Mockito (Maven) | Alta |
-| Integración | Persistencia con PostgreSQL, repositorios y migraciones Liquibase | Spring Boot Test + Testcontainers | Alta |
+| Integración | Persistencia con PostgreSQL, repositorios y migraciones Liquibase (changelogs de `somnguard-db`) | Spring Boot Test + Testcontainers | Alta |
 | API | Contratos REST de la API | Spring MockMvc / TestRestTemplate | Media |
 | Frontend web | Componentes React JS | Jest + React Testing Library | Media |
 | Móvil | Componentes React Native | Jest (React Native Testing Library) | Media |

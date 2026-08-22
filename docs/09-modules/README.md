@@ -19,7 +19,7 @@
 
 ## Contenido
 
-Catálogo de módulos del backend. SomnGuard es un monolito modular en Java 21 (Spring Boot 3.x, Maven) —no microservicios—; cada módulo agrupa un dominio funcional con sus entidades.
+Catálogo de módulos del backend. SomnGuard es un monolito modular en Java 21 (Spring Boot 4.1.1, Maven) —no microservicios—; cada módulo agrupa un dominio funcional con sus entidades.
 
 | Archivo | Descripción | Estado |
 |---------|-------------|--------|

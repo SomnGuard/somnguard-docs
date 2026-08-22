@@ -146,6 +146,7 @@ Registro de intentos de autenticación.
 | ip_address | VARCHAR(45) | Dirección IP del intento (IPv4/IPv6). |
 | user_agent | TEXT | User agent del cliente. |
 | attempted_at | TIMESTAMPTZ | Fecha y hora del intento. |
+| created_by | UUID | Actor que registró el intento (→ user.id o SYSTEM_ACTOR_ID). |
 
 ---
 
@@ -171,7 +172,7 @@ Define los niveles de severidad.
 | id | UUID PK | Identificador único. |
 | code | VARCHAR(20) | Código de la severidad. |
 | name | VARCHAR(50) | Nombre de la severidad. |
-| priority | SMALLINT | Prioridad numérica (mayor = más crítico). |
+| priority | SMALLINT | Prioridad numérica (mayor = más crítico). CHECK (1..10). |
 
 ### media_type
 
@@ -270,7 +271,7 @@ Archivos asociados a un evento.
 | id | UUID PK | Identificador único. |
 | event_id | UUID FK | Evento asociado (→ event.id). |
 | media_type_id | UUID FK | Tipo de medio (→ media_type.id). |
-| file_url | TEXT | Referencia al archivo en el almacenamiento multimedia. |
+| file_url | TEXT NOT NULL | Referencia al archivo en el almacenamiento multimedia. |
 
 ### alert_log
 
