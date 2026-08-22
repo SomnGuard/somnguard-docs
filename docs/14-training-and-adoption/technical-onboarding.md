@@ -19,11 +19,11 @@
 
 Guía de entrada para nuevos integrantes técnicos del proyecto **SomnGuard**. Al terminar deberías poder clonar los repos, entender la arquitectura, levantar el entorno local y hacer tu primer cambio.
 
-> **Estado real del proyecto:** existen la documentación (somnguard-docs) y el esqueleto del backend (somnguard-api, Java 21 + Spring Boot 3.x, estructura hexagonal). La capa de aplicación está en construcción. Complementa a [local-setup.md](../10-devops/local-setup.md).
+> **Estado real del proyecto:** existen la documentación (somnguard-docs) y el esqueleto del backend (somnguard-api, Java 21 + Spring Boot 4.1.1, estructura hexagonal). La capa de aplicación está en construcción. Complementa a [local-setup.md](../10-devops/local-setup.md).
 
 ## 1. Qué es el sistema (en una página)
 
-Sistema de **prevención de accidentes por fatiga o somnolencia al volante**: un dispositivo edge (Raspberry Pi + cámara) detecta estados de riesgo con visión por computadora, emite alertas sonoras inmediatas y sincroniza eventos con evidencia multimedia a un backend central (monolito modular hexagonal, Java 21 + Spring Boot 3.x). Los clientes (portal web React JS y app móvil React Native) permiten consultar eventos, recibir notificaciones y administrar cuentas, dispositivos y catálogos.
+Sistema de **prevención de accidentes por fatiga o somnolencia al volante**: un dispositivo edge (Raspberry Pi + cámara) detecta estados de riesgo con visión por computadora, emite alertas sonoras inmediatas y sincroniza eventos con evidencia multimedia a un backend central (monolito modular hexagonal, Java 21 + Spring Boot 4.1.1). Los clientes (portal web React JS y app móvil React Native) permiten consultar eventos, recibir notificaciones y administrar cuentas, dispositivos y catálogos.
 
 Vocabulario mínimo: **dispositivo** (Raspberry Pi + cámara en campo), **evento** (detección registrada), **evidencia** (multimedia del evento), **alerta** (aviso local del dispositivo), **notificación** (mensaje hacia la cuenta). Diccionario completo en el [glosario](../02-domain/glossary.md).
 
@@ -62,13 +62,16 @@ adapter/in/{web,amqp}       adapter/out/{persistence,storage}
 ## 4. Levantar el entorno local
 
 ```bash
-# 1) Levantar Postgres para el ambiente de desarrollo
-docker compose --env-file .env.develop up postgres -d
+# 1) Levantar Postgres para el ambiente de desarrollo (repositorio somnguard-db)
+docker compose --env-file .env.develop up -d postgres
 
-# 2) Levantar el backend (aplica migraciones Liquibase al arrancar)
+# 2) Aplicar las migraciones (repositorio somnguard-db, separadas del backend)
+docker compose --env-file .env.develop run --rm --build liquibase update
+
+# 3) Levantar el backend (repositorio somnguard-api)
 mvn spring-boot:run -Dspring-boot.run.profiles=develop
 
-# 3) Verificar
+# 4) Verificar
 # Healthcheck: http://localhost:8080/health
 ```
 
@@ -77,7 +80,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=develop
 ### Rollback y limpieza (solo local)
 
 ```bash
-mvn liquibase:rollback -Dliquibase.rollbackCount=1 -Dspring-boot.run.profiles=develop
+docker compose --env-file .env.develop run --rm liquibase rollback-count 1     # repositorio somnguard-db
 docker compose --env-file .env.develop down          # apagar
 docker compose --env-file .env.develop down -v       # reinicio limpio
 ```

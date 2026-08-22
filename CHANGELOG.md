@@ -52,7 +52,7 @@
   - La documentación anterior por fases (00-08) se conservó completa en `docs/99-archive/deprecated/previous-structure/`.
   - La primera versión del modelo de datos (ER conceptual, ER relacional y diccionario) se archivó en `docs/99-archive/deprecated/data-model-v1/`.
   - Se estandarizaron los encabezados de los documentos migrados y se actualizaron referencias de rutas en normativa, metodología, arquitectura y actas.
-- **Migración del backend a Java:** se actualizó toda la documentación vigente de C#/.NET a **Java 21 + Spring Boot 3.x (Maven)**:
+- **Migración del backend a Java:** se actualizó toda la documentación vigente de C#/.NET a **Java 21 + Spring Boot 4.1.1 (Maven)**:
   - Documento de arquitectura, normativa (convenciones de lenguaje), metodología, reglas de estructura, catálogo de módulos y acta de kick-off.
   - Se registró la decisión como [ADR-001](docs/05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md).
   - El resto del stack (Python, PostgreSQL, Liquibase, React JS, React Native, Raspberry Pi) se mantiene sin cambios.

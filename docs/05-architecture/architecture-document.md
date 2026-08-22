@@ -19,7 +19,7 @@
 
 </div>
 
-> **Actualización de stack (2026-08-16):** el backend se migra de C#/.NET a **Java 21 con Spring Boot 3.x (Maven)**. Ver [ADR-001: Backend en Java Spring Boot](./decisions/records/ADR-001-backend-java-spring-boot.md).
+> **Actualización de stack (2026-08-16):** el backend se migra de C#/.NET a **Java 21 con Spring Boot 4.1.1 (Maven)**. Ver [ADR-001: Backend en Java Spring Boot](./decisions/records/ADR-001-backend-java-spring-boot.md).
 >
 > **Actualización de arquitectura (2026-08-19):** el backend se estructura con **arquitectura hexagonal (puertos y adaptadores)** dentro del monolito modular. Ver [ADR-002: Arquitectura hexagonal en el backend](./decisions/records/ADR-002-hexagonal-architecture.md).
 
@@ -37,7 +37,7 @@ SomnGuard se concibe como un sistema integral de software y hardware para monito
 
 - Plataforma web para descarga de la app, acceso de administradores y dashboard de consulta.
 - App móvil para usuario final.
-- Backend en Java 21 (Spring Boot 3.x, Maven) como API principal.
+- Backend en Java 21 (Spring Boot 4.1.1, Maven) como API principal.
 - Dispositivo Raspberry Pi con cámara y software local de captura y visión.
 - Base de datos PostgreSQL administrada con Liquibase.
 - Servicio externo o independiente para almacenamiento de evidencia multimedia.
@@ -89,7 +89,7 @@ La forma de trabajo recomendada para el backend es un monolito modular con princ
 
 ### 5.1 Backend
 
-El backend se define como un monolito modular en Java 21 con Spring Boot 3.x, organizado por dominios funcionales con arquitectura hexagonal (puertos y adaptadores) por módulo (ver ADR-002).
+El backend se define como un monolito modular en Java 21 con Spring Boot 4.1.1, organizado por dominios funcionales con arquitectura hexagonal (puertos y adaptadores) por módulo (ver ADR-002).
 
 ### 5.2 Frontend
 
@@ -251,9 +251,10 @@ somnguard-db/
 │   ├── 03_tables/
 │   ├── 04_alter/
 │   ├── 05_views/
-│   ├── 06_functions/
-│   ├── 07_procedures/
-│   ├── 08_triggers/
+│   ├── 06_materialized_views/
+│   ├── 07_functions/
+│   ├── 08_procedures/
+│   ├── 09_triggers/
 │   └── 10_indexes/
 ├── 02_dml/
 │   ├── 00_inserts/
@@ -267,8 +268,7 @@ somnguard-db/
 │   └── 02_policies/
 ├── 04_tcl/
 │   ├── 00_transaction_blocks/
-│   ├── 01_manual_recoveries/
-│   └── 02_release_tags/
+│   └── 01_manual_recoveries/
 └── 05_rollbacks/
 	├── 01_ddl/
 	├── 02_dml/
@@ -287,6 +287,7 @@ La arquitectura de datos se alinea con los módulos ya definidos en el proyecto 
 - **device-management:** device, device_assignment, device_config.
 - **telemetry-service:** event, evidence, alert_log.
 - **monitoring:** notification.
+- **analytics:** vistas/reportes derivados (sin entidades transaccionales).
 
 ## 10. Autenticación y autorización
 

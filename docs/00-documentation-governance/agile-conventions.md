@@ -44,7 +44,7 @@ Las HU se gestionan exclusivamente en **GitHub Projects**:
 | Prefijo | Repo / componente |
 |---------|-------------------|
 | `HU-DEVICE-###` | Dispositivo edge (Raspberry Pi + cámara, Python) |
-| `HU-API-###` | Backend (Java 21 + Spring Boot 3.x, Maven) |
+| `HU-API-###` | Backend (Java 21 + Spring Boot 4.1.1, Maven) |
 | `HU-DB-###` | Base de datos (PostgreSQL + Liquibase) |
 | `HU-APP-###` | App móvil (React Native) |
 | `HU-PORTAL-###` | Portal web (React JS) |

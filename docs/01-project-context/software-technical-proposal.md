@@ -120,7 +120,7 @@ La propuesta contempla el desarrollo completo de ambos entornos, la integración
 | Criterio | Decisión | Justificación |
 |----------|----------|---------------|
 | Procesamiento en el edge | Raspberry Pi + Python | Detección en tiempo real sin depender de conectividad; latencia mínima para la alerta al conductor. |
-| Backend | Java 21 + Spring Boot 3.x + Maven | Madurez, ecosistema, rendimiento y productividad (ver ADR-001). |
+| Backend | Java 21 + Spring Boot 4.1.1 + Maven | Madurez, ecosistema, rendimiento y productividad (ver ADR-001). |
 | Monolito modular | Un artefacto, 6 módulos | Menor complejidad operativa que microservicios para un sistema de tamaño medio (ver ADR-001). |
 | Base de datos | PostgreSQL + Liquibase | Motor relacional robusto y migraciones versionadas de esquema. |
 | Portal web | React JS | SPA responsive de fácil mantenimiento y amplio ecosistema. |
@@ -134,10 +134,10 @@ La propuesta contempla el desarrollo completo de ambos entornos, la integración
 | Componente | Tecnología | Versión | Propósito |
 |------------|------------|---------|-----------|
 | Backend | Java (LTS) | 21 | Lenguaje del backend |
-| Backend | Spring Boot | 3.x | Framework de la API |
+| Backend | Spring Boot | 4.1.1 | Framework de la API |
 | Backend | Maven | 3.9+ | Gestión de dependencias y build |
-| Backend | Spring Security + JWT | 3.x | Autenticación y autorización |
-| Backend | Liquibase | 4.x | Migraciones de base de datos |
+| Backend | Spring Security + JWT | 7.x (emparejado con Spring Boot 4.1.1) | Autenticación y autorización |
+| Base de datos | Liquibase | 4.x | Migraciones versionadas de esquema (repo `somnguard-db`) |
 | Base de datos | PostgreSQL | 16+ | Almacenamiento relacional |
 | Portal web | React JS | 18+ | Aplicación web (SPA) |
 | App móvil | React Native | 0.7x | Aplicación móvil multiplataforma (versión a fijar en la iteración técnica) |

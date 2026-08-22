@@ -15,12 +15,12 @@ El backend es el componente central de la plataforma: centraliza autenticación,
 
 ## Decisión
 
-Se decide implementar el backend de SomnGuard en **Java 21 (LTS) con Spring Boot 3.x y Maven**, organizado como monolito modular con principios de clean architecture.
+Se decide implementar el backend de SomnGuard en **Java 21 (LTS) con Spring Boot 4.1.1 y Maven**, organizado como monolito modular con principios de clean architecture.
 
 Detalles de la decisión:
 
 - **Lenguaje:** Java 21 (LTS), versión soportada de largo plazo.
-- **Framework:** Spring Boot 3.x (Spring Web, Spring Security, Spring Data JPA, Spring Validation).
+- **Framework:** Spring Boot 4.1.1 (Spring Web, Spring Security, Spring Data JPA, Spring Validation).
 - **Build tool:** Maven (`pom.xml`).
 - **Base de datos:** PostgreSQL, sin cambios.
 - **Migraciones:** Liquibase, sin cambios.

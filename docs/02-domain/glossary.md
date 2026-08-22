@@ -43,7 +43,7 @@ Glosario de términos del dominio y técnicos utilizados en la documentación de
 
 | Término | Significado |
 |---------|-------------|
-| Backend | API central del sistema; monolito modular en Java 21 (Spring Boot 3.x, Maven). |
+| Backend | API central del sistema; monolito modular en Java 21 (Spring Boot 4.1.1, Maven). |
 | Monolito modular | Aplicación con un solo despliegue, organizada internamente por dominios (módulos). |
 | Clean architecture | Estilo de organización con dependencias hacia adentro: el dominio no conoce frameworks, HTTP ni la base de datos. |
 | Arquitectura hexagonal (puertos y adaptadores) | Formalización de la clean architecture por módulo: puertos de entrada (`port/in`) y salida (`port/out`), casos de uso (`usecase`), dominio (`model`, `service`) y adaptadores (`adapter/in`, `adapter/out`); ver ADR-002. |

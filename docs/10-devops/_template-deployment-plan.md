@@ -53,7 +53,7 @@
 | Orden | Paso | Comando / Acción | Responsable | Verificación |
 |-------|------|-----------------|-------------|--------------|
 | 1 | Backup de BD | | DBA | Backup confirmado |
-| 2 | Aplicar migraciones | `mvn liquibase:update` | DevOps | `db-status` OK |
+| 2 | Aplicar migraciones | `docker compose --env-file .env.<ambiente> run --rm --build liquibase update` (repo `somnguard-db`) | DevOps | `db-status` OK |
 | 3 | Desplegar backend | | DevOps | Healthcheck OK |
 | 4 | Smoke test | | QA | Tests pasan |
 | 5 | Activar tráfico | | DevOps | Métricas estables |

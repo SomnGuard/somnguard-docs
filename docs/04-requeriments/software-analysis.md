@@ -60,7 +60,7 @@ El análisis cubre los componentes de software de SomnGuard: plataforma cloud (b
 SomnGuard es un sistema de prevención de accidentes por fatiga o somnolencia al volante, compuesto por:
 
 - **Dispositivo edge**: cámara y procesador embebido (Raspberry Pi) que monitorea al conductor, detecta estados de riesgo mediante visión por computadora (Python) y emite alertas sonoras inmediatas.
-- **Plataforma cloud**: backend monolito modular (Java 21 + Spring Boot 3.x), base de datos PostgreSQL, portal web (React JS) y app móvil (React Native), que almacenan los eventos sincronizados, permiten su consulta/análisis y gestionan cuentas, dispositivos y catálogos.
+- **Plataforma cloud**: backend monolito modular (Java 21 + Spring Boot 4.1.1), base de datos PostgreSQL, portal web (React JS) y app móvil (React Native), que almacenan los eventos sincronizados, permiten su consulta/análisis y gestionan cuentas, dispositivos y catálogos.
 
 Funcionalidades principales (detalle en [product backlog](../03-product-definition/product-backlog.md)):
 
@@ -133,7 +133,7 @@ Cada módulo se organiza con arquitectura hexagonal (puertos y adaptadores): `ap
 | Entorno | Componente | Tecnología |
 |---------|------------|------------|
 | Edge | Captura, análisis de visión, alertas, agente de sincronización | Raspberry Pi, Python |
-| Cloud | API REST, base de datos, almacenamiento multimedia, notificaciones | Java 21, Spring Boot 3.x, PostgreSQL, Liquibase |
+| Cloud | API REST, base de datos, almacenamiento multimedia, notificaciones | Java 21, Spring Boot 4.1.1, PostgreSQL, Liquibase |
 | Clientes | Portal web, app móvil | React JS, React Native |
 
 ---

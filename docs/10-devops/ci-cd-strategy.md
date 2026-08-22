@@ -22,7 +22,7 @@ Estrategia de integración y despliegue continuo del proyecto, alineada con la m
 ## Herramienta
 
 - **GitHub Actions** como orquesta de CI/CD.
-- **Maven** para build y ejecución de pruebas del backend (Java 21 / Spring Boot 3.x).
+- **Maven** para build y ejecución de pruebas del backend (Java 21 / Spring Boot 4.1.1).
 - Gestión de secretos mediante GitHub Secrets (nunca credenciales en el repositorio).
 
 ## Flujo de ramas

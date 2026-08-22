@@ -53,7 +53,7 @@ Aplica a todo el equipo del proyecto:
 
 ### Código
 
-- **Lenguaje principal:** Java 21 (Spring Boot 3.x)
+- **Lenguaje principal:** Java 21 (Spring Boot 4.1.1)
 - **Java:** `camelCase` para variables y métodos; `PascalCase` para clases, interfaces y tipos
 - **Constantes:** MAYÚSCULAS_CON_GUIONES
 

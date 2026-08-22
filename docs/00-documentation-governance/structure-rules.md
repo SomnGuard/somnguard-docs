@@ -17,7 +17,7 @@
 
 </div>
 
-SomnGuard se implementa como un **monolito modular** en Java 21 con Spring Boot 3.x (Maven) con arquitectura limpia formalizada como **hexagonal (puertos y adaptadores)** por módulo, con `platform` transversal fuera de los módulos (ver `../05-architecture/architecture-document.md` y ADR-002). No se orienta a microservicios. Este documento establece los lineamientos para documentar los módulos del backend.
+SomnGuard se implementa como un **monolito modular** en Java 21 con Spring Boot 4.1.1 (Maven) con arquitectura limpia formalizada como **hexagonal (puertos y adaptadores)** por módulo, con `platform` transversal fuera de los módulos (ver `../05-architecture/architecture-document.md` y ADR-002). No se orienta a microservicios. Este documento establece los lineamientos para documentar los módulos del backend.
 
 ## Regla crítica
 
