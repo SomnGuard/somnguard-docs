@@ -27,7 +27,7 @@ Modelo de datos vigente del sistema. Este modelo es la **fuente de verdad** para
 | [02-modules-entities.md](./02-modules-entities.md) | Módulos, entidades y atributos con convenciones | Estable |
 | [02-relational-model.mmd](./02-relational-model.mmd) | Esquema relacional implementable del modelo vigente | En progreso |
 | [03-data-dictionary.md](./03-data-dictionary.md) | Diccionario de datos del modelo vigente | En progreso |
-| [modeling-conventions.md](./modeling-conventions.md) | Convenciones de modelado: auditoría, estados, Liquibase | En progreso |
+| [data-dictionary.md](../../data-dictionary.md) | Diccionario de datos unificado (v2026-08-22, 20 entidades + 3 catálogos de estado + ADR-009) | Borrador |
 
 ## Convenciones del modelo
 
