@@ -21,8 +21,7 @@ Convenciones transversales del modelo de datos de SomnGuard. Aplica a las 20 ent
 
 ## 1. Estándar de auditoría (columnas obligatorias)
 
-### Tablas transaccionales (todas)
-
+### Tablas transaccionales con UPDATE concurrente (user, device, device_config, notification, device_assignment, event_type)
 | Columna | Tipo | Nullable | Descripción |
 |---------|------|----------|-------------|
 | `created_at` | TIMESTAMPTZ | No | Momento de creación (UTC) |
@@ -31,7 +30,29 @@ Convenciones transversales del modelo de datos de SomnGuard. Aplica a las 20 ent
 | `created_by` | UUID | No | Usuario que creó (FK `user.id` o `SYSTEM_ACTOR_ID`) |
 | `updated_by` | UUID | No | Último usuario que modificó (FK `user.id` o `SYSTEM_ACTOR_ID`) |
 | `deleted_by` | UUID | Sí | Usuario que eliminó (FK `user.id` o `SYSTEM_ACTOR_ID`) |
-| `is_active` | BOOLEAN | No | Habilitado/deshabilitado sin eliminar (DEFAULT true) |
+| `version` | INTEGER | No | Optimistic locking (empezar en 1) |
+| `is_active` | BOOLEAN | No | **Campo de soft delete** — por defecto TRUE. FALSE = inactivo. |
+| `status` | VARCHAR(50) | SÍ | NULL | **Estado de negocio** — solo en `parameterization.event_type` (tiene FK a `parameterization.status`). En las demás tablas (user, device, notification) NULL = no aplica. Esta columna no es obligatoria en la base de datos. |
+| `status_category` | VARCHAR(30) | SÍ | NULL | **Categoría de estado** — solo en `parameterization.event_type` (tiene FK a `parameterization.status_category`). En las demás tablas NULL = no aplica. No es obligatoria en la base de datos. |
+
+### Tablas transaccionales solo INSERT / append-only (event, evidence, alert_log, audit_login, password_reset_request, device_config_history)
+| Columna | Tipo | Nullable | Descripción |
+|---------|------|----------|-------------|
+| `created_at` | TIMESTAMPTZ | No | Momento de creación (UTC) |
+| `created_by` | UUID | Sí | Usuario/Device que creó (FK `user.id` o `device.id`) |
+| `is_active` | BOOLEAN | No | **Soft delete** — por defecto TRUE. FALSE = inactivo. — controla eliminación lógica. |
+| `status` | VARCHAR(50) | SÍ | NULL | **Estado de negocio** — solo en `parameterization.event_type` (tiene FK a `parameterization.status`). En las demás tablas NULL = no aplica. No es columna base. |
+| `status_category` | VARCHAR(30) | SÍ | NULL | **Categoría de estado** — solo en `parameterization.event_type` (tiene FK a `parameterization.status_category`). En las demás tablas NULL = no aplica. No es columna base. |
+
+### Tablas catálogo (parameterization + security.role/module/feature/role_feature)
+| Columna | Tipo | Nullable | Descripción |
+|---------|------|----------|-------------|
+| `created_at` | TIMESTAMPTZ | No | Momento de creación (UTC) |
+| `created_by` | UUID | Sí | Usuario que creó (seed = SYSTEM_ACTOR_ID) |
+| `updated_at` | TIMESTAMPTZ | No | Última modificación (UTC) |
+| `updated_by` | UUID | Sí | Usuario que modificó |
+
+> **Nota:** Catálogos no llevan soft delete (`deleted_at`/`deleted_by`/`version`); se desactivan con `is_active = false` en `event_type` o no se modifican (role, module, feature, status_category, status, status_transition).
 
 ### Actor de sistema
 
@@ -41,14 +62,6 @@ Las acciones automáticas (workers, jobs, seeds) usan el UUID reservado:
 SYSTEM_ACTOR_ID = 00000000-0000-0000-0000-000000000000
 ```
 
-### Tablas catálogo (parameterization)
-
-Solo requieren `created_at`, `updated_at`, `is_active`. No llevan soft delete: un valor de catálogo se desactiva con `is_active = false`, no se elimina.
-
-### Tablas append-only
-
-`audit_login` y similares conservan únicamente su timestamp de inserción. No tienen `updated_*`, `deleted_*` ni `is_active`: son inmutables por definición.
-
 ### Regla de consulta
 
 Toda query de lectura sobre tablas transaccionales filtra por defecto `WHERE deleted_at IS NULL`.
@@ -57,19 +70,22 @@ Toda query de lectura sobre tablas transaccionales filtra por defecto `WHERE del
 
 | Concepto | Qué representa | Cómo se modela |
 |----------|----------------|----------------|
-| Ciclo de vida del registro | ¿La fila existe y está habilitada? | `is_active` + `deleted_at` (soft delete) |
-| Estado de negocio | Posición en una máquina de estados (ej. estados del dispositivo en `device`, del evento en `event`) | FK a catálogo parametrizable (vía `parameterization`) o `VARCHAR + CHECK` según decisión |
-| Enum técnico cerrado | Conjunto fijo e inmutable (ej. `media_type`, `severity`) | Catálogo `parameterization` o `VARCHAR + CHECK` |
+| Ciclo de vida del registro | ¿La fila existe y está habilitada? | `deleted_at` IS NULL (activo) / `is_active = FALSE` (inactivo) / timestamp (eliminado) — `is_active` es el campo de soft delete en todas las tablas |
+| Estado de negocio | Posición en una máquina de estados (ej. estados del dispositivo en `device`, del evento en `event`) | FK a catálogo parametrizable: `status` + `status_category` (ADR-009) — **solo en 5 tablas core** |
+| Enum técnico cerrado | Conjunto fijo e inmutable (ej. `media_type`, `severity`, `event_category`) | Catálogo `parameterization` (inmutables, solo `created_at`/`updated_at`/`created_by`/`updated_by`) |
 
-> Regla de oro: un registro puede estar `is_active = true` (habilitado) y a la vez tener un estado de negocio intermedio. Son ejes ortogonales.
-> Nota: los estados de negocio de SomnGuard se modelan con los catálogos de `parameterization` (`event_category`, `severity`, `media_type`, `sound_pattern`, `event_type`); la decisión de introducir `status` genérico parametrizable queda abierta (ver [open-questions.md](../15-project-control/open-questions.md)).
+> **Regla de oro:** el soft delete (`is_active = FALSE` / `deleted_at IS NULL`) y el estado de negocio (`status`/`status_category`) son ejes ortogonales.
+> **Estado actual en la BD:**
+> - `is_active` BOOLEAN es el campo de soft delete **en todas las tablas** (por defecto TRUE).
+> - `status` + `status_category` VARCHARs solo existen en `parameterization.event_type` (catálogo de estados). No están en user, device, event, notification como columnas base.
+> - Las 5 tablas objetivo de ADR-009 (`security.user`, `device_management.device`, `telemetry_service.event`, `device_management.device_config`, `monitoring.notification`) tendrán `status`+`status_category` en futuras migraciones, pero por ahora usan `is_active` para estado.
 
 ## 3. Otras convenciones (vigentes)
 
 - **Sin `ENUM` nativo de Postgres** (dificulta migraciones).
 - **Acciones referenciales**: cada FK declara `ON UPDATE`/`ON DELETE`. Por defecto: catálogo/padre → `RESTRICT`; hijo de agregado (composición) → `CASCADE`; FK opcional → `SET NULL`.
 - **Nomenclatura de constraints**: `pk_<tabla>` o el nombre automático de PostgreSQL (`<tabla>_pkey`), `uq_<tabla>_<cols>`, `fk_<tabla>_<ref>`, `ck_<tabla>_<regla>`, `ix_<tabla>_<cols>`.
-- **PK**: UUID v4 en todas las tablas.
+- **PK**: UUID v7 (generado en app, no en BD) en todas las tablas.
 - **Timestamps**: siempre `TIMESTAMPTZ` (UTC); la conversión a hora local es de la capa de presentación.
 
 ## 4. Estructura DDL y orden de aplicación (Liquibase)

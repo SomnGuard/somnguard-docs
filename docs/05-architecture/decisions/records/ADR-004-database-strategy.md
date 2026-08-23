@@ -59,14 +59,15 @@ Necesitamos una estrategia de base de datos que:
 ### 4. Convenciones de Modelado (Obligatorias — ver `modeling-conventions.md`)
 - **Naming:** `snake_case` tablas y columnas (`event_type_id`, `created_at`)
 - **PK:** UUID v7 (generado en app, no `gen_random_uuid()` en BD)
-- **Auditoría en TODAS las tablas transaccionales:**
-  - `created_at` TIMESTAMPTZ NOT NULL DEFAULT now()
-  - `created_by` UUID NULL (user_id o device_id)
+- **Auditoría base (todas las tablas):** `created_at` TIMESTAMPTZ NOT NULL, `created_by` UUID NULL
+- **Auditoría extendida (tablas con UPDATE real: user, device, device_config, notification, device_assignment, event_type):**
   - `updated_at` TIMESTAMPTZ NOT NULL DEFAULT now()
   - `updated_by` UUID NULL
-  - `deleted_at` TIMESTAMPTZ NULL (soft delete)
   - `version` INTEGER NOT NULL DEFAULT 1 (optimistic locking)
-- **Soft delete obligatorio:** Nunca `DELETE` físico; `UPDATE SET deleted_at = now()`
+  - `deleted_at` TIMESTAMPTZ NULL (soft delete)
+  - `deleted_by` UUID NULL
+- **Estados parametrizados (ADR-009 — solo 5 tablas core):** `status` + `status_category` con FK a `parameterization.status` / `status_category`
+- **Soft delete:** Nunca `DELETE` físico; `UPDATE SET deleted_at = now(), deleted_by = ? WHERE id = ? AND deleted_at IS NULL`
 - **JSONB** para configuraciones flexibles (`device_config.config_json`, `event.metadata`)
 - **FKs** con `ON DELETE RESTRICT` (integridad referencial estricta)
 - **Índices** en columnas de filtro frecuente: `device_id`, `occurred_at`, `event_type_id`, `severity_id`
