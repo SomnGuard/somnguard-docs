@@ -38,7 +38,7 @@
 | Analítica y reportes | API, PORTAL, APP | 4 | Should |
 | Device Edge (visión, alertas, offline) | DEVICE | 5 | Must |
 
-**Total MVP: 32 HUs** (Must: 25, Should: 7) | **Post-MVP: 4 HUs** (Could: 38 SP)
+**Total MVP: 26 HUs** (Must: 23, Should: 3) | **Post-MVP: 4 HUs** (Could: 39 SP)
 
 ---
 
