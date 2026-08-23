@@ -84,4 +84,5 @@ El `correlation_id` une los eventos de una misma operación (p. ej. el lote sinc
 
 - [Mapa de dominio](domain-map.md)
 - [Entidades y reglas de negocio](entities-and-rules.md)
+- [Catálogo de eventos](event-catalog.md)
 - [Análisis del software](../04-requeriments/software-analysis.md)

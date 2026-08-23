@@ -27,4 +27,4 @@ Documento de arquitectura del sistema y registro de decisiones arquitectónicas 
 | [software-design-report.md](./software-design-report.md) | Informe de diseño: arquitectura, componentes, modelo de datos, interfaces, patrones y reglas de negocio | En progreso |
 | [decisions/](./decisions/README.md) | Decisiones de arquitectura (ADRs) | En progreso |
 | [security-threat-model.md](./security-threat-model.md) | Modelo de amenazas de seguridad (STRIDE) | En progreso |
-| [pattern-guide.md](./pattern-guide.md) | Guía de patrones: capas, reglas de dependencia y anti-patrones del hexagonal | En progreso |
+| [cross-cutting.md](./cross-cutting.md) | Preocupaciones transversales (auth, audit, obs, idempotencia, estados, TZ, errores) | Borrador |
