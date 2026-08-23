@@ -31,23 +31,45 @@ Todas las entidades utilizan:
 
 | Campo | Tipo | Descripción |
 | ----- | ---- | ----------- |
-| id | UUID | Identificador único. |
+| id | UUID | Identificador único (generado en app, UUID v7). |
 
 ---
 
 ## Auditoría
 
-Todas las entidades transaccionales incluyen:
-
+### Base (todas las tablas)
 | Campo | Tipo |
 | ----- | ---- |
-| created_at | TIMESTAMPTZ |
-| updated_at | TIMESTAMPTZ |
-| deleted_at | TIMESTAMPTZ |
-| created_by | UUID |
-| updated_by | UUID |
-| deleted_by | UUID |
-| is_active | BOOLEAN |
+| created_at | TIMESTAMPTZ NOT NULL |
+| created_by | UUID NULL |
+
+### Extendida (tablas con UPDATE real: user, device, device_config, notification, device_assignment, event_type)
+| Campo | Tipo |
+| ----- | ---- |
+| updated_at | TIMESTAMPTZ NOT NULL |
+| updated_by | UUID NULL |
+| version | INTEGER NOT NULL DEFAULT 1 (optimistic locking) |
+
+### Soft delete (tablas transaccionales principales)
+| Campo | Tipo |
+| ----- | ---- |
+| deleted_at | TIMESTAMPTZ NULL |
+| deleted_by | UUID NULL |
+
+> **Nota:** `is_active` BOOLEAN **es el campo de soft delete en todas las tablas** (por defecto TRUE; FALSE = inactivo). El control de eliminación lógica es `is_active = FALSE` (o equivalently `deleted_at IS NULL` para compatibilidad con vistas).
+
+---
+
+## Estados de negocio (ADR-009 — solo 5 tablas core)
+
+Las siguientes tablas usan `status` + `status_category` (FK a `parameterization.status` / `status_category`):
+- `security.user`
+- `device_management.device`
+- `telemetry_service.event`
+- `device_management.device_config`
+- `monitoring.notification`
+
+Catálogos inmutables y tablas append-only **no** llevan estados parametrizados.
 
 ---
 
@@ -73,6 +95,18 @@ Representa a los usuarios del sistema.
 | first_name | VARCHAR(100) |
 | last_name | VARCHAR(100) |
 | phone | VARCHAR(30) |
+| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| email_verified_at | TIMESTAMPTZ |
+| last_login_at | TIMESTAMPTZ |
+| failed_login_attempts | SMALLINT |
+| locked_until | TIMESTAMPTZ |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
+| deleted_at | TIMESTAMPTZ |
+| deleted_by | UUID |
+| version | INTEGER |
 
 ---
 
@@ -83,8 +117,13 @@ Define los roles del sistema.
 | Campo | Tipo |
 | ----- | ---- |
 | id | UUID |
+| code | VARCHAR(50) |
 | name | VARCHAR(100) |
 | description | TEXT |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
 
 ---
 
@@ -98,6 +137,10 @@ Agrupa funcionalidades del sistema.
 | code | VARCHAR(50) |
 | name | VARCHAR(100) |
 | description | TEXT |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
 
 ---
 
@@ -112,6 +155,10 @@ Representa una funcionalidad protegida del sistema.
 | code | VARCHAR(50) |
 | name | VARCHAR(100) |
 | description | TEXT |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
 
 ---
 
@@ -124,6 +171,8 @@ Relaciona roles con funcionalidades.
 | id | UUID |
 | role_id | UUID |
 | feature_id | UUID |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
 
 ---
 
@@ -138,6 +187,13 @@ Asigna roles a los usuarios.
 | role_id | UUID |
 | assigned_at | TIMESTAMPTZ |
 | expires_at | TIMESTAMPTZ |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
+| deleted_at | TIMESTAMPTZ |
+| deleted_by | UUID |
+| version | INTEGER |
 
 ---
 
@@ -152,6 +208,9 @@ Solicitudes de recuperación de contraseña.
 | token_hash | TEXT |
 | expires_at | TIMESTAMPTZ |
 | is_used | BOOLEAN |
+| used_at | TIMESTAMPTZ |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
 
 ---
 
@@ -168,6 +227,8 @@ Registro de intentos de autenticación.
 | ip_address | VARCHAR(45) |
 | user_agent | TEXT |
 | attempted_at | TIMESTAMPTZ |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
 
 ---
 
@@ -189,6 +250,11 @@ Clasificación de eventos.
 | code | VARCHAR(30) |
 | name | VARCHAR(100) |
 | description | TEXT |
+| sort_order | INTEGER |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
 
 ---
 
@@ -202,6 +268,10 @@ Define los niveles de severidad.
 | code | VARCHAR(20) |
 | name | VARCHAR(50) |
 | priority | SMALLINT |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
 
 ---
 
@@ -214,6 +284,12 @@ Tipos de evidencia multimedia.
 | id | UUID |
 | code | VARCHAR(20) |
 | name | VARCHAR(50) |
+| mime_type | VARCHAR(50) |
+| max_size_mb | INTEGER |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
 
 ---
 
@@ -228,6 +304,13 @@ Patrones de sonido utilizados por el dispositivo.
 | description | TEXT |
 | frequency_hz | INTEGER |
 | duration_ms | INTEGER |
+| repetitions | SMALLINT |
+| pattern_type | VARCHAR(20) |
+| interval_ms | INTEGER |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
 
 ---
 
@@ -243,6 +326,17 @@ Tipos de eventos detectados por el sistema.
 | event_category_id | UUID |
 | default_severity_id | UUID |
 | default_sound_pattern_id | UUID |
+| threshold_config | JSONB |
+| is_active | BOOLEAN |
+| status | VARCHAR(50) |
+| status_category | VARCHAR(30) |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
+| deleted_at | TIMESTAMPTZ |
+| deleted_by | UUID |
+| version | INTEGER |
 
 ---
 
@@ -264,6 +358,18 @@ Representa un dispositivo físico.
 | serial_number | VARCHAR(100) |
 | api_key_hash | TEXT |
 | firmware_version | VARCHAR(50) |
+| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| last_heartbeat_at | TIMESTAMPTZ |
+| last_sync_at | TIMESTAMPTZ |
+| last_config_pull_at | TIMESTAMPTZ |
+| last_seen_ip | VARCHAR(45) |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
+| deleted_at | TIMESTAMPTZ |
+| deleted_by | UUID |
+| version | INTEGER |
 
 ---
 
@@ -278,18 +384,30 @@ Historial de asignación de dispositivos.
 | user_id | UUID |
 | assigned_at | TIMESTAMPTZ |
 | unassigned_at | TIMESTAMPTZ |
+| assigned_by | UUID |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
+| deleted_at | TIMESTAMPTZ |
+| deleted_by | UUID |
+| version | INTEGER |
 
 ---
 
-## device_config
+## device_config_history
 
-Configuración del dispositivo.
+Historial de cambios de configuración del dispositivo.
 
 | Campo | Tipo |
 | ----- | ---- |
 | id | UUID |
-| device_id | UUID |
+| device_config_id | UUID |
 | configuration | JSONB |
+| changed_by | UUID |
+| change_reason | VARCHAR(200) |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
 
 ---
 
@@ -311,7 +429,18 @@ Representa una ocurrencia detectada por el dispositivo.
 | device_id | UUID |
 | event_type_id | UUID |
 | occurred_at | TIMESTAMPTZ |
+| severity_id | UUID |
+| sound_pattern_id | UUID |
 | is_offline_sync | BOOLEAN |
+| metadata | JSONB |
+| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
+| deleted_at | TIMESTAMPTZ |
+| deleted_by | UUID |
+| version | INTEGER |
 
 ---
 
@@ -324,7 +453,11 @@ Archivos asociados a un evento.
 | id | UUID |
 | event_id | UUID |
 | media_type_id | UUID |
-| file_url | TEXT |
+| minio_key | VARCHAR(500) |
+| size_bytes | BIGINT |
+| checksum_sha256 | VARCHAR(64) |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
 
 ---
 
@@ -341,6 +474,9 @@ Un evento puede no generar alarmas, generar una única alarma o múltiples alarm
 | sound_pattern_id | UUID |
 | severity_id | UUID |
 | triggered_at | TIMESTAMPTZ |
+| device_id | UUID |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
 
 ---
 
@@ -364,8 +500,19 @@ Notificaciones enviadas a los usuarios como consecuencia de una alarma.
 | title | VARCHAR(200) |
 | message | TEXT |
 | channel | VARCHAR(30) |
+| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
 | sent_at | TIMESTAMPTZ |
+| delivered_at | TIMESTAMPTZ |
 | read_at | TIMESTAMPTZ |
+| retry_count | SMALLINT |
+| error_message | TEXT |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
+| deleted_at | TIMESTAMPTZ |
+| deleted_by | UUID |
+| version | INTEGER |
 
 ---
 

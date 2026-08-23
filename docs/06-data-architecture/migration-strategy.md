@@ -285,9 +285,10 @@ Basadas en la estructura real de `somnguard-db`, **todas** las changesets deben 
 | **Formato** | Siempre `changeSet { id, author, labels, comment }` + `changes: - sqlFile { path, relativeToChangelogFile, stripComments }` |
 | **Naming** | `snake_case` en nombres de archivos `.sql` (no en yaml ids) |
 | **PK** | UUID generado en app (archivo `.sql`: `gen_random_uuid()`), **nunca** definición de tipo en yaml |
-| **Auditoría** | Cada table SQL debe tener columnas: `created_at`, `created_by`, `updated_at`, `updated_by`, `deleted_at`, `deleted_by`, `version` |
-| **Soft delete** | En SQL: `deleted_at TIMESTAMPTZ` NULL = activo; nunca `DELETE` en changeset |
-| **Estados** | `status_category` VARCHAR(30) + `status` VARCHAR(50) con FK a `parameterization` |
+| **Auditoría base** | Cada tabla SQL debe tener: `created_at` TIMESTAMPTZ NOT NULL, `created_by` UUID NULL |
+| **Auditoría extendida** | Tablas con UPDATE real: `updated_at`, `updated_by`, `version` INTEGER NOT NULL DEFAULT 1 |
+| **Soft delete** | Tablas transaccionales: `deleted_at` TIMESTAMPTZ NULL, `deleted_by` UUID NULL; NULL = activo; nunca `DELETE` físico |
+| **Estados (ADR-009)** | Solo 5 tablas core: `status_category` + `status` con FK a `parameterization` (user, device, event, device_config, notification) |
 | **JSONB** | Para configuraciones flexibles, almacenado en columnas `configuration JSONB` |
 | **FKs** | `ON DELETE RESTRICT` por defecto; `ON DELETE CASCADE` solo en composición (evidence→event, notification→alert_log) |
 | **Índices** | Definidos en archivos `.sql` separados, no en yaml |
@@ -300,7 +301,7 @@ Archivo: `somnguard-db/01_ddl/03_tables/001_create_security_user.sql` (contenido
 
 ```sql
 CREATE TABLE security.user (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY,  -- sin DEFAULT, generado en app (UUID v7)
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     first_name VARCHAR(100) NOT NULL,
@@ -313,10 +314,11 @@ CREATE TABLE security.user (
     failed_login_attempts SMALLINT NOT NULL DEFAULT 0,
     locked_until TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    created_by UUID NOT NULL,
+    created_by UUID NULL,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_by UUID NOT NULL,
+    updated_by UUID NULL,
     deleted_at TIMESTAMPTZ,
+    deleted_by UUID NULL,
     version INTEGER NOT NULL DEFAULT 1
 );
 
@@ -326,6 +328,7 @@ CREATE UNIQUE INDEX idx_user_phone ON security.user (phone WHERE deleted_at IS N
 CREATE INDEX idx_user_status_active ON security.user (status) WHERE deleted_at IS NULL;
 ALTER TABLE security.user ADD CONSTRAINT fk_user_created_by FOREIGN KEY (created_by) REFERENCES security.user(id);
 ALTER TABLE security.user ADD CONSTRAINT fk_user_updated_by FOREIGN KEY (updated_by) REFERENCES security.user(id);
+ALTER TABLE security.user ADD CONSTRAINT fk_user_deleted_by FOREIGN KEY (deleted_by) REFERENCES security.user(id);
 ```
 
 ### 4.2 Estructura archivo rollback SQL

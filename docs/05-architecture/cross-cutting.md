@@ -58,31 +58,57 @@
 
 ## 2. Auditoría y Trazabilidad de Datos
 
-### 2.1 Campos Estándar en TODAS las Tablas Transaccionales
+### 2.1 Campos Estándar (por tipo de tabla)
+
+#### Transaccionales con UPDATE concurrente (user, device, device_config, notification, device_assignment, event_type)
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
-| `id` | UUID | PK, generado por app (no BD) |
+| `id` | UUID | PK, generado por app (UUID v7) |
 | `created_at` | TIMESTAMPTZ | UTC, `now()` en insert |
 | `created_by` | UUID | User ID o Device ID (nullable para system) |
 | `updated_at` | TIMESTAMPTZ | UTC, `now()` en update |
 | `updated_by` | UUID | User ID o Device ID |
 | `deleted_at` | TIMESTAMPTZ | **Soft delete** — NULL = activo |
+| `deleted_by` | UUID | User ID o Device ID que eliminó |
 | `version` | INTEGER | Optimistic locking (empezar en 1) |
+| `is_active` | BOOLEAN | **Campo de soft delete** — por defecto TRUE. FALSE = inactivo. **Es el campo base en todas las tablas.** |
+| `status` | VARCHAR(50) | **Solo en `parameterization.event_type`** (FK `parameterization.status`). En las demás tablas NULL = no aplica. |
+| `status_category` | VARCHAR(30) | **Solo en `parameterization.event_type`** (FK `parameterization.status_category`). En las demás tablas NULL = no aplica. |
+
+#### Transaccionales solo INSERT / append-only (event, evidence, alert_log, audit_login, password_reset_request, device_config_history)
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `id` | UUID | PK, generado por app (UUID v7) |
+| `created_at` | TIMESTAMPTZ | UTC, `now()` en insert |
+| `created_by` | UUID | User ID o Device ID (nullable para system) |
+| `status` | VARCHAR(50) | Estado de negocio — **solo event** |
+| `status_category` | VARCHAR(30) | Categoría — **solo event** |
+
+#### Catálogos inmutables (role, module, feature, event_category, severity, media_type, sound_pattern, status_category, status, status_transition)
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `id` / `code` | UUID / VARCHAR | PK |
+| `created_at` | TIMESTAMPTZ | UTC, `now()` en insert |
+| `created_by` | UUID | User ID creador (seed = SYSTEM_ACTOR_ID) |
+| `updated_at` | TIMESTAMPTZ | UTC, `now()` en update |
+| `updated_by` | UUID | User ID modificador |
+
+> **Nota:** `SYSTEM_ACTOR_ID = 00000000-0000-0000-0000-000000000000` para seeds y acciones automáticas.
 
 ### 2.2 Reglas de Auditoría
 | Regla | Descripción |
 |-------|-------------|
-| **Append-only** | Tablas de auditoría (`audit_login`, `alert_log`, `notification_delivery`) solo INSERT |
+| **Append-only** | Tablas de auditoría (`audit_login`, `alert_log`, `device_config_history`) solo INSERT |
 | **Soft delete obligatorio** | DELETE lógico vía `deleted_at`; nunca `DELETE` físico en app |
 | **Cascada suave** | Al borrar parent → `deleted_at` en children (no FK cascade delete) |
 | **Histórico de cambios** | Tablas `_history` (trigger PG) para entidades críticas: `user`, `device`, `event_type`, `device_config` |
+| **Estados parametrizados** | Solo 5 tablas core usan `status` + `status_category` (ADR-009): user, device, event, device_config, notification |
 
 ### 2.3 Tablas de Auditoría Base
 | Tabla | Propósito | Retención |
 |-------|-----------|-----------|
 | `audit_login` | Login attempts (éxito/fallo, IP, UA) | 2 años |
 | `alert_log` | Alertas emitidas (AS-XX, event_id, severity) | 5 años |
-| `notification_delivery` | Push/email tracking (sent/delivered/read, retries) | 1 año |
 | `device_config_history` | Cambios de config remota | 3 años |
 
 ---
@@ -145,7 +171,7 @@
 |----------|-------|----------------|
 | Device → API (eventos) | `event_id` (UUID v7, generado en device) | Índice único `telemetry.event(event_id)` |
 | Device → API (evidencia) | `evidence_id` (UUID) + `event_id` | Índice único `evidence(evidence_id)` |
-| API → Push (notificaciones) | `notification_id` (UUID) + `device_id` + `event_id` | Tabla `notification_delivery` PK compuesta |
+| API → Push (notificaciones) | `notification_id` (UUID) + `device_id` + `event_id` | Tabla `notification` (cols: `sent_at`, `delivered_at`, `read_at`, `retry_count`, `error_message`) |
 
 ### 4.2 Patrón de Reintentos (Device Side)
 ```python
@@ -340,16 +366,17 @@ GET /telemetry/events?sort=-occurred_at,event_type_id
 
 | ADR | Título | Estado | Archivo |
 |-----|--------|--------|---------|
-| ADR-001 | JWT RS256 + API Keys para autenticación | Aceptada | `decisions/records/ADR-001-backend-java-spring-boot.md` |
+| ADR-001 | Backend en Java Spring Boot | Aceptada | `decisions/records/ADR-001-backend-java-spring-boot.md` |
 | ADR-002 | Arquitectura Hexagonal por módulo (Monolito Modular) | Aceptada | `decisions/records/ADR-002-hexagonal-architecture.md` |
-| ADR-003 | Liquibase + 1 BD PostgreSQL + esquemas por módulo | Aceptada | `decisions/records/ADR-003-analytics-module.md` |
-| ADR-004 | Offline-first en Device (SQLite + sync idempotente) | Pendiente | `decisions/records/ADR-004-offline-first-device.md` |
-| ADR-005 | MinIO/S3 para evidencia multimedia | Pendiente | `decisions/records/ADR-005-minio-evidence.md` |
-| ADR-006 | OpenTelemetry + LGTM (Tempo/Prometheus/Loki/Grafana) | Pendiente | `decisions/records/ADR-006-otel-lgtm.md` |
-| ADR-007 | Traefik como Edge Gateway (puerto único 80/443) | Pendiente | `decisions/records/ADR-007-traefik-edge.md` |
-| ADR-008 | Estados parametrizados (status_category + status) + Auditoría append-only | Pendiente | `decisions/records/ADR-008-status-audit.md` |
+| ADR-003 | Analytics Module | Aceptada | `decisions/records/ADR-003-analytics-module.md` |
+| ADR-004 | Database Strategy — 1 PostgreSQL + Esquemas por Módulo + Liquibase | Aceptada | `decisions/records/ADR-004-database-strategy.md` |
+| ADR-005 | Offline-First en Device Edge (SQLite Local + Sync Idempotente) | Aceptada | `decisions/records/ADR-005-offline-first-device.md` |
+| ADR-006 | MinIO Evidence Storage | Aceptada | `decisions/records/ADR-006-minio-evidence-storage.md` |
+| ADR-007 | Observabilidad OpenTelemetry + LGTM | Aceptada | `decisions/records/ADR-007-observability-otel-lgtm.md` |
+| ADR-008 | Traefik Edge Gateway | Aceptada | `decisions/records/ADR-008-traefik-edge-gateway.md` |
+| ADR-009 | Estados Parametrizados + Auditoría Append-Only (status_category + status) | Aceptada | `decisions/records/ADR-009-status-parametrized-audit.md` |
 
-> **Acción:** Crear estos 8 ADRs en `docs/05-architecture/decisions/records/` usando `_template-adr.md`.
+> **Nota:** ADRs 004-009 ya existen y están aceptados. Ver carpeta `decisions/records/`.
 
 ---
 
@@ -363,7 +390,7 @@ GET /telemetry/events?sort=-occurred_at,event_type_id
 | `somnguard-portal` | ✅ (JWT) | N/A | ✅ (RUM) | N/A | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A |
 | `somnguard-app` | ✅ (JWT) | N/A | ✅ (RUM) | N/A | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A |
 
-**Leyenda:** ✅ = Implementar obligatorio | N/A = No aplica en ese repo
+**Leyenda:** ✅ = Implementar obligatorio | N/A = No aplica en ese repo | **Estados** = ADR-009 (5 tablas core)
 
 ---
 
