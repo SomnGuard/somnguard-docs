@@ -540,12 +540,3 @@ docker compose --profile tooling run --rm liquibase rollback-count 1
 | `changelog-master.yaml` | Punto de entrada único |
 
 ---
-
-## Próximos Pasos
-
-1. **Validar** este documento con DBA + Backend Lead (revisión 30 min) contra estructura real de `somnguard-db`
-2. **Verificar** que todos los `include` en los `changelog.yaml` tengan `contextFilter` y `labels` correctos
-3. **Crear** `migration-strategy-test.md` con escenarios de rollback automatizados contra BD real
-4. **Integrar** en la `ci-cd-strategy.md` validación automática en PRs (usando formato `sqlFile` real)
-5. **Actualizar** checklist de validación en `LISTA_DOCS_OTRO-PROJECT-PARA-SOMNGUARD.md`
-6. **Revisar** todos los archivos `.sql` existentes en `somnguard-db/` para asegurar consistencia con este strategy
