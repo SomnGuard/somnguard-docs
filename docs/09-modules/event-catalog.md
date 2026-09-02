@@ -41,22 +41,22 @@
 
 ## 2. Eventos por Publicador (Módulo)
 
-### 2.1 `device-management` (Dispositivo → API)
+### 2.1 `device_management` (Dispositivo → API)
 
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
-| `device.synced` | Lote de eventos recibido y confirmado por API | `telemetry-service` (persiste events), `monitoring` (actualiza estado device) | RF-EDGE-10, HU-DEVICE-003 |
-| `device.config.pulled` | Configuración remota descargada por device | `device-management` (actualiza device_config_cache) | RF-EDGE-11, HU-DEVICE-004 |
-| `device.state.changed` | Estado device cambió (ACTIVE↔OFFLINE, etc.) | `monitoring`, `telemetry-service` | ADR-005, cross-cutting.md §5.2 |
+| `device.synced` | Lote de eventos recibido y confirmado por API | `telemetry_service` (persiste events), `monitoring` (actualiza estado device) | RF-EDGE-10, HU-DEVICE-003 |
+| `device.config.pulled` | Configuración remota descargada por device | `device_management` (actualiza device_config_cache) | RF-EDGE-11, HU-DEVICE-004 |
+| `device.state.changed` | Estado device cambió (ACTIVE↔OFFLINE, etc.) | `monitoring`, `telemetry_service` | ADR-005, cross-cutting.md §5.2 |
 
-### 2.2 `telemetry-service` (Device → API → BD)
+### 2.2 `telemetry_service` (Device → API → BD)
 
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
-| `event.recorded` | Evento detectado recibido, persistido en BD (idempotente) | `telemetry-service` (propia tabla), `analytics` (línea de tiempo), `monitoring` (alertas) | RN-TEL-01, HU-API-007, HU-DEVICE-003 |
+| `event.recorded` | Evento detectado recibido, persistido en BD (idempotente) | `telemetry_service` (propia tabla), `analytics` (línea de tiempo), `monitoring` (alertas) | RN-TEL-01, HU-API-007, HU-DEVICE-003 |
 | `alert.generated` | Evento crítico detectado, registrado en alert_log | `monitoring` (notificaciones), `audit-service` (historial) | RF-TEL-03, HU-API-009 |
-| `evidence.uploaded` | Evidencia multimedia (imagen/video) subida a MinIO | `telemetry-service` (guarda minio_key), `monitoring` (thumbnails) | RF-TEL-02, HU-API-007 |
-| `event.sync.failed` | Sincronización fallida después de reintentos exponenciales | `device-management` (actualiza buffer retry), `monitoring` (métricas) | RF-EDGE-12, HU-DEVICE-003 |
+| `evidence.uploaded` | Evidencia multimedia (imagen/video) subida a MinIO | `telemetry_service` (guarda minio_key), `monitoring` (thumbnails) | RF-TEL-02, HU-API-007 |
+| `event.sync.failed` | Sincronización fallida después de reintentos exponenciales | `device_management` (actualiza buffer retry), `monitoring` (métricas) | RF-EDGE-12, HU-DEVICE-003 |
 
 ### 2.3 `monitoring` (Notificaciones)
 
@@ -93,7 +93,7 @@ Todos los eventos siguen un **envelope estándar** con campos de cabecera obliga
 | `event_id` | UUID v7 | Identificador único, generado en device, **único e idempotente** | `a1b2c3d4-e5f6-7890-abcd-ef1234567890` |
 | `event_type` | VARCHAR | Código del evento (EV-SOM-01, EV-DIS-02, etc.) | `EV-SOM-05` |
 | `timestamp` | TIMESTAMPTZ | Momento del evento en UTC | `2026-08-22T14:30:00.123Z` |
-| `source_module` | VARCHAR | Módulo que publicó el evento | `device-management` o `telemetry-service` |
+| `source_module` | VARCHAR | Módulo que publicó el evento | `device_management` o `telemetry_service` |
 | `correlation_id` | UUID (opcional) | Agrupa eventos de una misma operación (lote sync) | `d4c3b2a1-0000-1111-2222-333344445555` |
 
 ### 3.2 Ejemplo de envelope completo
@@ -104,7 +104,7 @@ Todos los eventos siguen un **envelope estándar** con campos de cabecera obliga
     "event_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "event_type": "EV-SOM-05",
     "timestamp": "2026-08-22T14:30:00.123Z",
-    "source_module": "device-management",
+    "source_module": "device_management",
     "correlation_id": "d4c3b2a1-0000-1111-2222-333344445555"
   },
   "payload": {
@@ -134,8 +134,8 @@ Estos eventos son de **orquestación interna** de un módulo (worker↔worker, s
 | `document.render.failed` | document-service | pdf-renderer: render fallido → reintento/DLQ |
 | `document.lifecycle.tick` | document-service | document-lifecycle-worker: pulso de cron |
 | `monitoring.kpi.tick` | monitoring-service | cron de recálculo de KPIs cada 5 min |
-| `telemetry.batch.processed` | telemetry-service | Lote de events sincronizados exitosamente (post-ACK) |
-| `config.sync.applied` | device-management | Configuración device_config aplicada en runtime after sync |
+| `telemetry.batch.processed` | telemetry_service | Lote de events sincronizados exitosamente (post-ACK) |
+| `config.sync.applied` | device_management | Configuración device_config aplicada en runtime after sync |
 
 ---
 
@@ -144,7 +144,7 @@ Estos eventos son de **orquestación interna** de un módulo (worker↔worker, s
 | Evento | Conflito | Propuesta | Decisión pendiente |
 |--------|----------|-----------|--------------------|
 | `monitoring.alert.generated` vs `monitoring.alert.triggered` | Usado en alert-worker/notification-worker ≡ `monitoring.alert.triggered` | Unificar al nombre canónico `monitoring.alert.triggered` | **Pendiente**: definir nombre canónico único |
-| `device.synced` (device-management) vs `event.sync.failed` (telemetry-service) | Mismos orígenes pero vistas diferentes | `device.synced` es confirmación de sincronización completa; `event.sync.failed` es fallo después de reintentos | **Pendiente**: definir si son eventos separados o uno con status |
+| `device.synced` (device_management) vs `event.sync.failed` (telemetry_service) | Mismos orígenes pero vistas diferentes | `device.synced` es confirmación de sincronización completa; `event.sync.failed` es fallo después de reintentos | **Pendiente**: definir si son eventos separados o uno con status |
 
 ---
 

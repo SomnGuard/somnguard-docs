@@ -107,6 +107,8 @@ Representa a los usuarios del sistema.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
+| status | VARCHAR(50) |
+| status_category | VARCHAR(30) |
 
 ---
 
@@ -120,6 +122,7 @@ Define los roles del sistema.
 | code | VARCHAR(50) |
 | name | VARCHAR(100) |
 | description | TEXT |
+| is_active | BOOLEAN | **Por defecto TRUE** |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
@@ -173,6 +176,12 @@ Relaciona roles con funcionalidades.
 | feature_id | UUID |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
+| deleted_at | TIMESTAMPTZ |
+| deleted_by | UUID |
+| version | INTEGER |
+| is_active | BOOLEAN | **Por defecto TRUE** |
 
 ---
 
@@ -194,6 +203,7 @@ Asigna roles a los usuarios.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
+| is_active | BOOLEAN | **Por defecto TRUE** |
 
 ---
 
@@ -370,6 +380,8 @@ Representa un dispositivo físico.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
+| status | VARCHAR(50) |
+| status_category | VARCHAR(30) |
 
 ---
 
@@ -392,6 +404,29 @@ Historial de asignación de dispositivos.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
+
+---
+
+## device_config
+
+Configuración remota del dispositivo (JSONB).
+
+| Campo | Tipo |
+| ----- | ---- |
+| id | UUID |
+| device_id | UUID |
+| configuration | JSONB |
+| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| version | INTEGER |
+| published_at | TIMESTAMPTZ |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
+| deleted_at | TIMESTAMPTZ |
+| deleted_by | UUID |
+| status | VARCHAR(50) |
+| status_category | VARCHAR(30) |
 
 ---
 
@@ -441,6 +476,8 @@ Representa una ocurrencia detectada por el dispositivo.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
+| status | VARCHAR(50) |
+| status_category | VARCHAR(30) |
 
 ---
 
@@ -513,6 +550,8 @@ Notificaciones enviadas a los usuarios como consecuencia de una alarma.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
+| status | VARCHAR(50) |
+| status_category | VARCHAR(30) |
 
 ---
 

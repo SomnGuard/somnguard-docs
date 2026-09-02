@@ -19,7 +19,7 @@
 
 > **PLANTILLA** — Para crear documentación de un módulo del backend:
 
-1. Copiar la carpeta `_template/module/` a `modules/<nombre-modulo>/` (p. ej. `modules/device-management/`).
+1. Copiar la carpeta `_template/module/` a `modules/<nombre-modulo>/` (p. ej. `modules/device_management/`).
 2. Completar cada archivo según las instrucciones de su cabecera.
 3. Registrar el módulo en [module-catalog.md](../../module-catalog.md).
 4. Añadir el módulo al [README de 09-modules](../../README.md).

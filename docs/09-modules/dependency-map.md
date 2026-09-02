@@ -36,7 +36,7 @@
 +----------------------+---------+---------+----------------------+
 |                      |         |         |                      |
 +--------+-------------+---------+---------+--------+---------+
-|  security          |parameterization|device-mgmt| telemetry-svc | monitoring|
+|  security          |parameterization|device_management| telemetry_service | monitoring|
 | (módulo base)      | (catálogos)    | (dispositi)| (ingesta ev.) | (notific.)|
 |  RN-01..03         | event_cat.,    |  device↔   |  events,     |  NOTIF-  |
 |  auth, audit       | severity,      |  user,     |  alert_log   |  cations |
@@ -89,12 +89,12 @@
 
 | Módulo | Depende de | Para qué | Que depende de él | Por qué |
 |--------|------------|----------|-------------------|---------|
-| **security** | Ninguna (base) | Autenticación, autorización, auditoría | parameterization, device-mgmt, telemetry-svc, monitoring | Proporciona: users, roles, features, JWT, API Keys base |
-| **parameterization** | Independiente | Catálogos configurables | device-mgmt, telemetry-svc, monitoring | Catálogos autónomos; FKs internos a parameterization (severity, sound_pattern, event_type, status_category, status) |
-| **device-management** | `security` + `parameterization` | Alta/asignación de devices, config remota | telemetry-service | devices → user asignation; config con catálogos vigentes |
-| **telemetry-service** | `device-mgmt` + `parameterization` | Ingesta events/evidence de devices | monitoring | events → device FK; event_type/severity FKs a catálogos; audit_login para logging |
-| **monitoring** | `telemetry-service` | Notificaciones, tracking delivery | analytics | notifications → alert_log FK; notification_delivery tracking; usuario FK a security.user |
-| **analytics** | `todos los anteriores` (solo lectura) | Líneas de tiempo, métricas, reportes IA | Ningún módulo (es de solo lectura) | Vistas materializadas sobre tables de security+parameterization+device-mgmt+telemetry+monitoring |
+| **security** | Ninguna (base) | Autenticación, autorización, auditoría | parameterization, device_management, telemetry_service, monitoring | Proporciona: users, roles, features, JWT, API Keys base |
+| **parameterization** | Independiente | Catálogos configurables | device_management, telemetry_service, monitoring | Catálogos autónomos; FKs internos a parameterization (severity, sound_pattern, event_type, status_category, status) |
+| **device_management** | `security` + `parameterization` | Alta/asignación de devices, config remota | telemetry_service | devices → user asignation; config con catálogos vigentes |
+| **telemetry_service** | `device_management` + `parameterization` | Ingesta events/evidence de devices | monitoring | events → device FK; event_type/severity FKs a catálogos; audit_login para logging |
+| **monitoring** | `telemetry_service` | Notificaciones, tracking delivery | analytics | notifications → alert_log FK; notification_delivery tracking; usuario FK a security.user |
+| **analytics** | `todos los anteriores` (solo lectura) | Líneas de tiempo, métricas, reportes IA | Ningún módulo (es de solo lectura) | Vistas materializadas sobre tables de security+parameterization+device_management+telemetry+monitoring |
 | **platform/transversal** | Ninguna (es independiente) | Errores, logging, observabilidad, secrets | Cualquier módulo | JWT RS256, logs JSON, métricas RED, trazas OTel, X-Request-ID, manejo de errores RFC 7807 |
 
 ### 2.1 Regla de Oro (ADR-002)
@@ -122,8 +122,8 @@ Capa interna (más cercana a domain):
 application/port/in (use case interfaces por módulo):
   - security: login, logout, RBAC
   - parameterization: CRUD catálogos, obtener estado device
-  - device-mgmt: alta device, asociar usuario, heartbeat
-  - telemetry-service: ingestar eventos, pull config
+  - device_management: alta device, asociar usuario, heartbeat
+  - telemetry_service: ingestar eventos, pull config
   - monitoring: enviar notificación, tracking delivery
 
   ↓ depende de
@@ -131,8 +131,8 @@ application/port/in (use case interfaces por módulo):
 application/port/out (output ports/Repositories por módulo):
   - security: user repository, role repository, password reset
   - parameterization: event_category repository, severity lookup
-  - device-mgmt: device repository, config repository
-  - telemetry-service: event repository, evidence repository, alert_log repository
+  - device_management: device repository, config repository
+  - telemetry_service: event repository, evidence repository, alert_log repository
   - monitoring: notification repository, notification_delivery repository
 
   ↓ depende de
@@ -140,8 +140,8 @@ application/port/out (output ports/Repositories por módulo):
 adapter/out (implementaciones concretas):
   - security: JPA/Spring Data repos, JWT validator, API Key validator
   - parameterization: Liquibase changesets, catálogo seeds
-  - device-mgmt: SQLite repos (device), API client for config sync
-  - telemetry-service: Liquibase tables, MinIO client for evidence, PostgreSQL repos
+  - device_management: SQLite repos (device), API client for config sync
+  - telemetry_service: Liquibase tables, MinIO client for evidence, PostgreSQL repos
   - monitoring: PostgreSQL repos, Redis cache, email/push SDKs
 
 Capa externa:
@@ -169,7 +169,7 @@ Capa externa:
 | `platform/transversal` | Spring Security (JWT RS256 validator, API Key validator), OpenTelemetry auto-instrumentation, Micrometer RED metrics, global exception handler (RFC 7807) |
 
 **No debe depender de:**
-- Módulos que no le correspondan (ej. no debería importar lógica de device-mgmt si solo expone auth)
+- Módulos que no le correspondan (ej. no debería importar lógica de device_management si solo expone auth)
 - Tables de otros módulos vía JPA directas (usar ports/adapters)
 
 ### 3.2 `somnguard-db` (PostgreSQL + Liquibase)
@@ -180,9 +180,9 @@ Capa externa:
 |--------|-----------|---------|
 | `security` | `01_ddl/03_tables` + `02_dml/00_inserts` | Tabla base: users, roles, features - debe aplicarse primero |
 | `parameterization` | `01_ddl/03_tables` + `02_dml/00_inserts` | Catálogos con FK a security.user/role - debe aplicarse después |
-| `device-management` | `01_ddl/03_tables` + `02_dml/00_inserts` | Devices → user FK, config con catálogos - después de security + parameterization |
-| `telemetry-service` | `01_ddl/03_tables` + `02_dml/00_inserts` | Events → device FK, event_type/severity FKs - después de los 3 anteriores |
-| `monitoring` | `01_ddl/03_tables` + `02_dml/00_inserts` | Notifications → alert_log FK, user FK - después de telemetry-service |
+| `device_management` | `01_ddl/03_tables` + `02_dml/00_inserts` | Devices → user FK, config con catálogos - después de security + parameterization |
+| `telemetry_service` | `01_ddl/03_tables` + `02_dml/00_inserts` | Events → device FK, event_type/severity FKs - después de los 3 anteriores |
+| `monitoring` | `01_ddl/03_tables` + `02_dml/00_inserts` | Notifications → alert_log FK, user FK - después de telemetry_service |
 | `analytics` | `01_ddl/03_tables` + `02_dml/00_inserts` (solo vistas) | Vistas materializadas sobre tables de todos los anteriores - último |
 
 **No debe tener cambios inline en yaml:** Todo vía `sqlFile` a archivos `.sql` externos (validado en migration-strategy.md creado previamente).
@@ -193,10 +193,10 @@ Capa externa:
 
 | Funcionalidad | Endpoint API | Módulo origen |
 |---------------|--------------|---------------|
-| Listar devices | `GET /devices` | device-management |
-| Timeline eventos | `GET /telemetry/events` | telemetry-service |
+| Listar devices | `GET /devices` | device_management |
+| Timeline eventos | `GET /telemetry/events` | telemetry_service |
 | Métricas y filtros | `GET /analytics/timeline` | analytics |
-| Config device | `GET /devices/{id}/config` | telemetry-service + device-management |
+| Config device | `GET /devices/{id}/config` | telemetry_service + device_management |
 | Notificaciones | `GET /notifications` | monitoring |
 | Auth (JWT) | `POST /auth/login` | security |
 
@@ -212,7 +212,7 @@ Capa externa:
 | Recibir push notifications | `GET /notifications` | monitoring |
 | Ver timeline eventos | `GET /analytics/timeline` | analytics |
 | Streaming WebRTC | `GET /devices/{id}/stream` | API + device |
-| Config device | `GET /devices/{id}/config` | telemetry-service |
+| Config device | `GET /devices/{id}/config` | telemetry_service |
 
 **Modo offline-first:** Al no tener red, usa SQLite local (propio al app) y sincroniza cuando hay conexión. No depende de SQLite del device.
 
@@ -224,9 +224,9 @@ Capa externa:
 |------------|-------------|-------------|
 | `SQLite local` | Ninguna (autónoma) | Buffer de eventos pending_events, device_config, evidence local |
 | `API Key` | `security` (validación central) | API Key generada por security, validada HMAC-SHA256 en device |
-| `Heartbeat → API` | `telemetry-service` (endpoint POST) | Cada 30s envía status, último evento, buffer stats |
-| `Config pull → API` | `telemetry-service` (GET /devices/{id}/config) | Solicita device_config JSONB, thresholds, sound_pattern, volumen |
-| `Event sync → API` | `telemetry-service` (POST /telemetry/events) | Envía lote de eventos offline, deduplicación por event_id UUID v7 |
+| `Heartbeat → API` | `telemetry_service` (endpoint POST) | Cada 30s envía status, último evento, buffer stats |
+| `Config pull → API` | `telemetry_service` (GET /devices/{id}/config) | Solicita device_config JSONB, thresholds, sound_pattern, volumen |
+| `Event sync → API` | `telemetry_service` (POST /telemetry/events) | Envía lote de eventos offline, deduplicación por event_id UUID v7 |
 | `Local DB esquema` | Mismo patrón que BD `security + parameterization + device_management` (tabla mínima) | Solo lo necesario: device, pending_events, device_config (recorta las 6 esquemas completos) |
 
 **No depende de:** JPA, Spring, HTTP frameworks. Usa `httpx` para calls HTTP simples a API gateway (Traefik en puerto 8080).
@@ -270,7 +270,7 @@ grep -R "contextFilter" somnguard-db/01_ddl/ somnguard-db/02_dml/
 ```
 somnguard dependency map (resumido):
 
-security ──▶ parameterization ──▶ device-management ──▶ telemetry-service ──▶ monitoring ──▶ analytics
+security ──▶ parameterization ──▶ device_management ──▶ telemetry_service ──▶ monitoring ──▶ analytics
      │                │                  │                      │                │
      ▼                ▼                  ▼                      ▼                ▼
   JWT, API Key   catálogos      device↔user         events, evidence  notifications  métricas/Timeline
