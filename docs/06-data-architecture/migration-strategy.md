@@ -288,7 +288,7 @@ Basadas en la estructura real de `somnguard-db`, **todas** las changesets deben 
 | **Auditoría base** | Cada tabla SQL debe tener: `created_at` TIMESTAMPTZ NOT NULL, `created_by` UUID NULL |
 | **Auditoría extendida** | Tablas con UPDATE real: `updated_at`, `updated_by`, `version` INTEGER NOT NULL DEFAULT 1 |
 | **Soft delete** | Tablas transaccionales: `deleted_at` TIMESTAMPTZ NULL, `deleted_by` UUID NULL; NULL = activo; nunca `DELETE` físico |
-| **Estados (ADR-009)** | 6 tablas core: `status_category` + `status` con FK a `parameterization` (user, device, event, device_config, notification) |
+| **Estados (ADR-009)** | 6 tablas core: `status_category` + `status` con FK a `parameterization` (`parameterization.event_type`, `security.user`, `device_management.device`, `telemetry_service.event`, `device_management.device_config`, `monitoring.notification`) |
 | **JSONB** | Para configuraciones flexibles, almacenado en columnas `configuration JSONB` |
 | **FKs** | `ON DELETE RESTRICT` por defecto; `ON DELETE CASCADE` solo en composición (evidence→event, notification→alert_log) |
 | **Índices** | Definidos en archivos `.sql` separados, no en yaml |
