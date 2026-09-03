@@ -37,9 +37,9 @@
 |                      |         |         |                      |
 +--------+-------------+---------+---------+--------+---------+
 |  security          |parameterization|device_management| telemetry_service | monitoring|
-| (módulo base)      | (catálogos)    | (dispositi)| (ingesta ev.) | (notific.)|
-|  RN-01..03         | event_cat.,    |  device↔   |  events,     |  NOTIF-  |
-|  auth, audit       | severity,      |  user,     |  alert_log   |  cations |
+| (módulo base)      | (catálogos)    | (devices)  | (ingesta ev.) | (notific.)|
+|  RN-01..03         | event_cat.,    |  device↔   |  events,     |  notifs   |
+|  auth, audit       | severity,      |  user,     |  alert_log   |          |
 |  JWT, API Key      | media_type,    |  config    |  FKs a device|  RF-MON-*
 +--------------------+------------+------------+------------+-----------+
          ^                  ^                  ^                  ^
