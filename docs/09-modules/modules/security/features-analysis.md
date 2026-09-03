@@ -29,7 +29,7 @@
 | Roles en BD | 2 (`admin`, `user`) |
 | Módulos en BD | 6 |
 | Features actuales en BD | 17 |
-| Features propuestas | 20 |
+| Features propuestas | 23 |
 | **A eliminar** | 2 |
 | **A renombrar** | 5 |
 | **A crear nuevas** | 7 |
