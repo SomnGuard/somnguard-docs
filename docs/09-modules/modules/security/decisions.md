@@ -82,7 +82,7 @@
 - `user`: solo features de lectura básica:
   - `user.read` (security)
   - `device.read` (device_management)
-  - `event.read` (telemetry)
+  - `event.read` (telemetry_service)
   - `notification.read` (monitoring)
   - `analytics.read` (analytics)
 
