@@ -103,11 +103,11 @@
 | 7 | `role.write` | security | CRUD roles (crear/editar/eliminar) | WRITE | ✅ | ❌ |
 | 8 | `role.assign` | security | Asignar/quitar roles a usuarios | ASSIGN | ✅ | ❌ |
 | 9 | `audit.read` | security | Ver logs de auditoría y login | READ | ✅ | ❌ |
-| 10 | `device.read` | device_mgmt | Ver dispositivos (lista y detalle) | READ | ✅ | ❌ (solo own) |
-| 11 | `device.write` | device_mgmt | Crear/editar/eliminar dispositivos (admin) | WRITE | ✅ | ❌ |
-| 12 | `device.assign` | device_mgmt | Asociar/desasociar dispositivo a usuario | ASSIGN | ✅ | ✅ (own) |
-| 13 | `device.config_read` | device_mgmt | Ver configuración de dispositivo | READ | ✅ | ✅ (own) |
-| 14 | `device.config_write` | device_mgmt | Gestionar configuración remota | WRITE | ✅ | ❌ |
+| 10 | `device.read` | device_management | Ver dispositivos (lista y detalle) | READ | ✅ | ❌ (solo own) |
+| 11 | `device.write` | device_management | Crear/editar/eliminar dispositivos (admin) | WRITE | ✅ | ❌ |
+| 12 | `device.assign` | device_management | Asociar/desasociar dispositivo a usuario | ASSIGN | ✅ | ✅ (own) |
+| 13 | `device.config_read` | device_management | Ver configuración de dispositivo | READ | ✅ | ✅ (own) |
+| 14 | `device.config_write` | device_management | Gestionar configuración remota | WRITE | ✅ | ❌ |
 | 15 | `event.read` | telemetry | Consultar eventos y evidencias | READ | ✅ | ✅ (own) |
 | 16 | `event.ingest` | telemetry | Ingestar eventos (desde device via API key) | INGEST | ❌ | ❌ (device only) |
 | 17 | `alert.read` | telemetry | Ver histórico de alarmas | READ | ✅ | ✅ (own) |
