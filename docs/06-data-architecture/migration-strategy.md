@@ -288,7 +288,7 @@ Basadas en la estructura real de `somnguard-db`, **todas** las changesets deben 
 | **Auditoría base** | Cada tabla SQL debe tener: `created_at` TIMESTAMPTZ NOT NULL, `created_by` UUID NULL |
 | **Auditoría extendida** | Tablas con UPDATE real: `updated_at`, `updated_by`, `version` INTEGER NOT NULL DEFAULT 1 |
 | **Soft delete** | Tablas transaccionales: `deleted_at` TIMESTAMPTZ NULL, `deleted_by` UUID NULL; NULL = activo; nunca `DELETE` físico |
-| **Estados (ADR-009)** | Solo 5 tablas core: `status_category` + `status` con FK a `parameterization` (user, device, event, device_config, notification) |
+| **Estados (ADR-009)** | 6 tablas core: `status_category` + `status` con FK a `parameterization` (`parameterization.event_type`, `security.user`, `device_management.device`, `telemetry_service.event`, `device_management.device_config`, `monitoring.notification`) |
 | **JSONB** | Para configuraciones flexibles, almacenado en columnas `configuration JSONB` |
 | **FKs** | `ON DELETE RESTRICT` por defecto; `ON DELETE CASCADE` solo en composición (evidence→event, notification→alert_log) |
 | **Índices** | Definidos en archivos `.sql` separados, no en yaml |
@@ -540,12 +540,3 @@ docker compose --profile tooling run --rm liquibase rollback-count 1
 | `changelog-master.yaml` | Punto de entrada único |
 
 ---
-
-## Próximos Pasos
-
-1. **Validar** este documento con DBA + Backend Lead (revisión 30 min) contra estructura real de `somnguard-db`
-2. **Verificar** que todos los `include` en los `changelog.yaml` tengan `contextFilter` y `labels` correctos
-3. **Crear** `migration-strategy-test.md` con escenarios de rollback automatizados contra BD real
-4. **Integrar** en la `ci-cd-strategy.md` validación automática en PRs (usando formato `sqlFile` real)
-5. **Actualizar** checklist de validación en `LISTA_DOCS_OTRO-PROJECT-PARA-SOMNGUARD.md`
-6. **Revisar** todos los archivos `.sql` existentes en `somnguard-db/` para asegurar consistencia con este strategy

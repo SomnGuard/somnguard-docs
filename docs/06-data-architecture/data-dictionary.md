@@ -182,6 +182,12 @@
 | `feature_id` | UUID | NO | — | `security.feature(id)` | IDX | Feature |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: creación |
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | User ID creador (seed = SYSTEM_ACTOR_ID) |
+| `updated_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: última modificación |
+| `updated_by` | UUID | SÍ | — | `security.user(id)` | — | User ID modificador |
+| `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete |
+| `deleted_by` | UUID | SÍ | — | `security.user(id)` | — | User ID que eliminó |
+| `version` | INTEGER | NO | 1 | — | — | Optimistic locking |
+| `is_active` | BOOLEAN | NO | TRUE | — | — | Activo/Inactivo — por defecto TRUE |
 
 ---
 
@@ -201,6 +207,7 @@
 | `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete = revocación |
 | `deleted_by` | UUID | SÍ | — | `security.user(id)` | — | User ID que revocó |
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking |
+| `is_active` | BOOLEAN | NO | TRUE | — | — | Activo/Inactivo — por defecto TRUE |
 
 > **Regla:** Un user solo tiene UNA asignación activa por role (`deleted_at IS NULL`)
 
@@ -468,6 +475,8 @@
 | `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete | |
 | `deleted_by` | UUID | SÍ | — | `security.user(id)` | — | User ID que eliminó | |
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking | |
+| `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio |
+| `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado |
 
 **Índices:** `idx_device_status_active (status) WHERE deleted_at IS NULL`, `idx_device_heartbeat (last_heartbeat_at)`
 
@@ -514,6 +523,8 @@
 | `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete |
 | `deleted_by` | UUID | SÍ | — | `security.user(id)` | — | User ID que eliminó |
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking (auditoría) |
+| `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio |
+| `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado |
 
 **Ejemplo `configuration` JSONB:**
 ```json
@@ -573,6 +584,8 @@
 | `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete | |
 | `deleted_by` | UUID | SÍ | — | — | — | User/Device ID que eliminó | |
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking | |
+| `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio |
+| `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado |
 
 **Índices compuestos críticos:**
 - `idx_event_device_time (device_id, occurred_at DESC)` — timeline por device
@@ -641,6 +654,8 @@
 | `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete | |
 | `deleted_by` | UUID | SÍ | — | `security.user(id)` | — | User ID que eliminó | |
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking | |
+| `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio |
+| `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado |
 
 **Reglas:** RN-07 (notificaciones críticas auto, propietario device), plantillas por event_type+severity
 

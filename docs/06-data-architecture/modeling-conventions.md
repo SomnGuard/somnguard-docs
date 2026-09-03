@@ -77,8 +77,7 @@ Toda query de lectura sobre tablas transaccionales filtra por defecto `WHERE del
 > **Regla de oro:** el soft delete (`is_active = FALSE` / `deleted_at IS NULL`) y el estado de negocio (`status`/`status_category`) son ejes ortogonales.
 > **Estado actual en la BD:**
 > - `is_active` BOOLEAN es el campo de soft delete **en todas las tablas** (por defecto TRUE).
-> - `status` + `status_category` VARCHARs solo existen en `parameterization.event_type` (catálogo de estados). No están en user, device, event, notification como columnas base.
-> - Las 5 tablas objetivo de ADR-009 (`security.user`, `device_management.device`, `telemetry_service.event`, `device_management.device_config`, `monitoring.notification`) tendrán `status`+`status_category` en futuras migraciones, pero por ahora usan `is_active` para estado.
+> - `status` + `status_category` VARCHARs existen en: `parameterization.event_type` (catálogo), `security.user`, `device_management.device`, `telemetry_service.event`, `device_management.device_config`, `monitoring.notification` (6 tablas total, ADR-009 aplicado).
 
 ## 3. Otras convenciones (vigentes)
 
