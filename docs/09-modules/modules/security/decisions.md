@@ -155,9 +155,7 @@
 **Fecha:** 2026-09-01
 **Estado:** Aceptada
 
-**Contexto:** Tabla `role_feature` en BD solo tiene `id, role_id, feature_id, created_at, created_by`.
-
-**Decisión:** No añadir `scope_type` por ahora. La tabla permanece simple.
+**Contexto:** Tabla `role_feature` en BD incluye auditoría extendida (`updated_at`, `updated_by`), soft delete (`deleted_at`, `deleted_by`), `version` e `is_active`, además de `id, role_id, feature_id, created_at, created_by`.
 
 **Consecuencias:**
 - + Esquema actual de BD soportado sin cambios
