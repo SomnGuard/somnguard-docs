@@ -48,9 +48,9 @@
 | device_management | `device.read` | Ver dispositivos y asignaciones | OK |
 | device_management | `device.write` | Registrar, asignar, configurar dispositivos | Muy amplio: alta + asignación + config |
 | device_management | `device.config` | Gestionar configuración remota | No es acción CRUD estándar |
-| telemetry | `event.read` | Consultar eventos y evidencias | OK |
-| telemetry | `event.write` | Ingestar eventos (device) | Es ingesta device, no acción usuario |
-| telemetry | `alert.read` | Ver histórico de alarmas | OK |
+| telemetry_service | `event.read` | Consultar eventos y evidencias | OK |
+| telemetry_service | `event.write` | Ingestar eventos (device) | Es ingesta device, no acción usuario |
+| telemetry_service | `alert.read` | Ver histórico de alarmas | OK |
 | monitoring | `notification.read` | Ver notificaciones propias | OK |
 | monitoring | `notification.write` | Enviar notificaciones (sistema) | Es acción sistema, no usuario |
 | analytics | `analytics.read` | Ver reportes y métricas | OK |
