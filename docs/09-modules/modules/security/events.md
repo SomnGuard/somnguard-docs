@@ -28,8 +28,8 @@ El módulo `security` publica los siguientes eventos de dominio para que otros m
 | `UserCreated` | Tras crear usuario (admin) | `user_id`, `email`, `first_name`, `last_name`, `roles[]` | `device_management` (crear conductor), `monitoring` (prefs notificación) |
 | `UserUpdated` | Tras actualizar usuario | `user_id`, `changed_fields{}`, `roles[]` | `device_management` (sync conductor), `analytics` (dimensión usuario) |
 | `UserDeactivated` | Tras soft-delete usuario | `user_id`, `deactivated_by`, `deactivated_at` | `device_management` (liberar dispositivos), `monitoring` (cancelar notifs) |
-| `UserRoleAssigned` | Asignar rol a usuario | `user_id`, `role_code`, `assigned_by`, `expires_at` | `device_management` (permisos dispositivo), `telemetry` (scope ingestión) |
-| `UserRoleRevoked` | Revocar rol de usuario | `user_id`, `role_code`, `revoked_by` | `device_management`, `telemetry`, `analytics` |
+| `UserRoleAssigned` | Asignar rol a usuario | `user_id`, `role_code`, `assigned_by`, `expires_at` | `device_management` (permisos dispositivo), `telemetry_service` (scope ingestión) |
+| `UserRoleRevoked` | Revocar rol de usuario | `user_id`, `role_code`, `revoked_by` | `device_management`, `telemetry_service`, `analytics` |
 | `PasswordResetRequested` | Solicitud reset password | `user_id`, `email`, `expires_at` | `monitoring` (enviar email) |
 | `PasswordResetCompleted` | Reset confirmado | `user_id`, `completed_at` | `audit` (log seguridad) |
 | `LoginSucceeded` | Login exitoso | `user_id`, `ip_address`, `user_agent`, `roles[]`, `features[]` | `audit`, `analytics` (sesiones) |
