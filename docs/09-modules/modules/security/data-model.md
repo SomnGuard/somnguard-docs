@@ -210,7 +210,7 @@ Registro de intentos de autenticación.
 
 ## Notas de integridad
 
-- **Catálogos inmutables**: `role`, `module`, `feature`, `role_feature` no llevan soft delete; se desactivan con `is_active = false` solo si nunca se usaron (ver modeling-conventions.md)
+- **Catálogos inmutables**: `role`, `module`, `feature` no llevan soft delete; se desactivan con `is_active = false` solo si nunca se usaron (ver modeling-conventions.md)
 - **SYSTEM_ACTOR_ID**: `00000000-0000-0000-0000-000000000000` para seeds y procesos automáticos
 - **Roles actuales**: Solo `admin` y `user` (según seeds en somnguard-db)
 - **Features actuales**: 17 features en minúscula formato `recurso.accion` (ver seeds 011_insert_security_features.sql)
