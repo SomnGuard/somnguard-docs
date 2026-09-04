@@ -114,7 +114,7 @@ Necesitamos una estrategia de base de datos que:
 
 ## Referencias
 
-- [cross-cutting.md](../cross-cutting.md#2-auditoría-y-trazabilidad-de-datos)
+- [cross-cutting.md](../../cross-cutting.md#2-auditoría-y-trazabilidad-de-datos)
 - [modeling-conventions.md](../../../06-data-architecture/modeling-conventions.md)
 - [migration-strategy.md](../../../06-data-architecture/migration-strategy.md)
 - [software-design-report.md](../../software-design-report.md) §3.2

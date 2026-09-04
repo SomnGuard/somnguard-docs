@@ -19,7 +19,7 @@
   - `01-project-context`: `overview.md`, `project-profile.md` y `scope-declaration.md`.
   - `02-domain`: `domain-map.md`, `entities-and-rules.md` (RN-01..RN-10 ↔ RB-01..RB-10) y `domain-events.md`.
   - `03-product-definition`: `product-backlog.md` (épicas desde F-01..F-10) y `_template-backlog.md`.
-  - `04-requeriments`: `non-functional.md` (NFR-01..NFR-08), `traceability-matrix.md` y `_template-hu.md`.
+  - `04-requirements`: `non-functional.md` (NFR-01..NFR-08), `traceability-matrix.md` y `_template-hu.md`.
   - `05-architecture`: `security-threat-model.md` (STRIDE), `pattern-guide.md` y `_template-adr.md`.
   - `06-data-architecture`: `modeling-conventions.md` (auditoría, estados, orden DDL Liquibase).
   - `07-api-design`: `guidelines.md`, `authentication.md` (JWT/RBAC/API keys) y `contracts/` (destino de OpenAPI por módulo).
@@ -34,7 +34,7 @@
 - **Estructura del backend Java:** `somnguard-api/backend-java/` (repositorio aparte, aún en borrador) con el árbol de carpetas completo del backend hexagonal (solo estructura, con `.gitkeep`), alineado a docs y ADRs: 6 módulos (security, parameterization, device-management, telemetry-service, monitoring, analytics) × `application/port/{in,out}`, `application/usecase`, `domain/{model,service}`, `adapter/in/{web,amqp}`, `adapter/out/{persistence,storage}`, más `platform/{error-handling,logging,observability}`.
 - **Diagramas UML:** 8 diagramas de secuencia en `docs/08-uml/diagrams/source/` (detección y alerta, sincronización offline, autenticación, restablecimiento de contraseña, alta de dispositivo, consulta de eventos, notificación crítica y generación de reportes) con sus exportaciones en `exports/`; 1 diagrama de clases de dominio (`cd-domain.mmd`).
 - **Propuesta técnica:** `docs/01-project-context/software-technical-proposal.md` — solución propuesta, arquitectura, stack tecnológico, diseño, metodología, plan de trabajo, recursos, costos referenciales, riesgos y entregables.
-- **Análisis del software:** `docs/04-requeriments/software-analysis.md` — modelo de dominio, casos de uso, vistas estáticas y vistas dinámicas (secuencia, actividades y estados) con trazabilidad funcionalidad → caso de uso → módulo → pruebas.
+- **Análisis del software:** `docs/04-requirements/software-analysis.md` — modelo de dominio, casos de uso, vistas estáticas y vistas dinámicas (secuencia, actividades y estados) con trazabilidad funcionalidad → caso de uso → módulo → pruebas.
   - Nuevos diagramas en `docs/08-uml/diagrams/source/`: 4 de actividades (`ac-*.mmd`) y 3 de estados (`es-*.mmd`), con sus exportaciones en `exports/`.
 
 ### Changed (2026-08-19)

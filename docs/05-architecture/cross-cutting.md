@@ -18,9 +18,9 @@
 </div>
 
 > **Reglas obligatorias para TODOS los módulos/repos** (API, DB, DEVICE, PORTAL, APP).
-> Basado en: [SRS](../04-requeriments/01-srs/) (RNF-*), [functional.md](./functional.md) (RF-*),
-> [architecture-document.md](../05-architecture/architecture-document.md),
-> [pattern-guide.md](../05-architecture/pattern-guide.md) (Hexagonal + DDD),
+> Basado en: [SRS](../04-requirements/01-srs/) (RNF-*), [functional.md](../04-requirements/functional.md) (RF-*),
+> [architecture-document.md](./architecture-document.md),
+> [pattern-guide.md](./pattern-guide.md) (Hexagonal + DDD),
 > Guía ADR-004 (estados parametrizados + auditoría).
 
 ---
@@ -35,7 +35,7 @@
 | **Refresh Token** | 7 días, rotación en cada uso, hash en BD, blocklist en logout |
 | **Claims obligatorios** | `sub` (user_id UUID), `roles` (array), `features` (array), `exp`, `iat`, `jti` |
 | **JWKS Endpoint** | `GET /.well-known/jwks.json` para verificación distribuida |
-| **Rate Limit Auth** | 5 req/min en `/auth/*` por IP |
+| **Rate Limit Auth** | 5 req/min en `/auth/*` por IP en API (`Retry-After: 60`). Gateway permite 10/min burst 20 (ADR-008:122) como proteccion DDoS; el limite efectivo es 5/min |
 
 ### 1.2 Dispositivos (Edge → API)
 | Aspecto | Especificación |
@@ -43,8 +43,8 @@
 | **Credencial** | API Key (opaque, 32 bytes base64url) + `device_id` (UUID) |
 | **Header** | `X-Device-ID: <uuid>` + `X-API-Key: <key>` |
 | **Validación** | HMAC-SHA256 de `api_key` comparado con `device.api_key_hash` |
-| **Rate Limit Device** | 100 req/min por API Key (token bucket) |
-| **Scope** | Solo endpoints `/telemetry/*` y `/devices/{id}/config` |
+| **Rate Limit Device** | 1000 req/min por API Key en gateway (Traefik `device-ratelimit`, burst 2000) — ver ADR-008. En API: `POST /telemetry/events 60/min`, `POST /heartbeat 2/min`, `GET /config 10/min` por `X-Device-ID` |
+| **Scope** | Solo endpoints `/telemetry/*`, `POST /devices/{id}/heartbeat` y `GET /devices/{id}/config`. `REGISTERED` sin `assign` -> `403` en telemetría |
 
 ### 1.3 RBAC (Role-Based Access Control)
 | Aspecto | Especificación |
@@ -226,22 +226,24 @@ Toda entidad con ciclo de vida usa **dos campos**:
 
 ---
 
-## 7. Manejo de Errores (RFC 7807 Problem Details)
+## 7. Manejo de Errores (formato implementado `{"error":{...}}`, ver `guidelines.md`)
 
-### 7.1 Formato Unificado
+> Canonico: `{"error":{"code","message","details":[],"trace_id"}}` (ver `guidelines.md`). RFC7807 queda como evolucion futura, no usar ahora.
+
+### 7.1 Formato Unificado (implementado)
 ```json
 {
-  "type": "https://somnguard.com/errors/VALIDATION_ERROR",
-  "title": "Validation failed",
-  "status": 422,
-  "detail": "Field 'email' must be a valid email address",
-  "instance": "/api/v1/auth/register",
-  "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "errors": [
-    {"field": "email", "code": "INVALID_FORMAT", "message": "Invalid email format"}
-  ]
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validacion fallida",
+    "details": [
+      {"field": "email", "issue": "Invalid email format"}
+    ],
+    "trace_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+  }
 }
 ```
+> Ejemplo RFC7807 (`type/title/status/detail/instance`) descartado para MVP: ver `guidelines.md:93-104` como unica fuente.
 
 ### 7.2 Códigos de Error Estándar
 | HTTP Status | Type (URI) | Código | Cuándo |

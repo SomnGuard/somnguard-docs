@@ -234,7 +234,7 @@
 
 ## Referencias cruzadas
 
-- [ADR-003: Analytics module](../../../../05-architecture/decisions/records/ADR-003-analytics-module.md)
-- [ADR-009: Estados de negocio parametrizados](../../../../05-architecture/decisions/records/ADR-009-parametrized-status.md)
+- [ADR-003: Analytics module](../../../05-architecture/decisions/records/ADR-003-analytics-module.md)
+- [ADR-009: Estados de negocio parametrizados](../../../05-architecture/decisions/records/ADR-009-status-parametrized-audit.md)
 - [Modelo de datos](./data-model.md)
 - [Catálogo de módulos](../../module-catalog.md)

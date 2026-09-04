@@ -82,5 +82,5 @@ El enrutamiento de alertas y la herramienta de alerting son un **punto abierto**
 - [_template-observability.md](./_template-observability.md)
 - [incident-management.md](./incident-management.md)
 - [backup-and-recovery.md](./backup-and-recovery.md)
-- [Requisitos no funcionales](../04-requeriments/non-functional.md)
+- [Requisitos no funcionales](../04-requirements/non-functional.md)
 - [Documento de arquitectura](../05-architecture/architecture-document.md#15-observabilidad-y-auditoría)

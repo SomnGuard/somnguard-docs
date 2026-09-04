@@ -17,7 +17,7 @@
 
 </div>
 
-> **Fuentes:** [SRS](../04-requeriments/01-srs/) (RF-1..RF-10, RNF-1..RNF-9, Apéndices),
+> **Fuentes:** [SRS](./01-srs/) (RF-1..RF-10, RNF-1..RNF-9, Apéndices),
 > [entities-and-rules.md](../02-domain/entities-and-rules.md) (RN-*),
 > [software-analysis.md](./software-analysis.md) (F-01..F-10),
 > [product-backlog.md](../03-product-definition/product-backlog.md) (épicas MoSCoW),
@@ -77,7 +77,8 @@
 | RF-DEV-03 | Configuración remota device_config (JSONB): umbrales, sound_pattern, volumen, intervalo sync | RN-DEV-04 | RF-1.2, RF-8.3 | Must | Gestión de dispositivos |
 | RF-DEV-04 | Heartbeat dispositivo: last_seen, versión firmware, estado conectividad | RN-DEV-05 | RF-8.2 | Must | Gestión de dispositivos |
 | RF-DEV-05 | Gestión de estados del dispositivo (state machine: Registrado → Asignado → Activo ↔ Offline → Suspendido → Retirado) | RN-DEV-06 | Apéndice 2 (EV-SYS-*), ES-device | Must | Gestión de dispositivos |
-| RF-DEV-06 | Consulta de dispositivos por usuario (filtros: estado, fecha asignación) | RN-DEV-07 | RF-10.1 | Should | Gestión de dispositivos |
+| RF-DEV-08 | Consulta de dispositivos por usuario (filtros: estado, fecha asignación) | RN-DEV-07 | RF-10.1 | Should | Gestión de dispositivos |
+| RF-DEV-09 | Rotación/revocación API Key: `PATCH /devices/{id}/rotate-key` (solo admin), invalida anterior de inmediato, devuelve nueva key una sola vez. Estado no cambia; device con key vieja recibe `401` hasta reprovisionar (mitiga T-002) | RN-DEV-03 | RF-9.6 | Should | Gestión de dispositivos |
 
 ### Telemetry Service (RF-TEL-*)
 
@@ -140,7 +141,9 @@
 | RF-SEC-04 | RN-SEC-06 | RF-9.4 | Seguridad y cuentas | Security | HU-API-004 |
 | RF-SEC-05 | RN-SEC-07 | RF-9.5 | Seguridad y cuentas | Security | HU-API-005 |
 | RF-DEV-06 | RN-DEV-01 | RF-9.6 | Gestión de dispositivos | Device Management | HU-API-006 |
-| RF-DEV-07 | RN-DEV-02 | RF-9.7 | Gestión de dispositivos | Device Management | HU-API-007 |
+| RF-DEV-07 | RN-DEV-02 | RF-9.7 | Gestion de dispositivos | Device Management | HU-API-006
+| RF-DEV-08 | RN-DEV-07 | RF-10.1 | Gestion de dispositivos | Device Management | HU-API-006
+| RF-DEV-09 | RN-DEV-03 | RF-9.6 | Gestion de dispositivos | Device Management | HU-API-006 |
 | RF-SEC-08 | RN-SEC-08 | RF-9.8 | Seguridad y cuentas | Security | HU-API-008 |
 | RF-SEC-09 | RN-SEC-09 | RNF-4.3 | Seguridad y cuentas | Security | HU-API-009 |
 | RF-SEC-10 | RN-SEC-10 | RNF-4.4 | Seguridad y cuentas | Security | HU-API-010 |
@@ -154,7 +157,7 @@
 | RF-DEV-03 | RN-DEV-04 | RF-1.2,8.3 | Gestión de dispositivos | Device Management | HU-API-018 |
 | RF-DEV-04 | RN-DEV-05 | RF-8.2 | Gestión de dispositivos | Device Management | HU-API-019 |
 | RF-DEV-05 | RN-DEV-06 | EV-SYS-* | Gestión de dispositivos | Device Management | HU-API-020 |
-| RF-DEV-06 | RN-DEV-07 | RF-10.1 | Gestión de dispositivos | Device Management | HU-PORTAL-001 |
+| RF-DEV-08 | RN-DEV-07 | RF-10.1 | Gestion de dispositivos | Device Management | HU-PORTAL-001 |
 | RF-TEL-01 | RN-TEL-01 | RF-7.1,7.2,8.3 | Telemetría y sincronización | Telemetry Service | HU-API-021 |
 | RF-TEL-02 | RN-TEL-02 | RF-7.4,8.3 | Telemetría y sincronización | Telemetry Service | HU-API-022 |
 | RF-TEL-03 | RN-TEL-03 | RF-6.1,6.2,7.3 | Telemetría y sincronización | Telemetry Service | HU-API-023 |

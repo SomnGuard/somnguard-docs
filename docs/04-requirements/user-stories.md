@@ -371,7 +371,8 @@
 | AC-003 | POST `/devices/{id}/unassign`: libera device → estado `Registrado` | Sí |
 | AC-004 | State machine automática: `Asignado` → `Activo` (primer heartbeat) ↔ `Offline` (sin heartbeat 5min) → `Suspendido` (admin) → `Retirado` | Sí |
 | AC-005 | GET `/devices` con filtros: estado, fecha asignación, paginación | Sí |
-| AC-006 | Heartbeat: PUT `/devices/{id}/heartbeat` actualiza `last_seen`, versión firmware | Sí |
+| AC-006 | Heartbeat: POST `/devices/{id}/heartbeat` (auth `X-Device-ID + X-API-Key`, body `{firmware_version, pending_count, free_disk_pct, uptime_s}`) actualiza `last_heartbeat_at, last_seen_ip, firmware_version`. Primer heartbeat válido `Asignado->Activo`; `>5min` sin heartbeat `->Offline` | Sí |
+| AC-007 | Rotación: PATCH `/devices/{id}/rotate-key` (solo admin JWT) invalida key anterior, devuelve nueva una sola vez, estado no cambia (RF-DEV-09, mitiga T-002) | Sí |
 
 ### Dependencias
 
@@ -379,7 +380,7 @@
 |----------------|------|-------------|
 | HU-API-001 | Bloqueante | Auth usuario |
 | HU-DB-001a | Bloqueante | Esquema `device_management` |
-| RF-DEV-01..05 | Requisito | Base funcional |
+| RF-DEV-01..09 | Requisito | Base funcional |
 
 ---
 
@@ -397,10 +398,10 @@
 
 | ID | Criterio | Testeable |
 |----|----------|-----------|
-| AC-001 | POST `/telemetry/events` (auth: API Key device) acepta array de eventos + evidencia | Sí |
-| AC-002 | Validación: `device_id` + `api_key` coinciden, `event_id` (UUID) único → 409 si duplicado | Sí |
+| AC-001 | POST `/telemetry/events` (auth `X-Device-ID + X-API-Key`) acepta **solo metadata JSON** `{"events":[]}` lote máx 100, sin archivos inline (descartado base64) | Sí |
+| AC-002 | Validación: `device_id` + `api_key` coinciden, `event_id` (UUIDv7) único → 409 si duplicado. `REGISTERED` sin assign -> `403` | Sí |
 | AC-003 | Persiste `event` (event_type_id, occurred_at, severity, is_offline_sync, evidence_refs) | Sí |
-| AC-004 | Evidencia (imagen/video) → MinIO bucket `somnguard-evidence`; retorna `evidence_id` | Sí |
+| AC-004 | Evidencia 1/evento MVP: `POST /telemetry/events/{id}/evidence` multipart 1 JPG -> MinIO `somnguard-evidence` key `{device_id/YYYY/MM/DD/event_id.jpg}` + `evidence_id` + `checksum_sha256`. Mapeo por `evidence.event_id UNIQUE` | Sí |
 | AC-005 | Registra `alert_log` con código AS-XX, timestamp, event_id, severidad | Sí |
 | AC-006 | Respuesta 201 con array de `event_id` aceptados; ACK para limpieza buffer local | Sí |
 | AC-007 | Lote máx 100 eventos; timeout 10s; payload máx 50MB | Sí |
@@ -823,7 +824,7 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 |----------------|------|-------------|
 | HU-PORTAL-001 | Bloqueante | Auth en portal |
 | HU-API-006, HU-API-008 | Bloqueante | APIs dispositivos y eventos |
-| RF-DEV-06, RF-TEL-06 | Requisito | Base funcional |
+| RF-DEV-08, RF-TEL-06 | Requisito | Base funcional |
 
 ---
 
@@ -949,7 +950,7 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 | HU-API-003 | RBAC | API | RF-SEC-10 | Seguridad y cuentas | 1 | 5 | Must |
 | HU-API-004 | CRUD catálogos | API, DB | RF-PAR-01..03 | Parametrización | 1 | 8 | Must |
 | HU-API-005 | Device config remota | API, DB | RF-DEV-03, RF-TEL-05, RF-EDGE-11 | Gestión disp. | 2 | 5 | Must |
-| HU-API-006 | Gestión dispositivos | API, DB | RF-DEV-01..05 | Gestión disp. | 1 | 8 | Must |
+| HU-API-006 | Gestión dispositivos | API, DB | RF-DEV-01..09 | Gestión disp. | 1 | 8 | Must |
 | HU-API-007 | Ingesta eventos/evidencia | API, DB | RF-TEL-01..03, RF-EDGE-08 | Telemetría | 2 | 13 | Must |
 | HU-API-008 | Consulta eventos | API, DB | RF-TEL-06 | Telemetría | 2 | 5 | Must |
 | HU-API-009 | Push eventos críticos | API | RF-MON-01..04 | Monitoreo | 3 | 8 | Must |
@@ -961,7 +962,7 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 | HU-DEVICE-003 | Buffer offline + sync | DEVICE | RF-EDGE-08,10,12, RF-TEL-04,07 | Telemetría | 2 | 13 | Must |
 | HU-DEVICE-004 | Alertas sonoras + escalamiento | DEVICE | RF-EDGE-07,11 | Telemetría | 2 | 5 | Must |
 | HU-PORTAL-001 | Auth portal (login, register, reset) | PORTAL | RF-SEC-01..05,08,09 | Seguridad y cuentas | 1 | 8 | Must |
-| HU-PORTAL-002 | Dashboard dispositivos/eventos | PORTAL | RF-DEV-06, RF-TEL-06 | Gestión/Telemetría | 3 | 8 | Must |
+| HU-PORTAL-002 | Dashboard dispositivos/eventos | PORTAL | RF-DEV-08, RF-TEL-06 | Gestión/Telemetría | 3 | 8 | Must |
 | HU-PORTAL-003 | Métricas y tendencias | PORTAL | RF-ANA-01,02 | Analítica | 4 | 5 | Must |
 | HU-PORTAL-004 | Resumen IA + reporte | PORTAL | RF-ANA-03,04 | Analítica | 5 | 8 | Should |
 | HU-APP-001 | Auth app (login, register, reset) | APP | RF-SEC-01..05,08,09 | Seguridad y cuentas | 1 | 8 | Must |

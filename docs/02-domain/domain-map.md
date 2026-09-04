@@ -76,4 +76,4 @@ Ver el glosario completo en [glossary.md](./glossary.md).
 
 - [Entidades y reglas de negocio](entities-and-rules.md)
 - [Eventos de dominio](domain-events.md)
-- [Análisis del software](../04-requeriments/software-analysis.md)
+- [Análisis del software](../04-requirements/software-analysis.md)

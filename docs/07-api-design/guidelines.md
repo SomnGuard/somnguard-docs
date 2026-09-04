@@ -25,7 +25,7 @@ Convenciones REST que rigen las APIs de SomnGuard. Complementa el diseño de API
 - Nombres de campos en `snake_case` (coherente con el modelo de datos y el JWT).
 - Fechas y horas en **ISO 8601 UTC** (`2026-08-01T14:30:00Z`).
 - Identificadores públicos: **UUID** (nunca IDs autoincrementales expuestos).
-- Cargas de archivo (evidencia multimedia) vía `multipart/form-data` en el módulo `telemetry-service`.
+- Cargas de archivo (evidencia multimedia) vía `multipart/form-data` **solo en `POST /telemetry/events/{eventId}/evidence` (1 archivo por evento)**. El lote `POST /telemetry/events` es **solo JSON** `{"events":[]}` sin archivos inline (descartado `base64 en event_json`: infla 33% y rompe límite 50MB).
 
 ## 2. Versionado
 
@@ -130,7 +130,7 @@ Cuerpo de error uniforme en toda la plataforma (alineado con `platform/error-han
 
 ## 10. Convenciones transversales
 
-- **Idempotencia** en escritura sensible: header `Idempotency-Key` en `POST` que crean recursos con efecto de negocio (sincronización de eventos, RN-08).
+- **Idempotencia (dos mecanismos, no mezclados):** telemetría usa `event_id UUIDv7` único en BD -> `409 Conflict` si duplicado, device borra local en `201` y `409` (RN-08). Header `Idempotency-Key` **solo** en `POST` no-telemetría (`/devices`, `/{id}/assign`, `/auth/*`). No usar header en `/telemetry/events`.
 - **Correlación**: propagar `trace_id` entre módulos y hacia logs/eventos.
 - **Rate limiting**: respuesta `429` con `Retry-After`; límites por identidad.
 - **Compatibilidad**: nunca romper un contrato publicado sin subir versión mayor.

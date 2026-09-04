@@ -95,7 +95,7 @@ Gestiona la autenticación, autorización y auditoría de usuarios del sistema S
 | `POST /api/v1/users/{id}/roles` | Asignar rol a usuario (`role.write`) |
 | `GET /api/v1/audit/login` | Logs de auditoría (`audit.read`) |
 
-Ver contrato completo en [`../../../../07-api-design/contracts/`](../../../../07-api-design/contracts/)
+Ver contrato completo en [`../../../07-api-design/contracts/`](../../../07-api-design/contracts/)
 
 ## Links
 

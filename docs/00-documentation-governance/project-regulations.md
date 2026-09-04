@@ -77,7 +77,7 @@ docs/
 ├── 01-project-context/           # Contexto del proyecto: perfil, alcance, propuesta
 ├── 02-domain/                    # Dominio del negocio: mapa de procesos
 ├── 03-product-definition/        # Definición del producto e investigación
-├── 04-requeriments/              # SRS, análisis y requisitos
+├── 04-requirements/              # SRS, análisis y requisitos
 ├── 05-architecture/              # Arquitectura y decisiones (ADRs)
 ├── 06-data-architecture/         # Modelo de datos y diccionarios
 ├── 07-api-design/                # Diseño de API
@@ -246,7 +246,7 @@ Refs: HU-DEVICE-007
 |------|-------------|-----------|
 | Código fuente | Repositorio Git del código | Repositorios de código del proyecto |
 | Documentación técnica | Manuales, guías, API docs | `docs/05-architecture`, `docs/07-api-design` |
-| Documentación funcional | SRS, casos de uso | `docs/04-requeriments`, `docs/08-uml` |
+| Documentación funcional | SRS, casos de uso | `docs/04-requirements`, `docs/08-uml` |
 | Datos | Modelos, esquemas | `docs/06-data-architecture` |
 | Reportes de pruebas | Test reports, coverage | `docs/11-quality-assurance` |
 | Binarios/Releases | Versiones empaquetadas | `/releases/v*.*.*.zip` |
@@ -303,7 +303,7 @@ Ejemplo: `somnguard-v1.0.0.zip`
 Plantillas y referencias:
 
 - Acta de reuniones: `docs/15-project-control/01-meeting-minutes/`
-- SRS / Requisitos: `docs/04-requeriments/`
+- SRS / Requisitos: `docs/04-requirements/`
 - Template de PR: `.github/pull_request_template.md` del repositorio
 
 ## 17. Glosario
@@ -320,3 +320,4 @@ Plantillas y referencias:
 ---
 
 _Última actualización: 2026-08-19_
+

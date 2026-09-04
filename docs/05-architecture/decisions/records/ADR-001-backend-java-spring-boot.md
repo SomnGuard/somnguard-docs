@@ -117,7 +117,7 @@ Se decide un **modelo dual** según tipo de cliente:
 - Reglas de documentación de módulos: `../../../00-documentation-governance/structure-rules.md`
 - Preguntas abiertas: `../../../15-project-control/open-questions.md`
 - **Autenticación detallada:** [`../../../07-api-design/authentication.md`](../../../07-api-design/authentication.md)
-- **Cross-cutting concerns:** [`../cross-cutting.md`](../cross-cutting.md#1-autenticación-y-autorización)
+- **Cross-cutting concerns:** [`../../cross-cutting.md`](../../cross-cutting.md#1-autenticación-y-autorización)
 - **ADR-002 (Hexagonal):** `./ADR-002-hexagonal-architecture.md`
 - **RFC 7519:** https://tools.ietf.org/html/rfc7519
 - **Spring Security JWT:** https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html

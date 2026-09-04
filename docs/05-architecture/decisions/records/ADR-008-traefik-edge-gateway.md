@@ -274,7 +274,7 @@ traefik:
 
 ## Referencias
 
-- [cross-cutting.md](../cross-cutting.md) — (config por ambiente, seguridad headers)
+- [cross-cutting.md](../../cross-cutting.md) — (config por ambiente, seguridad headers)
 - [local-setup.md](../../../10-devops/local-setup.md) — Docker Compose profiles
 - [architecture-document.md](../../architecture-document.md) §Deployment
 - Traefik v3 docs: https://doc.traefik.io/traefik/

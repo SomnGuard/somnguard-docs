@@ -38,10 +38,11 @@ El dispositivo genera:
 - **`event_id` (UUID v7)** generado en device — **clave de idempotencia** global
 - Evidencia guardada en `data/media/{event_id}.jpg` (ruta relativa en `evidence_path`)
 
-### 3. Detección de Conectividad
+### 3. Detección de Conectividad vs Heartbeat (no confundir)
 | Mecanismo | Detalle |
 |-----------|---------|
-| **Healthcheck** | `HEAD https://api.somnguard.com/actuator/health` cada 30s (configurable via `device_config.sync_interval_seconds`) |
+| **Healthcheck (device->API, sin auth)** | `HEAD https://api.somnguard.com/actuator/health` cada 30s (configurable via `device_config.sync_interval_seconds`). Solo responde ¿hay internet? No actualiza `last_heartbeat_at` |
+| **Heartbeat/saludo (device->API, con auth)** | `POST /api/v1/devices/{id}/heartbeat` con `X-Device-ID + X-API-Key` + `{firmware_version, pending_count, free_disk_pct, uptime_s}` cada 30-60s. Actualiza `last_heartbeat_at, last_seen_ip`. Primer heartbeat válido `ASSIGNED->ACTIVE`; `>5min` sin heartbeat `ACTIVE->OFFLINE` |
 | **Timeout** | 5s connect, 10s read |
 | **Estados** | `ONLINE` (2xx) / `OFFLINE` (timeout, 5xx, network error) |
 | **Cambio OFFLINE→ONLINE** | Dispara sync inmediato + backoff reset |
@@ -146,10 +147,11 @@ while True:
 
 ## Referencias
 
-- [cross-cutting.md](../cross-cutting.md#4-idempotencia-y-consistencia-en-sincronización)
-- [functional.md](../../../04-requeriments/functional.md) → RF-EDGE-08,10,12, RF-TEL-04,07
-- [software-analysis.md](../../../04-requeriments/software-analysis.md) §6.1 (sd-offline-sync, ac-offline-sync)
+- [cross-cutting.md](../../cross-cutting.md#4-idempotencia-y-consistencia-en-sincronización)
+- [functional.md](../../../04-requirements/functional.md) → RF-EDGE-08,10,12, RF-TEL-04,07
+- [software-analysis.md](../../../04-requirements/software-analysis.md) §6.1 (sd-offline-sync, ac-offline-sync)
 - [entities-and-rules.md](../../../02-domain/entities-and-rules.md) → RN-TEL-04, RN-EDGE-08,10,12
-- [SRS RNF-2.1, 2.2, 3.1](../../../04-requeriments/01-srs/) (offline operation, persistence, availability)
+- [SRS RNF-2.1, 2.2, 3.1](../../../04-requirements/01-srs/) (offline operation, persistence, availability)
 - SQLite WAL mode: https://www.sqlite.org/wal.html
 - UUID v7: https://datatracker.ietf.org/doc/html/draft-peabody-dispatch-new-uuid-format
+

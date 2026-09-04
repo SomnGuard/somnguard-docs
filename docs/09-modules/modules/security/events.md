@@ -75,5 +75,5 @@ El módulo `security` reacciona a:
 
 ## Referencias
 
-- [Catálogo de eventos global](../../../event-catalog.md)
+- [Catálogo de eventos global](../../event-catalog.md)
 - [Modelo de datos](./data-model.md)

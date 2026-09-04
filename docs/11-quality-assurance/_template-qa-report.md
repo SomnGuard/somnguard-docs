@@ -77,5 +77,5 @@
 ## Referencias
 
 - [Evidencia de pruebas](./_template-test-evidence.md)
-- [Matriz de trazabilidad](../04-requeriments/traceability-matrix.md)
+- [Matriz de trazabilidad](../04-requirements/traceability-matrix.md)
 - [Backlog](../03-product-definition/product-backlog.md)

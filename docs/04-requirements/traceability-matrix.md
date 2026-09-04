@@ -30,8 +30,8 @@ Matriz completa que relaciona **Requisitos Funcionales (RF)** ↔ **Historias de
 | RF-SEC-03 | Logout con invalidación refresh token (blocklist) | HU-API-001, HU-PORTAL-001, HU-APP-001 | Security | RN-SEC-05 | NFR-01 | ADR-001 | Integración: logout 204, refresh posterior 401 |
 | RF-SEC-04 | Recuperación contraseña via token temporal (1h) | HU-API-002, HU-PORTAL-001, HU-APP-001 | Security | RN-SEC-06 | NFR-01 | ADR-001 | Integración: forgot→reset flow, token expira 1h, un solo uso |
 | RF-SEC-05 | Actualización datos personales (unicidad email/tel) | HU-API-002, HU-PORTAL-001, HU-APP-001 | Security | RN-SEC-07 | NFR-01 | — | Unitarias: validador PATCH /users/me. Integración: 200/409 |
-| RF-SEC-06 | Asociación device ↔ user (1:1, device_assignment) | HU-API-006, HU-PORTAL-002 | Device Management | RN-DEV-01 | NFR-01 | — | Integración: assign/unassign, state machine |
-| RF-SEC-07 | Desasociación device (libera para otro user) | HU-API-006 | Device Management | RN-DEV-02 | NFR-01 | — | Integración: unassign → estado Registrado |
+| RF-DEV-06 | Asociación device ↔ user (1:1, device_assignment) - ver RF-DEV-02 detalle | HU-API-006, HU-PORTAL-002 | Device Management | RN-DEV-01 | NFR-01 | — | Integración: assign/unassign, state machine |
+| RF-DEV-07 | Desasociación device (libera para otro user) - ver RF-DEV-02 detalle | HU-API-006 | Device Management | RN-DEV-02 | NFR-01 | — | Integración: unassign → estado Registrado |
 | RF-SEC-08 | Eliminación cuenta soft-delete (ventana 30d) | HU-API-002 | Security | RN-SEC-08 | NFR-01, NFR-06 | — | Integración: DELETE /users/me → deleted_at, recuperación 30d |
 | RF-SEC-09 | Auditoría login (IP, user-agent, éxito/fallo, ts) | HU-API-001 | Security | RN-SEC-09 | NFR-04 | — | Unitarias: audit_login insert. Integración: login fallido/éxito registra |
 | RF-SEC-10 | RBAC: roles, features, role_feature, middleware 403 | HU-API-003 | Security | RN-SEC-10 | NFR-01, NFR-04 | ADR-001 | Unitarias: middleware authz. Integración: 403 sin feature, 200 con feature |
@@ -43,11 +43,12 @@ Matriz completa que relaciona **Requisitos Funcionales (RF)** ↔ **Historias de
 | RF-DEV-01 | Alta device: serial, firmware, api_key_hash, estados | HU-API-006 | Device Management | RN-DEV-03 | NFR-01 | — | Integración: POST /devices (admin), unique serial/api_key |
 | RF-DEV-02 | Asociación/desasociación device ↔ user | HU-API-006 | Device Management | RN-DEV-01, RN-DEV-02 | NFR-01 | — | Integración: assign/unassign, state machine 6 estados |
 | RF-DEV-03 | Config remota device_config (JSONB: umbrales, sound, volumen, sync) | HU-API-005, HU-DEVICE-004 | Device Management | RN-DEV-04 | NFR-03 | — | Integración: PATCH/GET config, merge defaults, historial |
-| RF-DEV-04 | Heartbeat device: last_seen, firmware, conectividad | HU-API-006, HU-DEVICE-002 | Device Management | RN-DEV-05 | NFR-03 | — | Integración: PUT heartbeat, transición Activo↔Offline 5min |
+| RF-DEV-04 | Heartbeat device: last_seen, firmware, conectividad | HU-API-006, HU-DEVICE-002 | Device Management | RN-DEV-05 | NFR-03 | — | Integración: POST heartbeat, transición Activo↔Offline 5min |
 | RF-DEV-05 | State machine device (Registrado→Asignado→Activo↔Offline→Suspendido→Retirado) | HU-API-006, HU-DEVICE-002 | Device Management | RN-DEV-06 | NFR-03 | — | Integración: transiciones automáticas + admin manual |
-| RF-DEV-06 | Consulta devices por user (filtros estado, fecha) | HU-API-006, HU-PORTAL-002 | Device Management | RN-DEV-07 | — | — | Integración: GET /devices con filtros + paginación |
+| RF-DEV-08 | Consulta devices por user (filtros estado, fecha) | HU-API-006, HU-PORTAL-002 | Device Management | RN-DEV-07 | — | — | Integración: GET /devices con filtros + paginación |
+| RF-DEV-09 | Rotacion API Key PATCH /rotate-key (solo admin, mitiga T-002) | HU-API-006 | Device Management | RN-DEV-03 | NFR-01 | ADR-001 | Integración: invalida anterior, devuelve nueva una vez, 401 con vieja |
 | RF-TEL-01 | Ingesta eventos idempotente (device+API key, event_id único) | HU-API-007, HU-DEVICE-003 | Telemetry Service | RN-TEL-01 | NFR-03, NFR-07 | — | Unitarias: validador idempotencia. Integración: duplicado → 409, ACK limpia buffer |
-| RF-TEL-02 | Ingesta evidencia multimedia → MinIO bucket somnguard-evidence | HU-API-007 | Telemetry Service | RN-TEL-02 | NFR-02, NFR-06 | ADR-003 | Integración: upload MinIO, retorna evidence_id, checksum SHA256 |
+| RF-TEL-02 | Ingesta evidencia multimedia → MinIO bucket somnguard-evidence | HU-API-007 | Telemetry Service | RN-TEL-02 | NFR-02, NFR-06 | ADR-006 | Integración: upload MinIO, retorna evidence_id, checksum SHA256 |
 | RF-TEL-03 | Registro alert_log (código AS-XX, ts, event_id, severidad) | HU-API-007 | Telemetry Service | RN-TEL-03 | NFR-04 | — | Integración: alert_log creado tras ingesta evento crítico |
 | RF-TEL-04 | Sync offline-first: buffer SQLite local, reintentos backoff, deduplicación | HU-DEVICE-003, HU-API-007 | Telemetry Service + Edge | RN-TEL-04 | NFR-03, NFR-07 | — | Integración: offline 1h → online sync → ACK → limpieza buffer |
 | RF-TEL-05 | Pull device_config desde device (GET /devices/{id}/config) | HU-API-005, HU-DEVICE-002, HU-DEVICE-003 | Telemetry Service | RN-TEL-05 | NFR-03 | — | Integración: device pulla config tras sync, aplica umbrales |

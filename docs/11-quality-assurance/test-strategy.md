@@ -41,7 +41,7 @@ Los casos de prueba se identifican con el prefijo **`TC-`** (convención en [agi
 
 - En la evidencia por historia: [_template-test-evidence.md](./_template-test-evidence.md) (formato `test-evidence-HU-<REPO>-NNN.md`).
 - En el reporte por sprint/release: [_template-qa-report.md](./_template-qa-report.md).
-- En la [matriz de trazabilidad](../04-requeriments/traceability-matrix.md), vinculando HU → AC → TC.
+- En la [matriz de trazabilidad](../04-requirements/traceability-matrix.md), vinculando HU → AC → TC.
 
 Cada caso de prueba declara: precondición, pasos, resultado esperado y trazabilidad al criterio de aceptación (AC) que verifica.
 
@@ -80,7 +80,7 @@ Las pruebas se ejecutan en GitHub Actions (ver `../10-devops/ci-cd-strategy.md`)
 
 ## Requisitos no funcionales
 
-La estrategia verifica los requisitos no funcionales del catálogo (ver [`../04-requeriments/non-functional.md`](../04-requeriments/non-functional.md)): rendimiento (NFR-04) y escalabilidad (NFR-05) se cubren con pruebas de carga en QA; disponibilidad (NFR-08) se monitorea vía SLOs en observabilidad.
+La estrategia verifica los requisitos no funcionales del catálogo (ver [`../04-requirements/non-functional.md`](../04-requirements/non-functional.md)): rendimiento (NFR-04) y escalabilidad (NFR-05) se cubren con pruebas de carga en QA; disponibilidad (NFR-08) se monitorea vía SLOs en observabilidad.
 
 ## Pendientes
 

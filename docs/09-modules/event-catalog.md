@@ -22,7 +22,7 @@
 > **Convención de naming:** `<entidad>.<accion>` — todo en minúsculas con puntos, en inglés, verbo en pasado.
 > Ejemplo: `device.synced`, `event.recorded`, `alert.generated`
 >
-> **Fuente de verdad:** `docs/02-domain/domain-events.md`, `data-dictionary.md` (codes EV-SOM-*, EV-DIS-*, EV-CIN-*, EV-SYS-*), `cross-cutting.md` (reglas de sincronización), `ADR-005` (offline-first device).
+> **Fuente de verdad:** `../02-domain/domain-events.md`, `../06-data-architecture/data-dictionary.md` (codes EV-SOM-*, EV-DIS-*, EV-CIN-*, EV-SYS-*), `../05-architecture/cross-cutting.md` (reglas de sincronización), `ADR-005` (offline-first device).
 
 ---
 
@@ -150,7 +150,7 @@ Estos eventos son de **orquestación interna** de un módulo (worker↔worker, s
 
 ## 6. Nota de Migración
 
-Los nombres de evento en SomnGuard siguen la convención `<entidad>.<accion>` en inglés, basada en el catálogo de dominio (`docs/02-domain/domain-events.md`). Cambios previos de nombres (ej. en versiones anteriores del proyecto) deben ser_trackeados en este catálogo para:
+Los nombres de evento en SomnGuard siguen la convención `<entidad>.<accion>` en inglés, basada en el catálogo de dominio (`../02-domain/domain-events.md`). Cambios previos de nombres (ej. en versiones anteriores del proyecto) deben ser_trackeados en este catálogo para:
 
 1. **Actualizar consumidores**: Cuando se renombra un evento, todos los módulos que lo suscriban deben actualizarse en paralelo
 2. **Compatibilidad hacia atrás**: El `event_id` UUID v7 permite correlación incluso si el nombre cambia
@@ -163,23 +163,23 @@ Los nombres de evento en SomnGuard siguen la convención `<entidad>.<accion>` en
 
 | Documento | Sección | Qué aporta |
 |-----------|---------|------------|
-| `domain-events.md` | `02-domain/domain-events.md` | Catálogo base con 4 eventos dominio (`device.synced`, `event.recorded`, `alert.generated`, `notification.sent`) |
-| `domain-events.md` | `02-domain/domain-events.md` | Eventos de negocio; complementa el catálogo por módulo |
-| `data-dictionary.md` | `06-data-architecture/data-dictionary.md` | Codes EV-SOM-*, EV-DIS-*, EV-CIN-*, EV-SYS-* y estructura de event_type |
-| `cross-cutting.md` | `05-architecture/cross-cutting.md` | Reglas de sincronización, IDs únicos, formatos de envelope, idempotencia |
-| `ADR-005` | `05-architecture/decisions/records/ADR-005-offline-first-device.md` | Offline-first, sync automático, backoff exponencial, UUID v7 para event_id |
-| `ADR-009` | `05-architecture/decisions/records/ADR-009-status-parametrized-audit.md` | `status_category` + `status` en eventos (DETECTED, REGISTERED, SYNCHRONIZED, ANALYZED, ARCHIVED) |
-| `guidelines.md` | `07-api-design/guidelines.md` | Contratos API para `/telemetry/events` y filtros/frecuentes |
-| `module-catalog.md` | `09-modules/module-catalog.md` | Módulos que publican/consumen cada evento |
+| `domain-events.md` | `../02-domain/domain-events.md` | Catálogo base con 4 eventos dominio (`device.synced`, `event.recorded`, `alert.generated`, `notification.sent`) |
+| `domain-events.md` | `../02-domain/domain-events.md` | Eventos de negocio; complementa el catálogo por módulo |
+| `data-dictionary.md` | `../06-data-architecture/data-dictionary.md` | Codes EV-SOM-*, EV-DIS-*, EV-CIN-*, EV-SYS-* y estructura de event_type |
+| `cross-cutting.md` | `../05-architecture/cross-cutting.md` | Reglas de sincronización, IDs únicos, formatos de envelope, idempotencia |
+| `ADR-005` | `../05-architecture/decisions/records/ADR-005-offline-first-device.md` | Offline-first, sync automático, backoff exponencial, UUID v7 para event_id |
+| `ADR-009` | `../05-architecture/decisions/records/ADR-009-status-parametrized-audit.md` | `status_category` + `status` en eventos (DETECTED, REGISTERED, SYNCHRONIZED, ANALYZED, ARCHIVED) |
+| `guidelines.md` | `../07-api-design/guidelines.md` | Contratos API para `/telemetry/events` y filtros/frecuentes |
+| `module-catalog.md` | `./module-catalog.md` | Módulos que publican/consumen cada evento |
 
 ---
 
 ## Próximos Pasos
 
 1. **Validar** este catálogo con el equipo de arquitectura y el team de device (revisión 30 min)
-2. **Añadir** a `LISTA_DOCS_OTRO-PROJECT-PARA-SOMNGUARD.md` como entregable de PRIORIDAD 2
+2. **Añadir** a [`../15-project-control/technical-backlog.md`](../15-project-control/technical-backlog.md) como entregable de PRIORIDAD 2
 3. **Integrar** en la `ci-cd-strategy.md` validación de nombres de eventos en PRs (validar que nuevos events sigan convención `<entidad>.<accion>`)
-4. **Crear** `_template/service/events.md` plantilla estándar para nuevos eventos por módulo
-5. **Actualizar** `domain-events.md` con los eventos nuevos que añada este catálogo
+4. **Crear** `modules/_template/module/events.md` plantilla estándar para nuevos eventos por módulo
+5. **Actualizar** `../02-domain/domain-events.md` con los eventos nuevos que añada este catálogo
 6. **Definir** nombres canónicos en la sección "Normalización Pendiente" tras decisión del equipo
 7. **Documentar** en los `ADR` correspondientes decisiones sobre nombres de eventos que tengan impacto transversal

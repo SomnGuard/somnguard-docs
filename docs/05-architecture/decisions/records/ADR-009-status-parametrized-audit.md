@@ -286,9 +286,10 @@ SELECT * FROM device_management.device WHERE deleted_at IS NULL;
 
 ## Referencias
 
-- [cross-cutting.md](../cross-cutting.md#5-estados-parametrizados-adr-004-guía-adaptado)
+- [cross-cutting.md](../../cross-cutting.md#5-estados-parametrizados-adr-004-guía-adaptado)
 - [modeling-conventions.md](../../../06-data-architecture/modeling-conventions.md) — campos auditoría obligatorios
-- [functional.md](../../../04-requeriments/functional.md) → RF-DEV-05, RF-TEL-*, RF-MON-*, RF-SEC-08
+- [functional.md](../../../04-requirements/functional.md) → RF-DEV-05, RF-TEL-*, RF-MON-*, RF-SEC-08
 - [entities-and-rules.md](../../../02-domain/entities-and-rules.md) — RN-DEV-06, RN-TEL-*, RN-SEC-*
 - Guía ADR-004 (SENA): `status_category` + `status` + append-only audit
 - PostgreSQL Triggers: https://www.postgresql.org/docs/current/triggers.html
+

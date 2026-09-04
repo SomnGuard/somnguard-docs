@@ -64,6 +64,6 @@ Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01.
 ## Ver también
 
 - [Convenciones ágiles](../00-documentation-governance/agile-conventions.md)
-- [Matriz de trazabilidad](../04-requeriments/traceability-matrix.md)
-- [Análisis del software](../04-requeriments/software-analysis.md)
+- [Matriz de trazabilidad](../04-requirements/traceability-matrix.md)
+- [Análisis del software](../04-requirements/software-analysis.md)
 - [Plan de trabajo](../01-project-context/software-technical-proposal.md#7-plan-de-trabajo-y-cronograma)

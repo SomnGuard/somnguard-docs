@@ -18,7 +18,7 @@
 </div>
 
 > Última actualización: 2026-09-01
-> Fuente: somnguard-db seeds (011_insert_security_features.sql, 012_insert_security_role_feature.sql) + docs/04-requeriments/
+> Fuente: somnguard-db seeds (011_insert_security_features.sql, 012_insert_security_role_feature.sql) + docs/04-requirements/
 
 ---
 

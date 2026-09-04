@@ -66,4 +66,4 @@
 
 - [UI Spec](./_template-ui-spec.md)
 - [PRD](../03-product-definition/product-backlog.md)
-- [HU template](../04-requeriments/_template-hu.md)
+- [HU template](../04-requirements/_template-hu.md)

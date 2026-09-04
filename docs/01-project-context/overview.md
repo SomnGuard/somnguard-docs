@@ -52,7 +52,7 @@ Un sistema integral edge-cloud: el dispositivo detecta en el vehículo (sin depe
 
 - Arquitectura: [`../05-architecture/architecture-document.md`](../05-architecture/architecture-document.md)
 - Propuesta técnica: [`./software-technical-proposal.md`](./software-technical-proposal.md)
-- Análisis del software: [`../04-requeriments/software-analysis.md`](../04-requeriments/software-analysis.md)
+- Análisis del software: [`../04-requirements/software-analysis.md`](../04-requirements/software-analysis.md)
 - Alcance y plan: [`./01-project-proposal/`](./01-project-proposal/) y [`./02-schedule/`](./02-schedule/)
 
 ## Ver también

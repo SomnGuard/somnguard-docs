@@ -17,12 +17,12 @@
 
 </div>
 
-> **Fuentes:** [02-modules-entities.md](../06-data-architecture/02-modules-entities.md) (MER + atributos),
+> **Fuentes:** [02-modules-entities.md](./02-modules-entities.md) (MER + atributos),
 > [entities-and-rules.md](../02-domain/entities-and-rules.md) (RN-*),
 > [ADR-004](../05-architecture/decisions/records/ADR-004-database-strategy.md) (BD strategy + convenciones),
 > [ADR-009](../05-architecture/decisions/records/ADR-009-status-parametrized-audit.md) (estados + auditoría),
 > [ADR-001](../05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md) (auth),
-> [SRS](../04-requeriments/01-srs/) (RF-*, RNF-*).
+> [SRS](../04-requirements/01-srs/) (RF-*, RNF-*).
 >
 > **Convenciones base (ADR-004):**
 > - **Naming:** `snake_case` tablas/columnas
@@ -600,7 +600,7 @@
 | Columna | Tipo | Null | Default | FK | Índice | Descripción |
 |---------|------|------|---------|----|--------|-------------|
 | `id` | UUID | NO | — | PK | PK | Identificador evidencia |
-| `event_id` | UUID | NO | — | `telemetry_service.event(id)` | **UNIQUE** | Evento asociado (1 evidencia por evento en MVP) |
+| `event_id` | UUID | NO | — | `telemetry_service.event(id)` | **UNIQUE** | Evento asociado (1 evidencia por evento en MVP). Mapeo lote: `POST /telemetry/events JSON` fase 1 -> `POST /telemetry/events/{id}/evidence multipart` fase 2. Key `{device_id/YYYY/MM/DD/event_id.jpg}` |
 | `media_type_id` | UUID | NO | — | `parameterization.media_type(id)` | — | Tipo: image_jpeg, video_mp4 |
 | `minio_key` | VARCHAR(500) | NO | — | — | — | Key en MinIO: `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` | ADR-006 |
 | `size_bytes` | BIGINT | NO | — | — | — | Tamaño archivo |
@@ -779,8 +779,8 @@ CREATE INDEX ON {schema}.{entity}_status_audit ({entity}_id, changed_at DESC);
 | Auth (JWT, API Keys) | [ADR-001](../05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md) |
 | Offline-first device | [ADR-005](../05-architecture/decisions/records/ADR-005-offline-first-device.md) |
 | MinIO evidence storage | [ADR-006](../05-architecture/decisions/records/ADR-006-minio-evidence-storage.md) |
-| Convenciones modelado Liquibase | [modeling-conventions.md](../06-data-architecture/modeling-conventions.md) |
-| Estrategia migraciones | [migration-strategy.md](../06-data-architecture/migration-strategy.md) |
+| Convenciones modelado Liquibase | [modeling-conventions.md](./modeling-conventions.md) |
+| Estrategia migraciones | [migration-strategy.md](./migration-strategy.md) |
 | Catálogo módulos | [module-catalog.md](../09-modules/module-catalog.md) |
 
 ---
@@ -791,4 +791,4 @@ CREATE INDEX ON {schema}.{entity}_status_audit ({entity}_id, changed_at DESC);
 2. **Generar changelogs Liquibase** iniciales por módulo (basados en este diccionario)
 3. **Crear `modeling-conventions.md`** con reglas formales (naming, FKs, índices, JSONB, triggers)
 4. **Crear `migration-strategy.md`** (orden ejecución, rollback, seed data, CI integration)
-5. **Actualizar `module-template/data-model.md`** para cada módulo use este diccionario como fuente
+5. **Actualizar `../09-modules/modules/_template/module/data-model.md`** para cada módulo use este diccionario como fuente

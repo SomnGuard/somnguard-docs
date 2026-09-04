@@ -224,7 +224,7 @@ Capa externa:
 |------------|-------------|-------------|
 | `SQLite local` | Ninguna (autónoma) | Buffer de eventos pending_events, device_config, evidence local |
 | `API Key` | `security` (validación central) | API Key generada por security, validada HMAC-SHA256 en device |
-| `Heartbeat → API` | `telemetry_service` (endpoint POST) | Cada 30s envía status, último evento, buffer stats |
+| `Heartbeat → API` | `telemetry_service` (POST /devices/{id}/heartbeat) | Cada 30-60s envía saludo con `X-Device-ID + X-API-Key`: `firmware_version, pending_count, free_disk_pct`. Actualiza `last_heartbeat_at`. Primer heartbeat `ASSIGNED->ACTIVE`, `>5min` sin heartbeat `->OFFLINE`. Distinto de `HEAD /actuator/health` (solo chequeo internet sin auth) |
 | `Config pull → API` | `telemetry_service` (GET /devices/{id}/config) | Solicita device_config JSONB, thresholds, sound_pattern, volumen |
 | `Event sync → API` | `telemetry_service` (POST /telemetry/events) | Envía lote de eventos offline, deduplicación por event_id UUID v7 |
 | `Local DB esquema` | Mismo patrón que BD `security + parameterization + device_management` (tabla mínima) | Solo lo necesario: device, pending_events, device_config (recorta las 6 esquemas completos) |
@@ -287,23 +287,23 @@ security ──▶ parameterization ──▶ device_management ──▶ teleme
 
 | Documento | Sección | Qué aporta al mapa |
 |-----------|---------|-------------------|
-| `ADR-002` | `05-architecture/decisions/records/ADR-002-hexagonal-architecture.md` | Define regla de dependencias hacia adentro (domain es centro) |
-| `module-catalog.md` | `09-modules/module-catalog.md` | Lista los 6 módulos y su responsabilidad |
-| `cross-cutting.md` | `05-architecture/cross-cutting.md` | Estándares transversales que aplican a todos los módulos |
-| `data-dictionary.md` | `06-data-architecture/data-dictionary.md` | Convenciones de naming, PK, auditoría usadas en todas tablas |
-| `modeling-conventions.md` | `06-data-architecture/modeling-conventions.md` | Estructura DDL, orden Liquibase, FKs, índices por módulo |
-| `entities-and-rules.md` | `02-domain/entities-and-rules.md` | Reglas de negocio RN-* que definen qué entidades existen y sus relaciones |
-| `guidelines.md` | `07-api-design/guidelines.md` | Contratos API por módulo y estándares de petición/respuesta |
-| `ADR-001` | `05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md` | JWT RS256 + API Keys (usado por security y device) |
-| `ADR-009` | `05-architecture/decisions/records/ADR-009-status-parametrized-audit.md` | `status_category` + `status` en todas las entidades (regla transversal) |
-| `ci-cd-strategy.md` | `10-devops/ci-cd-strategy.md` | Validación de dependencias en PRs y pipelines |
+| `ADR-002` | `../05-architecture/decisions/records/ADR-002-hexagonal-architecture.md` | Define regla de dependencias hacia adentro (domain es centro) |
+| `module-catalog.md` | `./module-catalog.md` | Lista los 6 módulos y su responsabilidad |
+| `cross-cutting.md` | `../05-architecture/cross-cutting.md` | Estándares transversales que aplican a todos los módulos |
+| `data-dictionary.md` | `../06-data-architecture/data-dictionary.md` | Convenciones de naming, PK, auditoría usadas en todas tablas |
+| `modeling-conventions.md` | `../06-data-architecture/modeling-conventions.md` | Estructura DDL, orden Liquibase, FKs, índices por módulo |
+| `entities-and-rules.md` | `../02-domain/entities-and-rules.md` | Reglas de negocio RN-* que definen qué entidades existen y sus relaciones |
+| `guidelines.md` | `../07-api-design/guidelines.md` | Contratos API por módulo y estándares de petición/respuesta |
+| `ADR-001` | `../05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md` | JWT RS256 + API Keys (usado por security y device) |
+| `ADR-009` | `../05-architecture/decisions/records/ADR-009-status-parametrized-audit.md` | `status_category` + `status` en todas las entidades (regla transversal) |
+| `ci-cd-strategy.md` | `../10-devops/ci-cd-strategy.md` | Validación de dependencias en PRs y pipelines |
 
 ---
 
 ## Próximos Pasos
 
 1. **Validar** este mapa con Architecture Team y DBA (revisión 45 min) - asegurar que no falten módulos o dependencias ocultas
-2. **Añadir** a `LISTA_DOCS_OTRO-PROJECT-PARA-SOMNGUARD.md` como entregable de PRIORIDAD 2 (junto con `migration-strategy.md`)
+2. **Añadir** a [`../15-project-control/technical-backlog.md`](../15-project-control/technical-backlog.md) como entregable de PRIORIDAD 2 (junto con `migration-strategy.md`)
 3. **Integrar** en la `ci-cd-strategy.md` validación automática de dependencias en cada PR merged
 4. **Revisar** con cada equipo de repos (API, DB, PORTAL, APP, DEVICE) que el mapa se ajusta a su realidad actual
 5. **Actualizar** cuando haya nuevos módulos, ADRs o cambios en la arquitectura hexagonal (verificar que no se introduzcan ciclos de dependencia)

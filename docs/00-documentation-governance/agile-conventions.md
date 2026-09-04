@@ -28,7 +28,7 @@ Convenciones para la gestión de requerimientos y trabajo ágil del proyecto: id
 | Caso de prueba | `TC-###` | Prueba trazada a una HU/AC | `../11-quality-assurance/test-strategy.md` |
 | Defecto | `BUG-###` | Defecto registrado en reporte/evidencia de QA | `../11-quality-assurance/_template-qa-report.md` |
 | Regla de negocio | `RN-##` | Regla del negocio (las ya publicadas usan `RB-##`) | `../02-domain/entities-and-rules.md` |
-| Requisito no funcional | `NFR-##` | Requisito de calidad/operación | `../04-requeriments/non-functional.md` |
+| Requisito no funcional | `NFR-##` | Requisito de calidad/operación | `../04-requirements/non-functional.md` |
 | Decisión de arquitectura | `ADR-###` | Decisión registrada | `../05-architecture/decisions/records/` |
 
 > **IDs ya publicados:** `F-01..F-10` (funcionalidades del sistema) y `RB-01..RB-10` (reglas de negocio) se conservan sin renumerar. `RB-*` equivale a `RN-*`.
@@ -60,7 +60,7 @@ Ejemplos:
 
 ## Criterios de aceptación (AC)
 
-Cada HU declara sus criterios `AC-###` (numerados por HU) en el campo de descripción del item de GitHub Projects. Ver la plantilla en `../04-requeriments/_template-hu.md`.
+Cada HU declara sus criterios `AC-###` (numerados por HU) en el campo de descripción del item de GitHub Projects. Ver la plantilla en `../04-requirements/_template-hu.md`.
 
 ## Casos de prueba (TC)
 
@@ -93,7 +93,7 @@ Los estados se manejan en GitHub Projects:
 
 Cada HU debe trazar: Funcionalidad (`F-*`) → Módulo → Reglas de negocio (`RN-*`) → Pruebas (`TC-*`) → ADR cuando aplique.
 
-Fuente de verdad de la matriz: `../04-requeriments/traceability-matrix.md`.
+Fuente de verdad de la matriz: `../04-requirements/traceability-matrix.md`.
 
 ## Ver también
 

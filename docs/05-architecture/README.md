@@ -28,3 +28,4 @@ Documento de arquitectura del sistema y registro de decisiones arquitectónicas 
 | [decisions/](./decisions/README.md) | Decisiones de arquitectura (ADRs) | En progreso |
 | [security-threat-model.md](./security-threat-model.md) | Modelo de amenazas de seguridad (STRIDE) | En progreso |
 | [cross-cutting.md](./cross-cutting.md) | Preocupaciones transversales (auth, audit, obs, idempotencia, estados, TZ, errores) | Borrador |
+| [pattern-guide.md](./pattern-guide.md) | Guía de patrones (Hexagonal + DDD) | En progreso |

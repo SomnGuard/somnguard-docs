@@ -29,7 +29,7 @@ docs/
 ├── 01-project-context/            # Contexto y cronograma
 ├── 02-domain/                     # Dominio del negocio: mapa de procesos
 ├── 03-product-definition/         # Definición del producto e investigación
-├── 04-requeriments/               # SRS, análisis y requisitos
+├── 04-requirements/               # SRS, análisis y requisitos
 ├── 05-architecture/               # Arquitectura y decisiones (ADRs)
 ├── 06-data-architecture/          # Modelo de datos y diccionarios
 ├── 07-api-design/                 # Diseño de API
@@ -47,7 +47,7 @@ docs/
 ## Cómo usar este repositorio
 
 1. **Empieza por la gobernanza**: lee `docs/00-documentation-governance/README.md` para conocer las reglas de documentación, normativa y metodología.
-2. **Requisitos**: revisa el SRS y las funcionalidades en `docs/04-requeriments/`.
+2. **Requisitos**: revisa el SRS y las funcionalidades en `docs/04-requirements/`.
 3. **Arquitectura**: consulta `docs/05-architecture/architecture-document.md` para el detalle técnico.
 4. **Datos**: el modelo vigente está en `docs/06-data-architecture/` (MER y módulos/entidades).
 5. **Diagramas**: los casos de uso y sus exportaciones están en `docs/08-uml/`.

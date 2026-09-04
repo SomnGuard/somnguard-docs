@@ -73,5 +73,5 @@
 ## Referencias
 
 - [Runbook](./_template-runbook.md)
-- [NFR](../04-requeriments/non-functional.md)
+- [NFR](../04-requirements/non-functional.md)
 - [Arquitectura](../05-architecture/architecture-document.md)
