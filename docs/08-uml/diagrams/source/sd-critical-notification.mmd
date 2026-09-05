@@ -10,5 +10,5 @@ sequenceDiagram
     MON->>DB: Crea notification (estado: no leída)
     MON->>PUSH: Envía notificación push
     PUSH-->>APP: Entrega en el dispositivo del usuario
-    APP->>MON: PUT /api/v1/notifications/{id}/read
+    APP->>MON: POST /api/v1/notifications/{id}/read
     MON->>DB: Actualiza estado de la notificación

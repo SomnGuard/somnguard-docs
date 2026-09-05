@@ -101,7 +101,7 @@ docker compose --env-file .env.develop down -v       # reinicio limpio
 ## 6. Gobernanza y decisiones
 
 - Toda decisión de arquitectura relevante requiere un **ADR** ([05-architecture/decisions/records/](../05-architecture/decisions/records/)).
-- ADRs vigentes: ADR-001 (stack), ADR-002 (hexagonal), ADR-003 (analytics).
+- ADRs vigentes: ADR-001 (stack), ADR-002 (hexagonal), ADR-003 (analytics), ADR-004 (BD), ADR-005 (offline-first), ADR-006 (MinIO), ADR-007 (observabilidad), ADR-008 (Traefik), ADR-009 (estados).
 - Antes de contribuir, lee [CONTRIBUTING.md](../../CONTRIBUTING.md) y [00-documentation-governance/](../00-documentation-governance/).
 
 ## 7. Checklist de primer día

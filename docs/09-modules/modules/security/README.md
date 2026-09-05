@@ -42,8 +42,8 @@ Gestiona la autenticación, autorización y auditoría de usuarios del sistema S
 | Módulo / recurso | Tipo | Motivo |
 |------------------|------|--------|
 | `platform` | transversal | Logging, observabilidad, errores |
-| `parameterization` | port in | Catálogos de estados, severidades |
-| `device_management` | port in | Validar device_id en asignaciones |
+
+> Sin dependencias de otros módulos (base, ver `dependency-map.md`). Lecturas futuras a catálogos (`parameterization`) o devices (`device_management`) irían por ports dedicados.
 
 ## Puertos (interfaces)
 
@@ -80,20 +80,32 @@ Gestiona la autenticación, autorización y auditoría de usuarios del sistema S
 
 | Recurso | Nota |
 |---------|------|
+| `POST /api/v1/auth/register` | Registro, retorna 201 |
 | `POST /api/v1/auth/login` | Autenticación, retorna JWT |
+| `POST /api/v1/auth/logout` | Cierre de sesión (invalida refresh) |
 | `POST /api/v1/auth/refresh` | Renovación de access token |
-| `POST /api/v1/auth/password-reset/request` | Solicitar reset de contraseña |
-| `POST /api/v1/auth/password-reset/confirm` | Confirmar reset con token |
+| `POST /api/v1/auth/verify-email` | Verificar correo con token |
+| `POST /api/v1/auth/forgot-password` | Solicitar reset (token 1h) |
+| `POST /api/v1/auth/reset-password` | Confirmar reset con token |
 | `GET /api/v1/users` | Listar usuarios (`user.read`) |
 | `GET /api/v1/users/{id}` | Detalle de usuario (`user.read`) |
 | `POST /api/v1/users` | Crear usuario (`user.write`) |
 | `PATCH /api/v1/users/{id}` | Actualizar usuario (`user.write`) |
+| `PATCH /api/v1/users/me` | Actualizar perfil propio |
 | `DELETE /api/v1/users/{id}` | Desactivar usuario (`user.write`) |
 | `GET /api/v1/roles` | Listar roles (`role.read`) |
 | `POST /api/v1/roles` | Crear rol (`role.write`) |
-| `POST /api/v1/roles/{id}/features` | Asignar feature a rol (`role.write`) |
+| `PUT /api/v1/roles/{id}` | Reemplazar rol (`role.write`) |
+| `DELETE /api/v1/roles/{id}` | Desactivar rol (`role.write`) |
+| `GET /api/v1/features` | Listar features (`role.read`) |
+| `POST /api/v1/features` | Crear feature (`role.write`) |
+| `PUT /api/v1/features/{id}` | Reemplazar feature (`role.write`) |
+| `DELETE /api/v1/features/{id}` | Eliminar feature (`role.write`) |
+| `POST /api/v1/role-features` | Asignar feature a rol (`role.write`) |
+| `DELETE /api/v1/role-features/{id}` | Quitar feature a rol (`role.write`) |
 | `POST /api/v1/users/{id}/roles` | Asignar rol a usuario (`role.write`) |
-| `GET /api/v1/audit/login` | Logs de auditoría (`audit.read`) |
+| `DELETE /api/v1/users/{id}/roles/{roleId}` | Quitar rol a usuario (`role.write`) |
+| `GET /api/v1/audit-login` | Logs de auditoría (`audit.read`) |
 
 Ver contrato completo en [`../../../07-api-design/contracts/`](../../../07-api-design/contracts/)
 

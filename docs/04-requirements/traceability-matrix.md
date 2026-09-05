@@ -10,7 +10,7 @@
 
 ## Matriz de trazabilidad
 
-**Estado:** Estable
+**Estado:** En progreso
 **Fecha:** 2026-08-23
 
 </div>
@@ -48,7 +48,7 @@ Matriz completa que relaciona **Requisitos Funcionales (RF)** ↔ **Historias de
 | RF-DEV-08 | Consulta devices por user (filtros estado, fecha) | HU-API-006, HU-PORTAL-002 | Device Management | RN-DEV-07 | — | — | Integración: GET /devices con filtros + paginación |
 | RF-DEV-09 | Rotacion API Key PATCH /rotate-key (solo admin, mitiga T-002) | HU-API-006 | Device Management | RN-DEV-03 | NFR-01 | ADR-001 | Integración: invalida anterior, devuelve nueva una vez, 401 con vieja |
 | RF-TEL-01 | Ingesta eventos idempotente (device+API key, event_id único) | HU-API-007, HU-DEVICE-003 | Telemetry Service | RN-TEL-01 | NFR-03, NFR-07 | — | Unitarias: validador idempotencia. Integración: duplicado → 409, ACK limpia buffer |
-| RF-TEL-02 | Ingesta evidencia multimedia → MinIO bucket somnguard-evidence | HU-API-007 | Telemetry Service | RN-TEL-02 | NFR-02, NFR-06 | ADR-006 | Integración: upload MinIO, retorna evidence_id, checksum SHA256 |
+| RF-TEL-02 | Ingesta evidencia multimedia → MinIO bucket somnguard-evidence | HU-API-007 | Telemetry Service | RN-TEL-02 | NFR-02, NFR-06 | ADR-006 | Integración: upload MinIO, retorna evidence_id (integridad v1: size + ETag) |
 | RF-TEL-03 | Registro alert_log (código AS-XX, ts, event_id, severidad) | HU-API-007 | Telemetry Service | RN-TEL-03 | NFR-04 | — | Integración: alert_log creado tras ingesta evento crítico |
 | RF-TEL-04 | Sync offline-first: buffer SQLite local, reintentos backoff, deduplicación | HU-DEVICE-003, HU-API-007 | Telemetry Service + Edge | RN-TEL-04 | NFR-03, NFR-07 | — | Integración: offline 1h → online sync → ACK → limpieza buffer |
 | RF-TEL-05 | Pull device_config desde device (GET /devices/{id}/config) | HU-API-005, HU-DEVICE-002, HU-DEVICE-003 | Telemetry Service | RN-TEL-05 | NFR-03 | — | Integración: device pulla config tras sync, aplica umbrales |
@@ -62,7 +62,7 @@ Matriz completa que relaciona **Requisitos Funcionales (RF)** ↔ **Historias de
 | RF-ANA-02 | Métricas agregadas: freq por tipo, severidad media, tendencia temporal | HU-API-010, HU-PORTAL-003 | Analytics | RN-ANA-02 | NFR-03 | — | Integración: GET /analytics/metrics, vistas materializadas |
 | RF-ANA-03 | Resumen descriptivo IA (patrones, tendencia, conclusiones) | HU-API-011, HU-PORTAL-004, HU-APP-003 | Analytics | RN-ANA-03 | NFR-05 | ADR-003 | Integración: POST /analytics/summary → LLM prompt → texto |
 | RF-ANA-04 | Reporte consolidado PDF/HTML (timeline + métricas + IA + evidencia) | HU-API-011, HU-PORTAL-004, HU-APP-003 | Analytics | RN-ANA-04 | NFR-02, NFR-05 | ADR-003 | Integración: POST /analytics/report → PDF/HTML, cache 1h, MinIO |
-| RF-ANA-05 | Video tiempo real WebRTC a demanda (Post-MVP) | HU-API-012, HU-DEVICE-005, HU-PORTAL-004, HU-APP-004 | Analytics + Edge | RN-ANA-05 | NFR-03, NFR-04 | — | **Post-MVP**: Integración WebRTC signaling, SFU, bitrate adaptativo |
+| RF-ANA-05 | Video tiempo real WebRTC a demanda (Post-MVP) | HU-API-012, HU-DEVICE-005, HU-PORTAL-005, HU-APP-004 | Analytics + Edge | RN-ANA-05 | NFR-03, NFR-04 | — | **Post-MVP**: Integración WebRTC signaling, SFU, bitrate adaptativo |
 | RF-EDGE-01 | Init hardware: verifica cámara, carga modelo, emite AS-08/AS-09 | HU-DEVICE-002 | Device Edge | RN-EDGE-01 | NFR-01, NFR-03 | — | Hardware: arranque <60s, cámara OK/ERROR |
 | RF-EDGE-02 | Verificación campo visual cámara (obstrucción/mala posición) | HU-DEVICE-002 | Device Edge | RN-EDGE-02 | NFR-03 | — | Hardware: detecta obstrucción → AS-09, pausa detección |
 | RF-EDGE-03 | Captura continua video rostro, landmarks → habilita análisis | HU-DEVICE-002 | Device Edge | RN-EDGE-03 | NFR-03, NFR-04 | — | Unitarias: frame reader FPS. Integración: landmarks detectados |
@@ -116,4 +116,4 @@ Matriz completa que relaciona **Requisitos Funcionales (RF)** ↔ **Historias de
 1. **Validar matriz** con PO + Arquitecto + Tech Leads (revisión 1h).
 2. **Crear issues en GitHub Projects** desde `user-stories.md` (IDs, títulos, ACs, SP, labels `repo:api|db|device|portal|app`, `moscow:must|should|could`, `sprint:N`).
 3. **Mantener sincronizada** esta matriz al crear/modificar HUs, RFs, ADRs o NFRs.
-4. **Definir `cross-cutting.md`** (reglas transversales: auth, audit, obs, idempotencia, tz, errores) y vincular aquí.
+4. **Aplicar `cross-cutting.md`** (reglas transversales: auth, audit, obs, idempotencia, tz, errores) y vincular aquí.

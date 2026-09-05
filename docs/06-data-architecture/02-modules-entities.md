@@ -56,11 +56,11 @@ Todas las entidades utilizan:
 | deleted_at | TIMESTAMPTZ NULL |
 | deleted_by | UUID NULL |
 
-> **Nota:** `is_active` BOOLEAN **es el campo de soft delete en todas las tablas** (por defecto TRUE; FALSE = inactivo). El control de eliminación lógica es `is_active = FALSE` (o equivalently `deleted_at IS NULL` para compatibilidad con vistas).
+> **Nota:** `is_active` BOOLEAN es el campo de soft delete por defecto TRUE (ausente en `module`, `feature`, `status_*` y `device_config_history`). El control de eliminación lógica es `is_active = FALSE` (o `deleted_at IS NULL` para compatibilidad con vistas).
 
 ---
 
-## Estados de negocio (ADR-009 — solo 5 tablas core)
+## Estados de negocio (ADR-009 — 5 core + `event_type`)
 
 Las siguientes tablas usan `status` + `status_category` (FK a `parameterization.status` / `status_category`):
 - `security.user`
@@ -68,8 +68,9 @@ Las siguientes tablas usan `status` + `status_category` (FK a `parameterization.
 - `telemetry_service.event`
 - `device_management.device_config`
 - `monitoring.notification`
+- `parameterization.event_type` (workflow de catálogo: `DRAFT/PUBLISHED/DEPRECATED`)
 
-Catálogos inmutables y tablas append-only **no** llevan estados parametrizados.
+`device_assignment` no tiene estado. Catálogos inmutables y tablas append-only **no** llevan estados parametrizados.
 
 ---
 
@@ -492,9 +493,11 @@ Archivos asociados a un evento.
 | media_type_id | UUID |
 | minio_key | VARCHAR(500) |
 | size_bytes | BIGINT |
-| checksum_sha256 | VARCHAR(64) |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
+| is_active | BOOLEAN |
+
+> Integridad en v1 vía `size_bytes` + ETag de MinIO (`checksum_sha256` futuro, sin columna).
 
 ---
 
@@ -586,7 +589,7 @@ Notificaciones enviadas a los usuarios como consecuencia de una alarma.
 
 - Un **DEVICE** genera múltiples **EVENT**.
 - Un **EVENT** pertenece a un **EVENT_TYPE**.
-- Un **EVENT** puede tener múltiples **EVIDENCE**.
+- Un **EVENT** tiene como máximo una **EVIDENCE** en MVP (`UNIQUE(event_id)`).
 - Una **EVIDENCE** pertenece a un **MEDIA_TYPE**.
 - Un **EVENT** puede generar cero, una o múltiples **ALERT_LOG**.
 - Un **ALERT_LOG** utiliza un **SOUND_PATTERN**.

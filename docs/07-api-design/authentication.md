@@ -40,7 +40,7 @@ Mecanismos de autenticación y autorización de la API de SomnGuard. Alineado co
   "sub": "uuid-v4",
   "email": "conductor@example.com",
   "roles": ["user"],
-  "features": ["DEVICE_READ", "EVENT_READ", "NOTIFICATION_READ"],
+  "features": ["device.read", "event.read", "notification.read"],
   "exp": 1777000000,
   "iat": 1776996400,
   "jti": "uuid-v4"
@@ -51,7 +51,7 @@ Mecanismos de autenticación y autorización de la API de SomnGuard. Alineado co
 
 - Modelo: `user_role` ↔ `role_feature` ↔ `feature` (ver [`../06-data-architecture/02-modules-entities.md`](../06-data-architecture/02-modules-entities.md)).
 - El token trae los `features` pre-calculados; cada endpoint declara el permiso que exige (RN-02).
-- Ejemplos de features: `ACCOUNT_MANAGE`, `DEVICE_ASSIGN`, `EVENT_WRITE`, `CATALOG_MANAGE`, `REPORT_READ`.
+- Ejemplos de features: `user.read`, `device.write`, `event.write`, `catalog.write`, `analytics.report` (formato `recurso.accion` en minúscula, ver seeds).
 
 ## 4. API keys de dispositivo
 
@@ -75,7 +75,7 @@ Mecanismos de autenticación y autorización de la API de SomnGuard. Alineado co
 |---------|-------|
 | Cifrado en tránsito | TLS 1.2+ |
 | Hash de contraseñas | bcrypt (nunca plano, RN-01) |
-| Rate limiting en login | Bloqueo temporal tras intentos fallidos |
+| Rate limiting en login | 5 req/min por IP en API + bloqueo tras 5 fallos (`locked_until`, ver `cross-cutting.md`) |
 | Expiración de sesión | TTL de token + refresh |
 
 ## Ver también

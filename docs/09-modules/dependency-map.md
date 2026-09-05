@@ -89,13 +89,13 @@
 
 | Módulo | Depende de | Para qué | Que depende de él | Por qué |
 |--------|------------|----------|-------------------|---------|
-| **security** | Ninguna (base) | Autenticación, autorización, auditoría | parameterization, device_management, telemetry_service, monitoring | Proporciona: users, roles, features, JWT, API Keys base |
+| **security** | Ninguna (base) | Autenticación, autorización, auditoría | parameterization, device_management, telemetry_service, monitoring | Proporciona: users, roles, features, JWT, auditoría (`audit_login`). Las API Keys viven en `device_management.device` (security las valida) |
 | **parameterization** | Independiente | Catálogos configurables | device_management, telemetry_service, monitoring | Catálogos autónomos; FKs internos a parameterization (severity, sound_pattern, event_type, status_category, status) |
 | **device_management** | `security` + `parameterization` | Alta/asignación de devices, config remota | telemetry_service | devices → user asignation; config con catálogos vigentes |
-| **telemetry_service** | `device_management` + `parameterization` | Ingesta events/evidence de devices | monitoring | events → device FK; event_type/severity FKs a catálogos; audit_login para logging |
-| **monitoring** | `telemetry_service` | Notificaciones, tracking delivery | analytics | notifications → alert_log FK; notification_delivery tracking; usuario FK a security.user |
+| **telemetry_service** | `device_management` + `parameterization` | Ingesta events/evidence de devices | monitoring | events → device FK; event_type/severity FKs a catálogos |
+| **monitoring** | `telemetry_service` | Notificaciones, tracking delivery | analytics | notifications → alert_log FK; tracking vía columnas `sent/delivered/read_at` (sin tabla `notification_delivery`); usuario FK a security.user |
 | **analytics** | `todos los anteriores` (solo lectura) | Líneas de tiempo, métricas, reportes IA | Ningún módulo (es de solo lectura) | Vistas materializadas sobre tables de security+parameterization+device_management+telemetry+monitoring |
-| **platform/transversal** | Ninguna (es independiente) | Errores, logging, observabilidad, secrets | Cualquier módulo | JWT RS256, logs JSON, métricas RED, trazas OTel, X-Request-ID, manejo de errores RFC 7807 |
+| **platform/transversal** | Ninguna (es independiente) | Errores, logging, observabilidad, secrets | Cualquier módulo | JWT RS256, logs JSON, métricas RED, trazas OTel, X-Request-ID, envelope `{"error":{}}` |
 
 ### 2.1 Regla de Oro (ADR-002)
 
@@ -133,7 +133,7 @@ application/port/out (output ports/Repositories por módulo):
   - parameterization: event_category repository, severity lookup
   - device_management: device repository, config repository
   - telemetry_service: event repository, evidence repository, alert_log repository
-  - monitoring: notification repository, notification_delivery repository
+  - monitoring: notification repository (tracking vía `sent/delivered/read_at`)
 
   ↓ depende de
 
@@ -146,7 +146,7 @@ adapter/out (implementaciones concretas):
 
 Capa externa:
   platform/transversal (puede ser usado por TODAS las capas anteriores):
-  - error handling (RFC 7807 Problem Details)
+  - error handling (envelope `{"error":{}}`)
   - observabilidad (OpenTelemetry, logs JSON, métricas RED)
   - seguridad (JWT RS256 verification, API Key validation)
   - gestión de errores y excepciones
@@ -166,7 +166,7 @@ Capa externa:
 | `application/port/in` | Use cases: auth, device mgmt, telemetry ingestion, notifications |
 | `application/port/out` | Repositories: user repo, device repo, event repo, notification repo |
 | `adapter/in/web` | Controllers REST, DTOs, mappers (usando ports de arriba) |
-| `platform/transversal` | Spring Security (JWT RS256 validator, API Key validator), OpenTelemetry auto-instrumentation, Micrometer RED metrics, global exception handler (RFC 7807) |
+| `platform/transversal` | Spring Security (JWT RS256 validator, API Key validator), OpenTelemetry auto-instrumentation, Micrometer RED metrics, global exception handler (envelope `{"error":{}}`) |
 
 **No debe depender de:**
 - Módulos que no le correspondan (ej. no debería importar lógica de device_management si solo expone auth)
@@ -179,7 +179,7 @@ Capa externa:
 | Módulo | Changelog | Por qué |
 |--------|-----------|---------|
 | `security` | `01_ddl/03_tables` + `02_dml/00_inserts` | Tabla base: users, roles, features - debe aplicarse primero |
-| `parameterization` | `01_ddl/03_tables` + `02_dml/00_inserts` | Catálogos con FK a security.user/role - debe aplicarse después |
+| `parameterization` | `01_ddl/03_tables` + `02_dml/00_inserts` | Catálogos (FKs físicas solo intra-catálogo en `04_alter`; se aplican tras security) |
 | `device_management` | `01_ddl/03_tables` + `02_dml/00_inserts` | Devices → user FK, config con catálogos - después de security + parameterization |
 | `telemetry_service` | `01_ddl/03_tables` + `02_dml/00_inserts` | Events → device FK, event_type/severity FKs - después de los 3 anteriores |
 | `monitoring` | `01_ddl/03_tables` + `02_dml/00_inserts` | Notifications → alert_log FK, user FK - después de telemetry_service |
@@ -193,12 +193,12 @@ Capa externa:
 
 | Funcionalidad | Endpoint API | Módulo origen |
 |---------------|--------------|---------------|
-| Listar devices | `GET /devices` | device_management |
-| Timeline eventos | `GET /telemetry/events` | telemetry_service |
-| Métricas y filtros | `GET /analytics/timeline` | analytics |
-| Config device | `GET /devices/{id}/config` | telemetry_service + device_management |
-| Notificaciones | `GET /notifications` | monitoring |
-| Auth (JWT) | `POST /auth/login` | security |
+| Listar devices | `GET /api/v1/devices` | device_management |
+| Timeline eventos | `GET /api/v1/events` | telemetry_service |
+| Métricas y filtros | `GET /api/v1/analytics/timeline` | analytics |
+| Config device | `GET /api/v1/devices/{id}/config` | device_management |
+| Notificaciones | `GET /api/v1/notifications` | monitoring |
+| Auth (JWT) | `POST /api/v1/auth/login` | security |
 
 **No depende directamente de BD ni de módulos internos:** Todo por API. Si necesita datos nuevos, pide nuevo endpoint al equipo API.
 
@@ -208,11 +208,11 @@ Capa externa:
 
 | Funcionalidad | Endpoint API | Módulo origen |
 |---------------|--------------|---------------|
-| Login / JWT | `POST /auth/login` | security |
-| Recibir push notifications | `GET /notifications` | monitoring |
-| Ver timeline eventos | `GET /analytics/timeline` | analytics |
-| Streaming WebRTC | `GET /devices/{id}/stream` | API + device |
-| Config device | `GET /devices/{id}/config` | telemetry_service |
+| Login / JWT | `POST /api/v1/auth/login` | security |
+| Recibir push notifications | `GET /api/v1/notifications` | monitoring |
+| Ver timeline eventos | `GET /api/v1/analytics/timeline` | analytics |
+| Streaming WebRTC (post-MVP: RF-ANA-05/RF-EDGE-13, HU-API-012/DEVICE-005/PORTAL-005/APP-004; aún no en api-design) | `GET /api/v1/devices/{id}/stream` | API + device |
+| Config device | `GET /api/v1/devices/{id}/config` | device_management |
 
 **Modo offline-first:** Al no tener red, usa SQLite local (propio al app) y sincroniza cuando hay conexión. No depende de SQLite del device.
 

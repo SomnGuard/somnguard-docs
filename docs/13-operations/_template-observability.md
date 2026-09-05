@@ -24,6 +24,8 @@
 
 ## Stack de observabilidad
 
+> Valores de referencia del proyecto: ver ADR-007 (OpenTelemetry + Loki/Prometheus/Tempo/Grafana). Reemplazar la tabla al instanciar.
+
 | Pilar | Herramienta | Destino | Estado |
 |-------|-------------|---------|--------|
 | Logs | [ELK / Loki / CloudWatch] | [URL dashboard] | Pendiente |

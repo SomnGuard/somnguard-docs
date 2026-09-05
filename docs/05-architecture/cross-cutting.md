@@ -10,7 +10,7 @@
 
 ## Preocupaciones Transversales (Cross-Cutting Concerns)
 
-**Estado:** Borrador
+**Estado:** En progreso
 **Fecha:** 2026-08-22
 
 </div>
@@ -52,7 +52,7 @@
 | **Modelo** | `role` ↔ `feature` (N:M via `role_feature`) → `user_role` (N:M) |
 | **Roles base** | `admin` (todas las features), `user` (features propias) |
 | **Enforcement** | Middleware en cada endpoint: `@RequireFeature("feature.code")` |
-| **Denegación** | 403 Forbidden con `{code: "FORBIDDEN", message: "Feature X required"}` |
+| **Denegación** | 403 Forbidden con envelope `{"error":{"code":"FORBIDDEN",...}}` (ver `guidelines.md`) |
 
 ---
 
@@ -60,7 +60,7 @@
 
 ### 2.1 Campos Estándar (por tipo de tabla)
 
-#### Transaccionales con UPDATE concurrente (user, device, device_config, notification, device_assignment, event_type)
+#### Transaccionales con UPDATE concurrente (user, device, device_config, notification, device_assignment, event, event_type)
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
 | `id` | UUID | PK, generado por app (UUID v7) |
@@ -71,20 +71,20 @@
 | `deleted_at` | TIMESTAMPTZ | **Soft delete** — NULL = activo |
 | `deleted_by` | UUID | User ID o Device ID que eliminó |
 | `version` | INTEGER | Optimistic locking (empezar en 1) |
-| `is_active` | BOOLEAN | **Campo de soft delete** — por defecto TRUE. FALSE = inactivo. **Es el campo base en todas las tablas.** |
-| `status` | VARCHAR(50) | **Solo en `parameterization.event_type`** (FK `parameterization.status`). En las demás tablas NULL = no aplica. |
-| `status_category` | VARCHAR(30) | **Solo en `parameterization.event_type`** (FK `parameterization.status_category`). En las demás tablas NULL = no aplica. |
+| `is_active` | BOOLEAN | **Campo de soft delete** — por defecto TRUE. FALSE = inactivo. Base en transaccionales; sin `is_active`: catálogos inmutables (`module`, `feature`, `status_*`) e historial `device_config_history`. |
+| `status` | VARCHAR(50) | **En `user, device, device_config, notification, event, event_type`** (FK `parameterization.status`). `device_assignment` NO tiene estado. |
+| `status_category` | VARCHAR(30) | **En las mismas 6 tablas** (FK `parameterization.status_category`). |
 
-#### Transaccionales solo INSERT / append-only (event, evidence, alert_log, audit_login, password_reset_request, device_config_history)
+#### Transaccionales solo INSERT / append-only (evidence, alert_log, audit_login, password_reset_request, device_config_history)
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
 | `id` | UUID | PK, generado por app (UUID v7) |
 | `created_at` | TIMESTAMPTZ | UTC, `now()` en insert |
 | `created_by` | UUID | User ID o Device ID (nullable para system) |
-| `status` | VARCHAR(50) | Estado de negocio — **solo event** |
-| `status_category` | VARCHAR(30) | Categoría — **solo event** |
 
 #### Catálogos inmutables (role, module, feature, event_category, severity, media_type, sound_pattern, status_category, status, status_transition)
+
+> `event_type` no es inmutable: tiene workflow (`DRAFT/PUBLISHED/DEPRECATED`) y auditoría completa, ver transaccionales.
 | Campo | Tipo | Descripción |
 |-------|------|-------------|
 | `id` / `code` | UUID / VARCHAR | PK |
@@ -102,7 +102,7 @@
 | **Soft delete obligatorio** | DELETE lógico vía `deleted_at`; nunca `DELETE` físico en app |
 | **Cascada suave** | Al borrar parent → `deleted_at` en children (no FK cascade delete) |
 | **Histórico de cambios** | Tablas `_history` (trigger PG) para entidades críticas: `user`, `device`, `event_type`, `device_config` |
-| **Estados parametrizados** | Solo 5 tablas core usan `status` + `status_category` (ADR-009): user, device, event, device_config, notification |
+| **Estados parametrizados** | 5 tablas core usan `status` + `status_category` (ADR-009): user, device, event, device_config, notification — más `event_type` (workflow de catálogo) = 6 tablas con columnas de estado. `device_assignment` no tiene estado. |
 
 ### 2.3 Tablas de Auditoría Base
 | Tabla | Propósito | Retención |
@@ -183,8 +183,8 @@ delay = min(base_delay * (2 ** attempt) + random(0, 30), max_delay)
 ```
 
 ### 4.3 Limpieza de Buffer (Device)
-- **ACK recibido (201):** Borrar `event_id` confirmados de `pending_events`
-- **Error 409 (duplicado):** Borrar duplicado local (ya persistido en server)
+- **ACK recibido (201 lote):** Borrar `acked_ids` + `duplicate_ids` de `pending_events` (los duplicados ya están persistidos, no son error)
+- **Error 409 (solo evidencia):** `POST /events/{id}/evidence` con evidencia ya existente -> no reintentar ese archivo
 - **Error 4xx/5xx:** Incrementar `retries`, reprogramar con backoff
 - **Retención máxima:** 7 días para fallidos persistentes; luego AS-09 + log
 
@@ -206,6 +206,9 @@ Toda entidad con ciclo de vida usa **dos campos**:
 | `event` | `DETECTED`, `REGISTERED`, `SYNCHRONIZED`, `ANALYZED`, `ARCHIVED` | `DETECTED`, `REGISTERED`, `SYNCHRONIZED`, `ANALYZED`, `ARCHIVED` |
 | `user` | `PENDING`, `ACTIVE`, `SUSPENDED`, `DELETED` | `PENDING_VERIFICATION`, `ACTIVE`, `SUSPENDED`, `SOFT_DELETED` |
 | `device_config` | `DRAFT`, `PUBLISHED`, `DEPRECATED` | `DRAFT`, `PUBLISHED`, `DEPRECATED` |
+| `notification` | `PENDING`, `ACTIVE`, `ERROR` | `PENDING`, `SENT`, `DELIVERED`, `READ`, `FAILED` |
+
+> Nombres lógicos (sin prefijo) usados en diagramas y HUs; en BD van prefijados por entidad (`DEVICE_REGISTERED`, `EVENT_DETECTED`, `USER_ACTIVE`, `NOTIFICATION_SENT`...) con su categoría (`PENDING/ACTIVE/INACTIVE/ERROR/ARCHIVED`), ver seeds de `status`. Migración total a códigos prefijados queda como decisión futura.
 
 ### 5.3 Reglas de Transición
 - Definidas en `status_transition` (from_category, from_status, to_category, to_status, allowed_roles)
@@ -275,30 +278,30 @@ Toda entidad con ciclo de vida usa **dos campos**:
 | `page` | 1 | — | 1-based |
 | `page_size` | 20 | 100 | Items por página |
 
-**Respuesta:**
+**Respuesta (canónica en `guidelines.md`):**
 ```json
 {
   "data": [...],
-  "meta": {
-    "total": 1234,
+  "pagination": {
     "page": 1,
     "page_size": 20,
+    "total_items": 1234,
     "total_pages": 62
   }
 }
 ```
 
-### 8.2 Filtrado
+### 8.2 Filtrado (canónico en `guidelines.md`: query params explícitos)
 ```
-GET /telemetry/events?filter[device_id]=uuid&filter[severity]=critical&filter[occurred_at][$gte]=2026-01-01
+GET /api/v1/events?device_id=<uuid>&severity=critical&occurred_at_gte=2026-01-01
 ```
-**Operadores:** `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$like`, `$ilike`
+Operadores con sufijo (`_gte`, `_lte`, `_in`) según endpoint; la notación `filter[campo]` equivale a query explícito.
 
 ### 8.3 Ordenación
 ```
-GET /telemetry/events?sort=-occurred_at,event_type_id
+GET /api/v1/events?sort=occurred_at:desc,event_type_id
 ```
-**Prefijo `-` = DESC; sin prefijo = ASC. Múltiples separados por coma.**
+`campo:desc` (equivale a `-campo`). Múltiples separados por coma.
 
 ---
 
@@ -398,8 +401,9 @@ GET /telemetry/events?sort=-occurred_at,event_type_id
 
 ## Próximos Pasos
 
-1. **Crear 8 ADRs** en `docs/05-architecture/decisions/records/` (usar `_template-adr.md`).
+1. **Mantener ADRs** ADR-001..009 aceptadas en `docs/05-architecture/decisions/records/` (usar `_template-adr.md` para nuevas).
 2. **Actualizar `modeling-conventions.md`** con campos de auditoría obligatorios.
 3. **Implementar middleware/base classes** en `somnguard-api/platform` para: auth, error handling, observabilidad, paginación.
 4. **Configurar OTel Collector + LGTM** en `somnguard-docker-infra` (ver propuesta separada).
 5. **Validar con equipo** en reunión de arquitectura (30 min).
+

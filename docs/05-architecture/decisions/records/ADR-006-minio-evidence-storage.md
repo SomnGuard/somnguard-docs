@@ -40,14 +40,14 @@ Requisitos:
 | Origen | Método | Detalle |
 |--------|--------|---------|
 | **Device → API (fase 1 metadata)** | `POST /telemetry/events` JSON `{"events":[]}` lote máx 100 | API valida `X-Device-ID+X-API-Key` + `event_id` único -> `201 {acked_ids[], duplicate_ids[]}`. Sin archivos inline |
-| **Device → API (fase 2 evidencia)** | `POST /telemetry/events/{eventId}/evidence` multipart single file | API valida -> sube a MinIO -> guarda `evidence_id` + `minio_key {device_id/YYYY/MM/DD/event_id.jpg}` + `checksum_sha256` en BD. Mapeo 1:1 por `evidence.event_id UNIQUE` |
+| **Device → API (fase 2 evidencia)** | `POST /telemetry/events/{eventId}/evidence` multipart single file | API valida -> sube a MinIO -> guarda `evidence_id` + `minio_key {device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` en BD (integridad v1: `size_bytes` + ETag; `checksum_sha256` futuro). Mapeo 1:1 por `evidence.event_id UNIQUE` |
 | **Device → MinIO (futuro)** | Pre-signed PUT URL | API genera URL firmada (TTL 15 min) -> device sube directo -> notifica API |
 | **Portal/App** | Pre-signed GET URL | API genera URL firmada (TTL 1 hora) -> cliente descarga/visualiza |
 
 ### 3. Metadatos en Base de Datos (no en MinIO)
 | Tabla | Columnas Clave |
 |-------|----------------|
-| `telemetry.evidence` | `id` (PK UUID), `event_id` (FK), `minio_key` (VARCHAR), `media_type_id` (FK), `size_bytes`, `checksum_sha256`, `created_at`, `created_by` (device_id) |
+| `telemetry.evidence` | `id` (PK UUID), `event_id` (FK), `minio_key` (VARCHAR), `media_type_id` (FK), `size_bytes`, `created_at`, `created_by` (device_id) |
 
 > **Regla:** MinIO **solo almacena bytes**. Metadatos, permisos, relaciones → PostgreSQL.
 

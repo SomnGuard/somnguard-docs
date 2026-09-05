@@ -82,7 +82,7 @@ classDiagram
     EventType "1" --> "0..*" Event
     Severity "1" --> "0..*" EventType
     SoundPattern "1" --> "0..*" EventType
-    Event "1" --> "0..*" Evidence
+    Event "1" --> "0..1" Evidence
     Event "1" --> "0..*" AlertLog
     SoundPattern "1" --> "0..*" AlertLog
     MediaType "1" --> "0..*" Evidence

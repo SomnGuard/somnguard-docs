@@ -258,7 +258,7 @@ SELECT * FROM device_management.device WHERE deleted_at IS NULL;
 - **Transiciones seguras:** Validadas en domain service; imposible estado inválido en BD
 - **Auditoría completa:** Histórico inmutable de cada cambio (quién, cuándo, de qué a qué)
 - **Consultas simples:** `WHERE status_category = 'ACTIVE'` funciona para device, event, user
-- **Soft delete universal:** `deleted_at` en todas las tablas; vistas activas por defecto
+- **Soft delete:** `deleted_at` en transaccionales (catálogos `module`/`feature`/`status_*` sin soft delete, por diseño inmutables)
 
 ### Negativas / Trade-offs
 - **Overhead inicial:** Catálogo + triggers + domain service por entidad

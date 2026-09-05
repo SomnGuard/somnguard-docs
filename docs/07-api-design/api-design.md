@@ -31,6 +31,7 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 | Identificadores | UUID en rutas y cuerpo |
 | Fechas | ISO 8601 (`yyyy-MM-dd'T'HH:mm:ssXXX`) |
 | Autenticación | JWT RS256 + API keys por dispositivo — ver [authentication.md](./authentication.md) |
+| Idempotencia | `event_id` en telemetría (`201` con duplicados reportados); header `Idempotency-Key` en `POST /devices`, `/assign`, `/auth/*`, `PATCH /config`, `PATCH /rotate-key` — ver [guidelines.md](./guidelines.md) |
 | Documentación en vivo | SpringDoc/OpenAPI (`/swagger-ui.html`) |
 
 ### Códigos HTTP
@@ -43,22 +44,33 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
+| POST | `/api/v1/auth/register` | Registrar cuenta (retorna 201) |
 | POST | `/api/v1/auth/login` | Iniciar sesión |
 | POST | `/api/v1/auth/logout` | Cerrar sesión |
 | POST | `/api/v1/auth/refresh` | Renovar token |
-| POST | `/api/v1/auth/password-reset` | Solicitar recuperación de contraseña |
-| POST | `/api/v1/auth/password-reset/confirm` | Confirmar recuperación con token |
+| POST | `/api/v1/auth/verify-email` | Verificar correo con token |
+| POST | `/api/v1/auth/forgot-password` | Solicitar recuperación (token 1h al correo) |
+| POST | `/api/v1/auth/reset-password` | Confirmar recuperación con token |
 | POST | `/api/v1/users` | Crear usuario |
 | GET | `/api/v1/users` | Listar usuarios |
 | GET | `/api/v1/users/{id}` | Consultar usuario |
-| PUT | `/api/v1/users/{id}` | Actualizar usuario |
+| PATCH | `/api/v1/users/{id}` | Actualizar usuario |
+| PATCH | `/api/v1/users/me` | Actualizar perfil propio |
 | DELETE | `/api/v1/users/{id}` | Eliminar cuenta (con retención) |
 | GET | `/api/v1/roles` | Listar roles |
 | POST | `/api/v1/roles` | Crear rol |
+| PUT | `/api/v1/roles/{id}` | Reemplazar rol |
+| DELETE | `/api/v1/roles/{id}` | Desactivar rol |
+| GET | `/api/v1/features` | Listar features |
+| POST | `/api/v1/features` | Crear feature |
+| PUT | `/api/v1/features/{id}` | Reemplazar feature |
+| DELETE | `/api/v1/features/{id}` | Eliminar feature |
 | GET | `/api/v1/modules` | Listar módulos |
 | GET | `/api/v1/modules/{id}/features` | Funcionalidades de un módulo |
 | POST | `/api/v1/users/{id}/roles` | Asignar rol a usuario |
 | DELETE | `/api/v1/users/{id}/roles/{roleId}` | Quitar rol a usuario |
+| POST | `/api/v1/role-features` | Asignar feature a rol (body `roleId + featureId`) |
+| DELETE | `/api/v1/role-features/{id}` | Quitar feature a rol |
 | GET | `/api/v1/audit-login` | Historial de intentos de autenticación |
 
 ## Módulo device-management
@@ -80,8 +92,8 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| POST | `/api/v1/telemetry/events` | Ingresar lote de eventos **solo metadata JSON** `{"events":[{event_id UUIDv7, device_id, occurred_at UTC, event_type, severity, metadata, has_evidence}]}`. Lote máx 100, timeout 10s. Idempotencia por `event_id` único -> `409` si duplicado. Respuesta `201 {acked_ids[], duplicate_ids[]}` |
-| POST | `/api/v1/telemetry/events/{eventId}/evidence` | Subir evidencia de un evento (1 archivo por evento MVP). `multipart/form-data` single file `file` JPG ~50-200KB + `checksum_sha256`. Alternativa prod: presigned PUT directo a MinIO (ver ADR-006). Mapeo `event_id -> minio_key {device_id/YYYY/MM/DD/event_id.jpg}` |
+| POST | `/api/v1/telemetry/events` | Ingresar lote de eventos **solo metadata JSON** `{"events":[{event_id UUIDv7, device_id, occurred_at UTC, event_type, severity, metadata, has_evidence}]}`. Auth `X-Device-ID + X-API-Key`. Lote máx 100, timeout 10s. `event_type` y `severity` van por **código de catálogo** (ej. `EV-SOM-01`); la API resuelve a `event_type_id/severity_id`, `422` si desconocido. Idempotencia por `event_id`: el lote **siempre responde `201 {acked_ids[], duplicate_ids[]}`** (los duplicados se reportan, no son error). Device borra local ambos. `REGISTERED` sin assign -> `403` |
+| POST | `/api/v1/telemetry/events/{eventId}/evidence` | Subir evidencia de un evento (1 archivo por evento MVP). `multipart/form-data` single file `file` JPG ~50-200KB (integridad v1: `size_bytes` + ETag MinIO; `checksum_sha256` futuro). `201 {evidence_id}`; `409` si el evento ya tiene evidencia; `404` si el evento no existe. Alternativa prod: presigned PUT directo a MinIO (ver ADR-006). Mapeo `event_id -> minio_key {device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` |
 | GET | `/api/v1/events` | Consultar eventos (filtros por dispositivo, tipo, rango de fechas) |
 | GET | `/api/v1/events/{id}` | Consultar detalle de evento |
 | GET | `/api/v1/events/{id}/evidence` | Consultar evidencia de un evento |
@@ -113,6 +125,7 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 | GET | `/api/v1/analytics/timeline` | Línea de tiempo de eventos por dispositivo/rango |
 | GET | `/api/v1/analytics/metrics` | Métricas de comportamiento (sesiones de riesgo, duración) |
 | GET | `/api/v1/analytics/reports` | Reportes generados (resumen IA, descargables) |
+| POST | `/api/v1/analytics/reports` | Solicitar generación de reporte (propuesta async, `202 Accepted`) |
 
 ## Modelo de respuesta de ejemplo
 

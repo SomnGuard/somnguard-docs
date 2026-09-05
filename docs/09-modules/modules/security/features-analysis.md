@@ -88,7 +88,7 @@
 
 ---
 
-## Propuesta de features estandarizadas (20 features)
+## Propuesta de features estandarizadas (21 propuestas; implementadas 17, ver seeds)
 
 ### Convención: `{recurso}.{accion}` en minúscula | Acciones: `read`, `write`, `delete`, `assign`, `ingest`, `generate`
 
@@ -152,7 +152,7 @@
 
 ## Cambios requeridos en BD (seeds)
 
-### ELIMINAR (2 features - no aplican a usuarios)
+### ELIMINAR (2 features - no aplican a usuarios) — propuesto, no aplicado en seeds vigentes
 ```sql
 -- monitoring.notification.write → Es acción del sistema, no feature de usuario
 -- telemetry.event.write → Es ingesta de device, no acción de usuario

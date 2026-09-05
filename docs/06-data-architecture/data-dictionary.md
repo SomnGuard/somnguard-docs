@@ -41,20 +41,20 @@
 
 | Esquema (Módulo) | Entidades (Tablas) | Tipo |
 |------------------|-------------------|------|
-| `security` | `user`, `role`, `module`, `feature`, `role_feature`, `user_role`, `password_reset_request`, `audit_login` | Transaccional |
+| `security` | `user`, `role`, `module`, `feature`, `role_feature`, `user_role`, `password_reset_request`, `audit_login`, `refresh_token`, `email_verification`, `user_status_audit` | Transaccional |
 | `parameterization` | `event_category`, `severity`, `media_type`, `sound_pattern`, `event_type`, `status_category`, `status`, `status_transition` | Catálogo / Config |
-| `device_management` | `device`, `device_assignment`, `device_config`, `device_config_history` | Transaccional |
-| `telemetry_service` | `event`, `evidence`, `alert_log` | Transaccional (alta escritura) |
-| `monitoring` | `notification` | Transaccional |
+| `device_management` | `device`, `device_assignment`, `device_config`, `device_config_history`, `device_status_audit`, `device_config_status_audit` | Transaccional |
+| `telemetry_service` | `event`, `evidence`, `alert_log`, `event_status_audit` | Transaccional (alta escritura) |
+| `monitoring` | `notification`, `notification_status_audit` | Transaccional |
 | `analytics` | *Sin tablas propias* — vistas materializadas (`v_event_timeline`, `v_metrics_daily`) | Analítico |
 
-**Total: 20 tablas transaccionales + 3 catálogos de estado + vistas analíticas**
+**Total: 31 tablas** (los `.mmd` de `01-entity-relationship-model` y `02-relational-model` cubren las 20 entidades de dominio: sin tablas `*_status_audit`, `refresh_token` ni `email_verification`)
 
 ---
 
 ## Convenciones de Columna (Por tipo de tabla)
 
-### Tabla A — Transaccionales con UPDATE concurrente (user, device, device_config, notification)
+### Tabla A — Transaccionales con UPDATE concurrente (user, device, device_config, notification, device_assignment, event, event_type)
 | Campo | Tipo | Null | Default | Descripción |
 |-------|------|------|---------|-------------|
 | `id` | UUID | NO | — | PK — generado en app (UUID v7) |
@@ -69,16 +69,16 @@
 | `status` | VARCHAR(50) | SÍ | NULL | **Estado de negocio** — solo en tablas donde aplica (ver Tabla C). FK `parameterization.status`. NULL = no tiene estado parametrizado. |
 | `status_category` | VARCHAR(30) | SÍ | NULL | **Categoría de estado** — solo en tablas donde aplica. FK `parameterization.status_category`. NULL = no tiene categoría. |
 
-### Tabla B — Transaccionales solo INSERT / append-only (event, evidence, alert_log, audit_login, password_reset_request, device_config_history)
+### Tabla B — Transaccionales solo INSERT / append-only (evidence, alert_log, audit_login, password_reset_request, device_config_history)
 | Campo | Tipo | Null | Default | Descripción |
 |-------|------|------|---------|-------------|
 | `id` | UUID | NO | — | PK — generado en app (UUID v7) |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | Auditoría: creación (UTC) |
 | `created_by` | UUID | SÍ | — | User ID o Device ID que creó |
-| `status` | VARCHAR(50) | SÍ | NULL | **Estado de negocio** — solo en `event` (ADR-009). En las demás tablas NULL = no aplica. FK `parameterization.status` solo en event. |
-| `status_category` | VARCHAR(30) | SÍ | NULL | **Categoría de estado** — solo en `event` (ADR-009). En las demás tablas NULL = no aplica. FK `parameterization.status_category` solo en event. |
 
-### Tabla C — Catálogos inmutables (role, module, feature, event_category, severity, media_type, sound_pattern, event_type)
+### Tabla C — Catálogos inmutables (role, module, feature, event_category, severity, media_type, sound_pattern, status_category, status, status_transition)
+
+> `event_type` no es inmutable: tiene workflow (`DRAFT/PUBLISHED/DEPRECATED`) y auditoría completa, ver Tabla A.
 | Campo | Tipo | Null | Default | Descripción |
 |-------|------|------|---------|-------------|
 | `id` / `code` | UUID / VARCHAR | NO | — | PK |
@@ -118,6 +118,8 @@
 | `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete | |
 | `deleted_by` | UUID | SÍ | — | `security.user(id)` | — | User ID que eliminó | |
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking | |
+| `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio (ADR-009) | |
+| `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado (ADR-009) | |
 
 **Índices compuestos:** `idx_user_status_active (status) WHERE deleted_at IS NULL`
 
@@ -133,6 +135,7 @@
 | `code` | VARCHAR(50) | NO | — | — | **UNIQUE** | Código técnico: `admin`, `user` |
 | `name` | VARCHAR(100) | NO | — | — | — | Nombre legible |
 | `description` | TEXT | SÍ | — | — | — | Descripción |
+| `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: creación |
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | User ID creador (seed = SYSTEM_ACTOR_ID) |
 | `updated_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: última modificación |
@@ -241,6 +244,7 @@
 | `attempted_at` | TIMESTAMPTZ | NO | `now()` | — | **IDX (attempted_at DESC)** | Timestamp intento |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | = attempted_at |
 | `created_by` | UUID | SÍ | — | — | — | = user_id (NULL si email no existe) |
+| `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE |
 
 > **Retención:** 2 años (política de limpieza job mensual)
 
@@ -509,12 +513,12 @@
 ### `device_management.device_config` — Configuración remota del dispositivo (JSONB)
 
 | Columna | Tipo | Null | Default | FK | Índice | Descripción |
-|---------|----t----|------|---------|----|--------|-------------|
+|---------|------|------|---------|----|--------|-------------|
 | `id` | UUID | NO | — | PK | PK | Identificador |
 | `device_id` | UUID | NO | — | `device_management.device(id)` | **UNIQUE** | Device (1 config por device) |
 | `configuration` | JSONB | NO | `'{}'` | — | — | Config completa (umbrales, sound_pattern, volumen, sync_interval) |
 | `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
-| `version` | INTEGER | NO | 1 | — | — | Versión config (incrementa en cada publish) |
+| `version` | INTEGER | NO | 1 | — | — | Optimistic locking (incrementa en cada UPDATE; la publicación se versiona vía `published_at` + `device_config_history`) |
 | `published_at` | TIMESTAMPTZ | SÍ | — | — | — | Cuándo se publicó |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: creación |
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | User ID creador (admin) |
@@ -522,7 +526,6 @@
 | `updated_by` | UUID | SÍ | — | `security.user(id)` | — | User ID modificador |
 | `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete |
 | `deleted_by` | UUID | SÍ | — | `security.user(id)` | — | User ID que eliminó |
-| `version` | INTEGER | NO | 1 | — | — | Optimistic locking (auditoría) |
 | `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio |
 | `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado |
 
@@ -600,13 +603,15 @@
 | Columna | Tipo | Null | Default | FK | Índice | Descripción |
 |---------|------|------|---------|----|--------|-------------|
 | `id` | UUID | NO | — | PK | PK | Identificador evidencia |
-| `event_id` | UUID | NO | — | `telemetry_service.event(id)` | **UNIQUE** | Evento asociado (1 evidencia por evento en MVP). Mapeo lote: `POST /telemetry/events JSON` fase 1 -> `POST /telemetry/events/{id}/evidence multipart` fase 2. Key `{device_id/YYYY/MM/DD/event_id.jpg}` |
+| `event_id` | UUID | NO | — | `telemetry_service.event(id)` | **UNIQUE** | Evento asociado (1 evidencia por evento en MVP). Mapeo lote: `POST /telemetry/events JSON` fase 1 -> `POST /telemetry/events/{id}/evidence multipart` fase 2. Key `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg}` |
 | `media_type_id` | UUID | NO | — | `parameterization.media_type(id)` | — | Tipo: image_jpeg, video_mp4 |
 | `minio_key` | VARCHAR(500) | NO | — | — | — | Key en MinIO: `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` | ADR-006 |
 | `size_bytes` | BIGINT | NO | — | — | — | Tamaño archivo |
-| `checksum_sha256` | VARCHAR(64) | NO | — | — | — | Integridad |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Timestamp subida |
 | `created_by` | UUID | NO | — | `device_management.device(id)` | — | Device que subió |
+| `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE |
+
+> **Nota:** verificación de integridad futura vía `checksum_sha256` (sin columna en v1; usar `size_bytes` + ETag de MinIO).
 
 > **Retención:** 90 días (eventos normales) / 5 años (severity=critical) — ADR-006 ILM
 
@@ -708,7 +713,7 @@ CREATE MATERIALIZED VIEW analytics.v_metrics_daily AS
 SELECT
   DATE_TRUNC('day', e.occurred_at AT TIME ZONE 'America/Bogota') AS metric_date,
   e.device_id,
-  d.user_id,
+  da.user_id,
   e.event_type_id,
   et.event_category_id,
   e.severity_id,
@@ -719,6 +724,7 @@ SELECT
   MAX(e.occurred_at) AS last_event_at
 FROM telemetry_service.event e
 JOIN device_management.device d ON d.id = e.device_id
+JOIN device_management.device_assignment da ON da.device_id = d.id AND da.unassigned_at IS NULL AND da.deleted_at IS NULL
 JOIN parameterization.event_type et ON et.id = e.event_type_id
 WHERE e.deleted_at IS NULL AND d.deleted_at IS NULL
 GROUP BY 1,2,3,4,5,6;
@@ -763,8 +769,8 @@ CREATE INDEX ON {schema}.{entity}_status_audit ({entity}_id, changed_at DESC);
 |---------------|----------|-----------|-------------|---------|---------|
 | **Catálogo inmutable** | `role`, `module`, `feature`, `event_category`, `severity`, `media_type`, `sound_pattern`, `status_category`, `status`, `status_transition` | `created_at`, `created_by` | NO | NO | NO |
 | **Configuración versionada** | `device_config`, `event_type` | Completa | SÍ | SÍ | `status_category` + `status` |
-| **Transaccional principal** | `user`, `device`, `device_assignment`, `event`, `notification` | Completa | SÍ | SÍ | `status_category` + `status` |
-| **Append-only (eventos)** | `audit_login`, `alert_log`, `password_reset_request`, `evidence`, `device_config_history` | `created_at`/`created_by` | NO | NO | Solo `event` |
+| **Transaccional principal** | `user`, `device`, `device_assignment`, `event`, `notification` | Completa | SÍ | SÍ | `status_category` + `status` donde aplica (sin estado: `device_assignment`) |
+| **Append-only (eventos)** | `audit_login`, `alert_log`, `password_reset_request`, `evidence`, `device_config_history` | `created_at`/`created_by` | NO | NO | NO |
 | **Histórico de estado** | `*_status_audit` | Append-only | NO | NO | N/A |
 
 ---

@@ -60,7 +60,7 @@ Se decide un **modelo dual** según tipo de cliente:
 - Modelo: `role` ↔ `feature` (N:M via `role_feature`) → `user_role` (N:M)
 - Roles base: `admin` (todas las features), `user` (features propias)
 - Enforcement: Middleware `@RequireFeature("feature.code")` en cada endpoint
-- Denegación: 403 con `{code: "FORBIDDEN", message: "Feature X required"}`
+- Denegación: 403 con envelope `{"error":{"code":"FORBIDDEN","message":"Feature X required",...}}` (ver `guidelines.md`)
 
 ---
 
@@ -75,7 +75,7 @@ Se decide un **modelo dual** según tipo de cliente:
 - Liquibase se mantiene, por lo que el versionado del esquema no cambia respecto al plan original.
 - **Auth dual**: Separación clara user vs device; JWT RS256 permite verificación distribuida via JWKS; API Key simple para device sin complejidad de certificados.
 - **Revocation**: Refresh token blocklist + rotación = logout real; API Key regenerable por admin.
-- **Estándares**: RFC 7519 (JWT), RFC 7807 (errors), librerías maduras en Java/Python/JS.
+- **Estándares**: RFC 7519 (JWT), envelope propio `{"error":{}}` (ver `guidelines.md`), librerías maduras en Java/Python/JS.
 
 ### Negativas / Trade-offs
 

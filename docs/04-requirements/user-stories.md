@@ -10,7 +10,7 @@
 
 ## Historias de Usuario — HU-<REPO>-NNN
 
-**Estado:** Borrador
+**Estado:** En progreso
 **Fecha:** 2026-08-23
 
 </div>
@@ -30,15 +30,15 @@
 | Épica | Repo | HUs | Prioridad |
 |-------|------|-----|-----------|
 | Setup y Foundation | API, DB | 3 | Must |
-| Seguridad y cuentas | API, PORTAL, APP | 7 | Must |
-| Gestión de dispositivos | API, DB | 3 | Must |
-| Parametrización | API, DB | 2 | Must |
-| Telemetría y sincronización | API, DB, DEVICE | 6 | Must |
+| Seguridad y cuentas | API, PORTAL, APP | 5 | Must |
+| Gestión de dispositivos | API, DB | 2 | Must |
+| Parametrización | API, DB | 1 | Must |
+| Telemetría y sincronización | API, DB, DEVICE | 3 | Must |
 | Monitoreo y notificaciones | API, APP | 2 | Must |
-| Analítica y reportes | API, PORTAL, APP | 4 | Should |
-| Device Edge (visión, alertas, offline) | DEVICE | 5 | Must |
+| Analítica y reportes | API, PORTAL, APP, DB | 6 | Must/Should |
+| Device Edge (visión, alertas, offline) | DEVICE | 4 | Must |
 
-**Total MVP: 32 HUs** (Must: 28, Should: 4) | **Post-MVP: 4 HUs** (Could: 39 SP)
+**Total MVP: 26 HUs** (Must: 23, Should: 3) | **Post-MVP: 4 HUs** (Could: 39 SP)
 
 ---
 
@@ -399,11 +399,11 @@
 | ID | Criterio | Testeable |
 |----|----------|-----------|
 | AC-001 | POST `/telemetry/events` (auth `X-Device-ID + X-API-Key`) acepta **solo metadata JSON** `{"events":[]}` lote máx 100, sin archivos inline (descartado base64) | Sí |
-| AC-002 | Validación: `device_id` + `api_key` coinciden, `event_id` (UUIDv7) único → 409 si duplicado. `REGISTERED` sin assign -> `403` | Sí |
+| AC-002 | Validación: `device_id` + `api_key` coinciden, `event_type/severity` por código (resuelve a id, `422` si desconocido). `REGISTERED` sin assign -> `403`. Duplicados por `event_id` se reportan en `duplicate_ids` del `201`, no son error | Sí |
 | AC-003 | Persiste `event` (event_type_id, occurred_at, severity, is_offline_sync, evidence_refs) | Sí |
-| AC-004 | Evidencia 1/evento MVP: `POST /telemetry/events/{id}/evidence` multipart 1 JPG -> MinIO `somnguard-evidence` key `{device_id/YYYY/MM/DD/event_id.jpg}` + `evidence_id` + `checksum_sha256`. Mapeo por `evidence.event_id UNIQUE` | Sí |
+| AC-004 | Evidencia 1/evento MVP: `POST /telemetry/events/{id}/evidence` multipart 1 JPG -> MinIO `somnguard-evidence` key `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` + `evidence_id` (integridad v1: `size_bytes` + ETag). `409` si ya existe evidencia; `404` si no existe el evento. Mapeo por `evidence.event_id UNIQUE` | Sí |
 | AC-005 | Registra `alert_log` con código AS-XX, timestamp, event_id, severidad | Sí |
-| AC-006 | Respuesta 201 con array de `event_id` aceptados; ACK para limpieza buffer local | Sí |
+| AC-006 | Respuesta `201 {acked_ids[], duplicate_ids[]}`; ACK para limpieza buffer local (borra ambos) | Sí |
 | AC-007 | Lote máx 100 eventos; timeout 10s; payload máx 50MB | Sí |
 
 ### Dependencias
@@ -528,17 +528,17 @@
 |----------------|------|-------------|
 | HU-API-010 | Bloqueante | Métricas base |
 | RF-ANA-03,04 | Requisito | Base funcional |
-| ADR-003 (Object Storage) | Decisión | MinIO para PDFs |
+| ADR-006 (Object Storage) | Decisión | MinIO para PDFs |
 
 ---
 
 ## 📦 BACKLOG POST-MVP (Could — Fuera de alcance MVP)
 
-Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP. Se abordarán tras validar el MVP completo.
+Las siguientes HUs son **Could** (39 SP totales) y se mueven a backlog post-MVP. Se abordarán tras validar el MVP completo.
 
 ---
 
-### HU-API-012: Video streaming tiempo real (WebRTC) — POST-MVP
+## HU-API-012: Video streaming tiempo real (WebRTC) — POST-MVP
 
 > **Repo:** API, DEVICE | **Sprint:** Post-MVP | **SP:** 13 | **MoSCoW:** Could
 > **Épica:** Analítica y reportes | **Feature:** FEA-ANA-STREAM
@@ -567,7 +567,7 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 
 ---
 
-### HU-DEVICE-005: Video streaming WebRTC a demanda — POST-MVP
+## HU-DEVICE-005: Video streaming WebRTC a demanda — POST-MVP
 
 > **Repo:** DEVICE | **Sprint:** Post-MVP | **SP:** 13 | **MoSCoW:** Could
 > **Épica:** Analítica y reportes | **Feature:** FEA-EDGE-STREAM
@@ -596,7 +596,7 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 
 ---
 
-### HU-PORTAL-004: Video en vivo embebido — POST-MVP
+## HU-PORTAL-005: Video en vivo embebido — POST-MVP
 
 > **Repo:** PORTAL | **Sprint:** Post-MVP | **SP:** 5 | **MoSCoW:** Could
 > **Épica:** Analítica y reportes | **Feature:** FEA-PORTAL-STREAM
@@ -623,7 +623,7 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 
 ---
 
-### HU-APP-004: Video en vivo en app — POST-MVP
+## HU-APP-004: Video en vivo en app — POST-MVP
 
 > **Repo:** APP | **Sprint:** Post-MVP | **SP:** 8 | **MoSCoW:** Could
 > **Épica:** Analítica y reportes | **Feature:** FEA-APP-STREAM
@@ -977,10 +977,10 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 |-------|--------|------|---------------|-------|--------|----|-----------|
 | HU-API-012 | Video streaming WebRTC | API, DEVICE | RF-ANA-05, RF-EDGE-13 | Analítica | Post-MVP | 13 | Could |
 | HU-DEVICE-005 | Video streaming WebRTC | DEVICE | RF-EDGE-13, RF-ANA-05 | Analítica | Post-MVP | 13 | Could |
-| HU-PORTAL-004 | Video en vivo embebido | PORTAL | RF-ANA-05 | Analítica | Post-MVP | 5 | Could |
+| HU-PORTAL-005 | Video en vivo embebido | PORTAL | RF-ANA-05 | Analítica | Post-MVP | 5 | Could |
 | HU-APP-004 | Video en vivo en app | APP | RF-ANA-05 | Analítica | Post-MVP | 8 | Could |
 
-**Total Story Points MVP: 185** (Must: 148, Should: 37) | **Post-MVP: 39 SP** (Could)
+**Total Story Points MVP: 209** (Must: 183, Should: 26) | **Post-MVP: 39 SP** (Could)
 
 ---
 
@@ -989,5 +989,8 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 1. **Validar HUs** con PO + Tech Leads (reunión 1h).
 2. **Crear issues en GitHub Projects** desde esta tabla (copiar ID, título, ACs, SP, labels).
 3. **Actualizar `traceability-matrix.md`** con matriz completa RF ↔ HU ↔ Módulo ↔ Prueba ↔ ADR.
-4. **Definir `cross-cutting.md`** (reglas transversales: auth, audit, obs, idempotencia, tz, errores).
-5. **Escribir ADRs** (ADR-001..007) en `docs/05-architecture/decisions/records/`.
+4. **Aplicar `cross-cutting.md`** (reglas transversales: auth, audit, obs, idempotencia, tz, errores).
+5. **Mantener ADRs** (ADR-001..009) en `docs/05-architecture/decisions/records/` al cambiar HUs.
+
+
+

@@ -258,9 +258,11 @@ flowchart TD
 stateDiagram-v2
     [*] --> Registrado: Alta en la plataforma
     Registrado --> Asignado: Asignación a una cuenta
-    Asignado --> Activo: Primera conexión (configuración descargada)
-    Activo --> Offline: Pérdida de conectividad
-    Offline --> Activo: Se restablece la conectividad
+    Asignado --> Activo: Primer heartbeat válido (saludo con API key)
+    Activo --> Offline: Sin heartbeat 5min
+    Offline --> Activo: Heartbeat válido (se restablece la conectividad)
+    Activo --> Registrado: Desasociación (unassign)
+    Asignado --> Registrado: Desasociación (unassign)
     Activo --> Suspendido: Administrador suspende
     Suspendido --> Activo: Administrador reactiva
     Suspendido --> Retirado: Fin del ciclo de vida

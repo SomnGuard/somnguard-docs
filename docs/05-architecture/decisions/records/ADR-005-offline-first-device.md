@@ -65,11 +65,10 @@ while True:
             )
             
             if response.status == 201:
-                acked_ids = response.json()['event_ids']
-                delete_where_id_in(acked_ids)  # Limpieza inmediata
+                acked_ids = response.json()['acked_ids']
+                duplicate_ids = response.json()['duplicate_ids']
+                delete_where_id_in(acked_ids + duplicate_ids)  # Limpieza inmediata (duplicados ya persistidos, no son error)
                 pull_config_if_needed()
-            elif response.status == 409:  # Duplicate
-                delete_where_id_in(batch.event_ids)  # Ya persistido en server
             else:
                 increment_retries(batch)
                 apply_backoff()
@@ -86,9 +85,9 @@ while True:
 | **Fórmula** | `min(base_delay * 2^attempt + jitter, max_delay)` |
 
 ### 6. Idempotencia en Server (API)
-- **Índice único** `telemetry.event(event_id)` → `409 Conflict` si duplicado
-- Device **borra local** en `201` (ACK) **y en `409`** (ya existe)
-- **Nunca reintenta** evento con `409` — ya persistido
+- **Índice único** `telemetry.event(id)` donde `id = event_id UUIDv7` generado en device → duplicados se reportan en `duplicate_ids` del `201`, nunca `409` en el lote
+- Device **borra local** `acked_ids + duplicate_ids` en `201`
+- `409` solo en `POST /telemetry/events/{id}/evidence` si el evento ya tiene evidencia (no reintentar ese archivo)
 
 ### 7. Pull de Configuración Remota
 - Tras **sync exitoso (201)**: `GET /devices/{id}/config` → merge con defaults → guarda en `device_config_cache` + aplica en runtime

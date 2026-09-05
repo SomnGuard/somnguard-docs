@@ -172,7 +172,7 @@ Modelo relacional de **20 entidades** en PostgreSQL, gestionado con Liquibase. F
 
 - [Modelo entidad-relación](../06-data-architecture/01-entity-relationship-model.mmd)
 - [Módulos y entidades](../06-data-architecture/02-modules-entities.md)
-- [Diccionario de datos](../06-data-architecture/03-data-dictionary.md)
+- [Diccionario de datos](../06-data-architecture/data-dictionary.md)
 
 ### 5.3 API
 

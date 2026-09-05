@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### Fixed (2026-09-04)
+- **Contratos device-API:** `POST /devices/{id}/heartbeat` (saludo, `ASSIGNED->ACTIVE`) y `PATCH /devices/{id}/rotate-key` definidos en `api-design.md`, `authentication.md`, `HU-API-006` (RF-DEV-09); sync two-phase (`POST /telemetry/events` JSON + `POST /events/{id}/evidence` multipart, base64 descartado); idempotencia `201 {acked_ids, duplicate_ids}` (`409` solo evidencia); `event_type/severity` por código; UML (`es-device`, `sd-offline-sync`, `sd-device-registration`) alineado.
+- **Endpoints security alineados a HU:** `forgot-password`/`reset-password`, `register`, `verify-email`, CRUD roles/features, `POST /role-features`, `PATCH /users/{id}` + `PATCH /users/me`; `GET /audit-login`; prefijo `/api/v1` en `dependency-map.md`.
+- **IDs y trazabilidad:** duplicados `RF-DEV-06/07/08/09` y `HU-PORTAL-004` resueltos (video → `HU-PORTAL-005`); conteo real 26 MVP + 4 post-MVP (209 SP); tabla RF→HU de `functional.md` remapeada a HUs existentes; equivalencia `RN-01..10 ↔ RN-XXX` en `entities-and-rules.md`; estados a `En progreso`/`Pendiente` según gobernanza.
+- **Links rotos:** `../cross-cutting.md` → `../../` en 7 ADRs; `event-catalog.md`, `module-catalog.md`, `data-dictionary.md`, logos UML, deprecado `03-data-dictionary.md` → `data-dictionary.md`; `decisions/README.md` con ADR-001..009.
+- **Q/TD:** cerradas Q-007 (QR-008 payload), Q-013 (QR-013 estados), Q-016 (QR-016 observabilidad); TD-004 y TD-006 resueltos.
+
+### Changed (2026-09-04)
+- **Rename:** `docs/04-requeriments/` → `docs/04-requirements/` (typo) con 25 referencias actualizadas.
+- **Licencia:** `LICENSE` MIT 2026 SomnGuard (estaba pendiente).
+
 ### Fixed (2026-08-20)
 - **Acta de kick-off fiel al stack original (C#/.NET)** con nota histórica de migración a Java (ADR-001); fecha de última actualización corregida.
 - **Paquetes Java en snake_case** (`com.somnguard.telemetry_service`, `com.somnguard.device_management`) en arquitectura, diseño, ADR-002, análisis y onboarding, con nota de convención (módulos kebab-case en catálogo).

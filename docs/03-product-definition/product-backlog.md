@@ -44,13 +44,13 @@ Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01.
 | Épica | Estado | Nota |
 |-------|--------|------|
 | Seguridad y cuentas | Pendiente | Base para el resto del sistema; capa de aplicación aún no construida (TD-002) |
-| Gestión de dispositivos | Backlog | Depende de Seguridad (roles) |
-| Telemetría y sincronización | Backlog | Depende de Gestión de dispositivos |
-| Monitoreo y notificaciones | Backlog | Depende de Telemetría (eventos) |
-| Parametrización | Backlog | Requisito de Telemetría (catálogos validan eventos) |
-| Analítica y reportes | Backlog | Depende de Telemetría y Monitoreo |
+| Gestión de dispositivos | Pendiente | Depende de Seguridad (roles) |
+| Telemetría y sincronización | Pendiente | Depende de Gestión de dispositivos |
+| Monitoreo y notificaciones | Pendiente | Depende de Telemetría (eventos) |
+| Parametrización | Pendiente | Requisito de Telemetría (catálogos validan eventos) |
+| Analítica y reportes | Pendiente | Depende de Telemetría y Monitoreo |
 
-## Historias de usuario (ejemplos iniciales)
+## Historias de usuario (ejemplos iniciales — canónicas en `user-stories.md`)
 
 | HU | Título (GitHub Projects) | Repo |
 |----|--------------------------|------|
@@ -67,3 +67,4 @@ Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01.
 - [Matriz de trazabilidad](../04-requirements/traceability-matrix.md)
 - [Análisis del software](../04-requirements/software-analysis.md)
 - [Plan de trabajo](../01-project-context/software-technical-proposal.md#7-plan-de-trabajo-y-cronograma)
+

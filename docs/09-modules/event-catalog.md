@@ -54,7 +54,7 @@
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
 | `event.recorded` | Evento detectado recibido, persistido en BD (idempotente) | `telemetry_service` (propia tabla), `analytics` (línea de tiempo), `monitoring` (alertas) | RN-TEL-01, HU-API-007, HU-DEVICE-003 |
-| `alert.generated` | Evento crítico detectado, registrado en alert_log | `monitoring` (notificaciones), `audit-service` (historial) | RF-TEL-03, HU-API-009 |
+| `alert.generated` | Evento crítico detectado, registrado en alert_log | `monitoring` (notificaciones), `security` (historial en `audit_login`) | RF-TEL-03, HU-API-009 |
 | `evidence.uploaded` | Evidencia multimedia (imagen/video) subida a MinIO | `telemetry_service` (guarda minio_key), `monitoring` (thumbnails) | RF-TEL-02, HU-API-007 |
 | `event.sync.failed` | Sincronización fallida después de reintentos exponenciales | `device_management` (actualiza buffer retry), `monitoring` (métricas) | RF-EDGE-12, HU-DEVICE-003 |
 
@@ -62,23 +62,23 @@
 
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
-| `notification.sent` | Notificación entregada al usuario (push, email, in-app) | `audit-service` (historial), `app` (confirmación UI) | RF-MON-01, HU-API-009, HU-APP-001 |
-| `notification.delivered` | Notificación entregada exitosamente al canal | `audit-service`, `app` (tracking) | RF-MON-03, HU-MON-03 |
-| `notification.read` | Notificación leída por usuario (in-app) | `audit-service` (statísticas) | RF-MON-03 (opcional) |
+| `notification.sent` | Notificación entregada al usuario (push, email, in-app) | `security` (historial), app (confirmación UI) | RF-MON-01, HU-API-009, HU-APP-001 |
+| `notification.delivered` | Notificación entregada exitosamente al canal | `security`, app (tracking) | RF-MON-03, HU-API-009 |
+| `notification.read` | Notificación leída por usuario (in-app) | `security` (estadísticas) | RF-MON-03 (opcional), HU-API-009 |
 
 ### 2.4 `analytics` (Línea de tiempo y reportes)
 
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
-| `analytics.metrics.updated` | Métricas agregadas actualizadas (freq, severidad, tendencia) | `portal`, `app` (dashboard) | RF-ANA-02, HU-PORTAL-002, HU-APP-002 |
-| `analytics.summary.generated` | Resumen IA generado para un usuario/periodo | `portal`, `app` (botón "Resumen IA") | RF-ANA-03, HU-PORTAL-003, HU-APP-002 |
+| `analytics.metrics.updated` | Métricas agregadas actualizadas (freq, severidad, tendencia) | portal (dashboard) | RF-ANA-02, HU-PORTAL-003 |
+| `analytics.summary.generated` | Resumen IA generado para un usuario/periodo | portal, app (botón "Resumen IA") | RF-ANA-03, HU-PORTAL-004, HU-APP-003 |
 
 ### 2.5 `security` (Autenticación y autorización)
 
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
-| `auth.login.attempt` | Intento de login (éxito o fallo, con IP, user-agent) | `audit-service` (persiste audit_login) | RF-SEC-09, cross-cutting.md §7.2 |
-| `auth.logout` | Cierre de sesión de usuario | `audit-service`, `monitoring` (tracking sesiones) | RF-SEC-03, cross-cutting.md §7.2 |
+| `auth.login.attempt` | Intento de login (éxito o fallo, con IP, user-agent; cubre `LoginSucceeded`/`LoginFailed` de `security/events.md`) | `security` (persiste `audit_login`) | RF-SEC-09, cross-cutting.md §7.2 |
+| `auth.logout` | Cierre de sesión de usuario | `security`, `monitoring` (tracking sesiones) | RF-SEC-03, cross-cutting.md §7.2 |
 
 ---
 
@@ -125,7 +125,7 @@ Todos los eventos siguen un **envelope estándar** con campos de cabecera obliga
 
 ## 4. Eventos Internos de Servicio (No cruzan frontera)
 
-Estos eventos son de **orquestación interna** de un módulo (worker↔worker, scheduler/cron) y **no son contratos de integración** que consume otro módulo. Se documentan aquí para trazabilidad.
+Estos eventos son de **orquestación interna** de un módulo (worker↔worker, scheduler/cron) y **no son contratos de integración** que consume otro módulo. Se documentan aquí para trazabilidad. `document-service`/`pdf-renderer`/`monitoring-service` no son módulos del monolito (ver `module-catalog.md`): son workers futuros/post-MVP.
 
 | Evento interno | Servicio | Propósito |
 |----------------|----------|-----------|
@@ -154,7 +154,7 @@ Los nombres de evento en SomnGuard siguen la convención `<entidad>.<accion>` en
 
 1. **Actualizar consumidores**: Cuando se renombra un evento, todos los módulos que lo suscriban deben actualizarse en paralelo
 2. **Compatibilidad hacia atrás**: El `event_id` UUID v7 permite correlación incluso si el nombre cambia
-3. **Wildcard en audit-worker**: El `audit-service` suscribe por wildcard, por lo que cambios de naming no afectan su lógica de consumo
+3. **Wildcard en `security`**: suscribe por wildcard (`audit_login`), por lo que cambios de naming no afectan su lógica
 4. **Contratos API**: Cualquier endpoint que acepte/retorne nombres de eventos (ej. `GET /telemetry/events?event_type=XX`) debe actualizarse en la misma PR
 
 ---
