@@ -74,5 +74,7 @@ docs/
 
 ## Historial
 
+- **2026-09-05**: modelo 06 alineado a DDL real, contratos auth/UML a código y api-design, trazabilidad RF→HU real, Q-007/013/016 y TD-004/005/006 cerrados (ver `CHANGELOG.md`).
+- **2026-09-04**: contratos device-API (`heartbeat`, `rotate-key`, sync two-phase), rename `04-requirements/`, licencia MIT (ver `CHANGELOG.md`).
 - **2026-08-19**: estructura ampliada con plantillas reutilizables y documentos de proceso (gobernanza, dominio, producto, requisitos, operaciones, control de proyecto), alineados con la arquitectura hexagonal y las convenciones ágiles.
 - **2026-08-16**: unificación de las estructuras anteriores en una sola, organizada por secciones y sin orientación a microservicios.

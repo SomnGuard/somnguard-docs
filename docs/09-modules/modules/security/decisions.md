@@ -203,12 +203,11 @@
 
 **Contexto:** Seguridad del flujo de reset de contraseña.
 
-**Decisión:** Almacenar `token_hash` (BCrypt) en `password_reset_request`. Token en claro solo via email (expira 1h).
+**Decisión:** Almacenar `token_hash` (SHA-256) en `password_reset_request`. Token en claro solo via email (expira 1h).
 
 **Consecuencias:**
 - + Si BD comprometida, tokens no servibles
-- + Verificación: `BCrypt.check(token_plano, token_hash)`
-- - Costo BCrypt en validación (aceptable: flujo raro)
+- + Verificación: `SHA-256(token_plano) == token_hash` (búsqueda directa por hash)
 
 ---
 
@@ -223,7 +222,7 @@
 - `failed_login_attempts` incrementa en cada fallo
 - `locked_until = NOW() + 15 minutos` al alcanzar 5
 - Reset contador en login exitoso o desbloqueo manual
-- Log en `audit_login` con `outcome = FAILED_LOCKED`
+- Log en `audit_login` con `outcome = ACCOUNT_LOCKED`
 
 **Consecuencias:**
 - + Protección básica sin dependencias externas

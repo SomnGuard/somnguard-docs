@@ -52,8 +52,6 @@
 | RF-SEC-03 | Cierre de sesión con invalidación de token/sesión | RN-SEC-05 | RF-9.3 | Must | Seguridad y cuentas |
 | RF-SEC-04 | Recuperación de contraseña via token temporal enviado por correo | RN-SEC-06 | RF-9.4 | Must | Seguridad y cuentas |
 | RF-SEC-05 | Actualización de datos personales (validación unicidad correo/teléfono) | RN-SEC-07 | RF-9.5 | Should | Seguridad y cuentas |
-| RF-DEV-06 | Asociación dispositivo-usuario (1 device ↔ 1 user) | RN-DEV-01 | RF-9.6 | Must | Gestión de dispositivos |
-| RF-DEV-07 | Desasociación dispositivo (libera para otro usuario) | RN-DEV-02 | RF-9.7 | Should | Gestión de dispositivos |
 | RF-SEC-08 | Eliminación de cuenta con soft-delete (ventana 30 días recuperación) | RN-SEC-08 | RF-9.8 | Could | Seguridad y cuentas |
 | RF-SEC-09 | Auditoría de login (audit_login): IP, user-agent, éxito/fallo, timestamp | RN-SEC-09 | RNF-4.3 | Must | Seguridad y cuentas |
 | RF-SEC-10 | Control de acceso por roles (RBAC): admin, user; features por role_feature | RN-SEC-10 | RNF-4.4 | Must | Seguridad y cuentas |
@@ -77,6 +75,8 @@
 | RF-DEV-03 | Configuración remota device_config (JSONB): umbrales, sound_pattern, volumen, intervalo sync | RN-DEV-04 | RF-1.2, RF-8.3 | Must | Gestión de dispositivos |
 | RF-DEV-04 | Heartbeat dispositivo: last_seen, versión firmware, estado conectividad | RN-DEV-05 | RF-8.2 | Must | Gestión de dispositivos |
 | RF-DEV-05 | Gestión de estados del dispositivo (state machine: Registrado → Asignado → Activo ↔ Offline → Suspendido → Retirado) | RN-DEV-06 | Apéndice 2 (EV-SYS-*), ES-device | Must | Gestión de dispositivos |
+| RF-DEV-06 | Asociación dispositivo-usuario (1 device ↔ 1 user) | RN-DEV-01 | RF-9.6 | Must | Gestión de dispositivos |
+| RF-DEV-07 | Desasociación dispositivo (libera para otro usuario) | RN-DEV-02 | RF-9.7 | Should | Gestión de dispositivos |
 | RF-DEV-08 | Consulta de dispositivos por usuario (filtros: estado, fecha asignación) | RN-DEV-07 | RF-10.1 | Should | Gestión de dispositivos |
 | RF-DEV-09 | Rotación/revocación API Key: `PATCH /devices/{id}/rotate-key` (solo admin), invalida anterior de inmediato, devuelve nueva key una sola vez. Estado no cambia; device con key vieja recibe `401` hasta reprovisionar (mitiga T-002) | RN-DEV-03 | RF-9.6 | Should | Gestión de dispositivos |
 
@@ -119,7 +119,7 @@
 | RF-EDGE-02 | Verificación campo visual cámara: obstrucción/mala posición → AS-09, pausa detección | RN-EDGE-02 | RF-2.1 | Must | Telemetría y sincronización |
 | RF-EDGE-03 | Captura continua video rostro; detección rostro (landmarks) → habilita análisis | RN-EDGE-03 | RF-2.2 | Must | Telemetría y sincronización |
 | RF-EDGE-04 | Detección somnolencia/fatiga: PERCLOS, parpadeo anómalo, cierre prolongado, bostezo, cabeceo → nivel (leve/moderada/severa/crítica) + AS-01..AS-04 | RN-EDGE-04 | RF-3.1, Apéndice 2 (EV-SOM-01..05) | Must | Telemetría y sincronización |
-| RF-EDGE-05 | Detección distracciones: teléfono (AS-05), mirada fuera vía (AS-06), movimientos anómalos (AS-05) | RN-EDGE-05 | RF-4.1, RF-4.2, RF-4.3, Apéndice 2 (EV-DIS-01..05) | Must | Telemetría y sincronización |
+| RF-EDGE-05 | Detección distracciones: teléfono (AS-05), mirada fuera de la vía (AS-06), movimientos anómalos (AS-05) | RN-EDGE-05 | RF-4.1, RF-4.2, RF-4.3, Apéndice 2 (EV-DIS-01..05) | Must | Telemetría y sincronización |
 | RF-EDGE-06 | Detección cinturón: presencia + posición correcta → AS-07 (intermitente) si no | RN-EDGE-06 | RF-5.1, RF-5.2, Apéndice 2 (EV-CIN-01,02) | Must | Telemetría y sincronización |
 | RF-EDGE-07 | Generación alerta sonora diferenciada por event_type + escalamiento por persistencia (AS-01..AS-09) | RN-EDGE-07 | RF-6.1, RF-6.2, RF-6.3, Apéndice 1 | Must | Telemetría y sincronización |
 | RF-EDGE-08 | Registro local de eventos + alert_log + evidencia (imagen frame) en buffer SQLite offline | RN-EDGE-08 | RF-7.1..7.4, RF-8.1 | Must | Telemetría y sincronización |
@@ -141,9 +141,9 @@
 | RF-SEC-04 | RN-SEC-06 | RF-9.4 | Seguridad y cuentas | Security | HU-API-002, HU-PORTAL-001, HU-APP-001 |
 | RF-SEC-05 | RN-SEC-07 | RF-9.5 | Seguridad y cuentas | Security | HU-API-002, HU-PORTAL-001, HU-APP-001 |
 | RF-DEV-06 | RN-DEV-01 | RF-9.6 | Gestión de dispositivos | Device Management | HU-API-006 |
-| RF-DEV-07 | RN-DEV-02 | RF-9.7 | Gestion de dispositivos | Device Management | HU-API-006 |
-| RF-DEV-08 | RN-DEV-07 | RF-10.1 | Gestion de dispositivos | Device Management | HU-API-006, HU-PORTAL-002 |
-| RF-DEV-09 | RN-DEV-03 | RF-9.6 | Gestion de dispositivos | Device Management | HU-API-006 |
+| RF-DEV-07 | RN-DEV-02 | RF-9.7 | Gestión de dispositivos | Device Management | HU-API-006 |
+| RF-DEV-08 | RN-DEV-07 | RF-10.1 | Gestión de dispositivos | Device Management | HU-API-006, HU-PORTAL-002 |
+| RF-DEV-09 | RN-DEV-03 | RF-9.6 | Gestión de dispositivos | Device Management | HU-API-006 |
 | RF-SEC-08 | RN-SEC-08 | RF-9.8 | Seguridad y cuentas | Security | HU-API-002, HU-PORTAL-001, HU-APP-001 |
 | RF-SEC-09 | RN-SEC-09 | RNF-4.3 | Seguridad y cuentas | Security | HU-API-001, HU-PORTAL-001, HU-APP-001 |
 | RF-SEC-10 | RN-SEC-10 | RNF-4.4 | Seguridad y cuentas | Security | HU-API-003 |
@@ -157,7 +157,6 @@
 | RF-DEV-03 | RN-DEV-04 | RF-1.2,8.3 | Gestión de dispositivos | Device Management | HU-API-005 |
 | RF-DEV-04 | RN-DEV-05 | RF-8.2 | Gestión de dispositivos | Device Management | HU-API-006, HU-DEVICE-002 |
 | RF-DEV-05 | RN-DEV-06 | EV-SYS-* | Gestión de dispositivos | Device Management | HU-API-006, HU-DEVICE-002 |
-| RF-DEV-08 | RN-DEV-07 | RF-10.1 | Gestion de dispositivos | Device Management | HU-API-006, HU-PORTAL-002 |
 | RF-TEL-01 | RN-TEL-01 | RF-7.1,7.2,8.3 | Telemetría y sincronización | Telemetry Service | HU-API-007 |
 | RF-TEL-02 | RN-TEL-02 | RF-7.4,8.3 | Telemetría y sincronización | Telemetry Service | HU-API-007 |
 | RF-TEL-03 | RN-TEL-03 | RF-6.1,6.2,7.3 | Telemetría y sincronización | Telemetry Service | HU-API-007 |
@@ -207,4 +206,7 @@
 1. **Revisar y validar** esta lista con el equipo (PO + Arquitecto + Tech Leads).
 2. **Mantener sincronizados** `user-stories.md`, `traceability-matrix.md` y ADRs (`docs/05-architecture/decisions/records/ADR-001..009`) al cambiar RFs.
 3. **Aplicar** [cross-cutting.md](../05-architecture/cross-cutting.md) (auth, idempotencia, estados, errores) en cada RF nuevo.
+
+
+
 

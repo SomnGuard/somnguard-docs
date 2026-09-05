@@ -443,17 +443,19 @@
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | User ID creador (seed = SYSTEM_ACTOR_ID) |
 | *append-only* | — | — | — | — | — | Solo INSERT |
 
-**Ejemplos seed (ver ADR-009):**
+**Ejemplos seed (códigos prefijados por entidad):**
 | from_status | to_status | allowed_roles | description |
 |-------------|-----------|---------------|-------------|
-| REGISTERED | ASSIGNED | `{user}` | Usuario asocia device |
-| ASSIGNED | ACTIVE | `{system}` | Primer heartbeat |
-| ACTIVE | OFFLINE | `{system}` | Sin heartbeat > 5 min |
-| OFFLINE | ACTIVE | `{system}` | Heartbeat recibido |
-| ACTIVE | SUSPENDED | `{admin}` | Admin suspende |
-| SUSPENDED | ACTIVE | `{admin}` | Admin reactiva |
-| DETECTED | REGISTERED | `{system}` | Persistido en buffer local |
-| REGISTERED | SYNCHRONIZED | `{system}` | ACK recibido de API |
+| DEVICE_REGISTERED | DEVICE_ASSIGNED | `{user}` | Usuario asocia device |
+| DEVICE_ASSIGNED | DEVICE_ACTIVE | `{system}` | Primer heartbeat |
+| DEVICE_ACTIVE | DEVICE_OFFLINE | `{system}` | Sin heartbeat > 5 min |
+| DEVICE_OFFLINE | DEVICE_ACTIVE | `{system}` | Heartbeat recibido |
+| DEVICE_ACTIVE | DEVICE_SUSPENDED | `{admin}` | Admin suspende |
+| DEVICE_SUSPENDED | DEVICE_ACTIVE | `{admin}` | Admin reactiva |
+| EVENT_DETECTED | EVENT_REGISTERED | `{system}` | Persistido en buffer local |
+| EVENT_REGISTERED | EVENT_SYNCHRONIZED | `{system}` | ACK recibido de API |
+
+> Transiciones de desasociación (`*_ACTIVE`/`*_ASSIGNED` → `*_REGISTERED` vía `unassign`) documentadas en `es-device.mmd` y `HU-API-006 AC-003, todavía sin filas en seeds.
 
 ---
 

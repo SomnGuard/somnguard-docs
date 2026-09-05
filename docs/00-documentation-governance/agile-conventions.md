@@ -53,8 +53,8 @@ Ejemplos:
 
 | Mal | Bien |
 |-----|------|
-| `Login del sistema` | `HU-API-012 - Autenticar usuario en la plataforma` |
-| `Reportes` | `HU-PORTAL-013 - Generar reporte de eventos por rango de fechas` |
+| `Login del sistema` | `HU-API-001 - Autenticar usuario en la plataforma` |
+| `Reportes` | `HU-PORTAL-004 - Generar reporte de eventos por rango de fechas` |
 
 > Una HU puede tocar más de un repo (p. ej. edge + API): se identifica con el prefijo del repo principal y los demás se indican como dependencias o subtareas.
 

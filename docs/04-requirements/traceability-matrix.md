@@ -87,10 +87,12 @@ Matriz completa que relaciona **Requisitos Funcionales (RF)** ↔ **Historias de
 | Seguridad y cuentas | HU-API-001, 002, 003, HU-PORTAL-001, HU-APP-001 | 1 | 34 | Must |
 | Gestión de dispositivos | HU-API-005, 006 | 1-2 | 13 | Must |
 | Parametrización | HU-API-004 | 1 | 8 | Must |
-| Telemetría y sincronización | HU-API-007, 008, HU-DEVICE-001, 002, 003, 004 | 1-3 | 68 | Must |
+| Telemetría y sincronización | HU-API-007, 008, HU-DEVICE-001, 002, 003, 004 | 1-3 | 65 | Must |
 | Monitoreo y notificaciones | HU-API-009, HU-APP-002 | 3 | 16 | Must |
-| Analítica y reportes | HU-API-010, 011, HU-DB-002, HU-PORTAL-003, 004, HU-APP-003 | 3-5 | 45 | Must/Should |
+| Analítica y reportes | HU-API-010, 011, HU-DB-002, HU-PORTAL-003, 004, HU-APP-003 | 3-5 | 44 | Must/Should |
 | Device Edge | HU-DEVICE-001, 002, 003, 004 | 1-3 | 47 | Must |
+
+> SP por épica no suma al total: Device Edge comparte HUs con Telemetría. Total único MVP: 209 SP (26 HUs).
 
 ---
 

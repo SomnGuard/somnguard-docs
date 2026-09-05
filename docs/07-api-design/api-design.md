@@ -116,7 +116,7 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 | GET | `/api/v1/catalogs/media-types` | Catálogo de tipos de medio |
 | GET | `/api/v1/catalogs/sound-patterns` | Catálogo de patrones de sonido |
 | GET | `/api/v1/catalogs/event-types` | Catálogo de tipos de evento |
-| POST/PUT/DELETE | `/api/v1/catalogs/...` | Administración de catálogos (acceso restringido) |
+| POST/PATCH/DELETE | `/api/v1/catalogs/...` | Administración de catálogos (acceso restringido; update parcial con `PATCH`) |
 
 ## Módulo analytics
 

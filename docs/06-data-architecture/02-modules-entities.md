@@ -96,7 +96,7 @@ Representa a los usuarios del sistema.
 | first_name | VARCHAR(100) |
 | last_name | VARCHAR(100) |
 | phone | VARCHAR(30) |
-| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| is_active | BOOLEAN |
 | email_verified_at | TIMESTAMPTZ |
 | last_login_at | TIMESTAMPTZ |
 | failed_login_attempts | SMALLINT |
@@ -123,7 +123,7 @@ Define los roles del sistema.
 | code | VARCHAR(50) |
 | name | VARCHAR(100) |
 | description | TEXT |
-| is_active | BOOLEAN | **Por defecto TRUE** |
+| is_active | BOOLEAN |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
@@ -182,7 +182,7 @@ Relaciona roles con funcionalidades.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
-| is_active | BOOLEAN | **Por defecto TRUE** |
+| is_active | BOOLEAN |
 
 ---
 
@@ -204,7 +204,7 @@ Asigna roles a los usuarios.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
-| is_active | BOOLEAN | **Por defecto TRUE** |
+| is_active | BOOLEAN |
 
 ---
 
@@ -369,7 +369,7 @@ Representa un dispositivo físico.
 | serial_number | VARCHAR(100) |
 | api_key_hash | TEXT |
 | firmware_version | VARCHAR(50) |
-| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| is_active | BOOLEAN |
 | last_heartbeat_at | TIMESTAMPTZ |
 | last_sync_at | TIMESTAMPTZ |
 | last_config_pull_at | TIMESTAMPTZ |
@@ -417,7 +417,7 @@ Configuración remota del dispositivo (JSONB).
 | id | UUID |
 | device_id | UUID |
 | configuration | JSONB |
-| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| is_active | BOOLEAN |
 | version | INTEGER |
 | published_at | TIMESTAMPTZ |
 | created_at | TIMESTAMPTZ |
@@ -469,7 +469,7 @@ Representa una ocurrencia detectada por el dispositivo.
 | sound_pattern_id | UUID |
 | is_offline_sync | BOOLEAN |
 | metadata | JSONB |
-| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| is_active | BOOLEAN |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
@@ -540,7 +540,7 @@ Notificaciones enviadas a los usuarios como consecuencia de una alarma.
 | title | VARCHAR(200) |
 | message | TEXT |
 | channel | VARCHAR(30) |
-| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| is_active | BOOLEAN |
 | sent_at | TIMESTAMPTZ |
 | delivered_at | TIMESTAMPTZ |
 | read_at | TIMESTAMPTZ |

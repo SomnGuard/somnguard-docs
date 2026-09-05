@@ -88,7 +88,7 @@
 
 ---
 
-## Propuesta de features estandarizadas (21 propuestas; implementadas 17, ver seeds)
+## Propuesta de features estandarizadas (23 propuestas; implementadas 17, ver seeds)
 
 ### Convención: `{recurso}.{accion}` en minúscula | Acciones: `read`, `write`, `delete`, `assign`, `ingest`, `generate`
 

@@ -95,6 +95,8 @@ Gestiona la autenticación, autorización y auditoría de usuarios del sistema S
 | `DELETE /api/v1/users/{id}` | Desactivar usuario (`user.write`) |
 | `GET /api/v1/roles` | Listar roles (`role.read`) |
 | `POST /api/v1/roles` | Crear rol (`role.write`) |
+| `GET /api/v1/modules` | Listar módulos (`role.read`) |
+| `GET /api/v1/modules/{id}/features` | Features de un módulo (`role.read`) |
 | `PUT /api/v1/roles/{id}` | Reemplazar rol (`role.write`) |
 | `DELETE /api/v1/roles/{id}` | Desactivar rol (`role.write`) |
 | `GET /api/v1/features` | Listar features (`role.read`) |

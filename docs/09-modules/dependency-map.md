@@ -122,8 +122,8 @@ Capa interna (más cercana a domain):
 application/port/in (use case interfaces por módulo):
   - security: login, logout, RBAC
   - parameterization: CRUD catálogos, obtener estado device
-  - device_management: alta device, asociar usuario, heartbeat
-  - telemetry_service: ingestar eventos, pull config
+  - device_management: alta device, asociar usuario, heartbeat, pull config
+  - telemetry_service: ingestar eventos
   - monitoring: enviar notificación, tracking delivery
 
   ↓ depende de
@@ -224,8 +224,8 @@ Capa externa:
 |------------|-------------|-------------|
 | `SQLite local` | Ninguna (autónoma) | Buffer de eventos pending_events, device_config, evidence local |
 | `API Key` | `security` (validación central) | API Key generada por security, validada HMAC-SHA256 en device |
-| `Heartbeat → API` | `telemetry_service` (POST /devices/{id}/heartbeat) | Cada 30-60s envía saludo con `X-Device-ID + X-API-Key`: `firmware_version, pending_count, free_disk_pct`. Actualiza `last_heartbeat_at`. Primer heartbeat `ASSIGNED->ACTIVE`, `>5min` sin heartbeat `->OFFLINE`. Distinto de `HEAD /actuator/health` (solo chequeo internet sin auth) |
-| `Config pull → API` | `telemetry_service` (GET /devices/{id}/config) | Solicita device_config JSONB, thresholds, sound_pattern, volumen |
+| `Heartbeat → API` | `device_management` (POST /api/v1/devices/{id}/heartbeat) | Cada 30-60s envía saludo con `X-Device-ID + X-API-Key`: `firmware_version, pending_count, free_disk_pct`. Actualiza `last_heartbeat_at`. Primer heartbeat `ASSIGNED->ACTIVE`, `>5min` sin heartbeat `->OFFLINE`. Distinto de `HEAD /actuator/health` (solo chequeo internet sin auth) |
+| `Config pull → API` | `device_management` (GET /api/v1/devices/{id}/config) | Solicita device_config JSONB, thresholds, sound_pattern, volumen |
 | `Event sync → API` | `telemetry_service` (POST /telemetry/events) | Envía lote de eventos offline, deduplicación por event_id UUID v7 |
 | `Local DB esquema` | Mismo patrón que BD `security + parameterization + device_management` (tabla mínima) | Solo lo necesario: device, pending_events, device_config (recorta las 6 esquemas completos) |
 

@@ -54,12 +54,12 @@ Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01.
 
 | HU | Título (GitHub Projects) | Repo |
 |----|--------------------------|------|
-| `HU-API-###` | Autenticar usuario en la plataforma | API |
-| `HU-API-###` | Registrar evento de telemetría de forma idempotente | API |
-| `HU-DB-###` | Crear esquema de catálogos de parametrización | DB |
-| `HU-DEVICE-###` | Sincronizar lote de eventos con respaldo offline | DEVICE |
-| `HU-PORTAL-###` | Consultar línea de tiempo de eventos del conductor | PORTAL |
-| `HU-APP-###` | Recibir notificación de evento crítico | APP |
+| `HU-API-001` | Autenticar usuario en la plataforma | API |
+| `HU-API-007` | Registrar evento de telemetría de forma idempotente | API |
+| `HU-DB-001a` | Crear esquema de catálogos de parametrización | DB |
+| `HU-DEVICE-003` | Sincronizar lote de eventos con respaldo offline | DEVICE |
+| `HU-PORTAL-002` | Consultar línea de tiempo de eventos del conductor | PORTAL |
+| `HU-APP-002` | Recibir notificación de evento crítico | APP |
 
 ## Ver también
 

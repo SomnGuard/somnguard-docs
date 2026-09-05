@@ -28,4 +28,4 @@ Documentación que ya no está vigente pero se conserva por trazabilidad e histo
 | [deprecated/previous-structure/](./deprecated/previous-structure/) | Estructura de documentación anterior (fases 00-08), conservada completa |
 | [deprecated/data-model-v1/](./deprecated/data-model-v1/) | Primera versión del modelo de datos (ER conceptual, ER relacional y diccionario), reemplazada por el modelo vigente en `../06-data-architecture/` |
 | [deprecated/templates/](./deprecated/templates/) | Plantilla general de documento, reemplazada por la estructura mínima en `../00-documentation-governance/documentation-rules.md` |
-| legacy/ | Recursos legados sin clasificar |
+| legacy/ | Recursos legados sin clasificar (carpeta vacía, solo `.gitkeep`) |

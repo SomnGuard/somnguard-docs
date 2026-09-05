@@ -21,7 +21,7 @@
 > Basado en: [SRS](../04-requirements/01-srs/) (RNF-*), [functional.md](../04-requirements/functional.md) (RF-*),
 > [architecture-document.md](./architecture-document.md),
 > [pattern-guide.md](./pattern-guide.md) (Hexagonal + DDD),
-> Guía ADR-004 (estados parametrizados + auditoría).
+> Guía ADR-009 (estados parametrizados + auditoría).
 
 ---
 
@@ -190,7 +190,7 @@ delay = min(base_delay * (2 ** attempt) + random(0, 30), max_delay)
 
 ---
 
-## 5. Estados Parametrizados (ADR-004 Guía Adaptado)
+## 5. Estados Parametrizados (ADR-009)
 
 ### 5.1 Modelo Unificado de Estados
 Toda entidad con ciclo de vida usa **dos campos**:
@@ -406,4 +406,5 @@ GET /api/v1/events?sort=occurred_at:desc,event_type_id
 3. **Implementar middleware/base classes** en `somnguard-api/platform` para: auth, error handling, observabilidad, paginación.
 4. **Configurar OTel Collector + LGTM** en `somnguard-docker-infra` (ver propuesta separada).
 5. **Validar con equipo** en reunión de arquitectura (30 min).
+
 
