@@ -240,6 +240,7 @@ Registro de intentos de autenticación.
 | attempted_at | TIMESTAMPTZ |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 

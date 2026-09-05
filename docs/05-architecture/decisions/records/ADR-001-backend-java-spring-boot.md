@@ -42,7 +42,7 @@ Se decide un **modelo dual** según tipo de cliente:
 | **Algoritmo** | RS256 (RSA 2048 bits, firma asimétrica) |
 | **Access Token** | JWT, 15 min, `Authorization: Bearer <jwt>` |
 | **Refresh Token** | Opaco, 7 días, rotación en cada uso, hash en BD, blocklist en logout |
-| **Claims obligatorios** | `sub` (user_id UUID), `roles` (array), `features` (array), `exp`, `iat`, `jti` |
+| **Claims obligatorios** | `sub` (user_id UUID), `email`, `roles` (array), `features` (array), `exp`, `iat`, `jti` |
 | **JWKS Endpoint** | `GET /.well-known/jwks.json` para verificación distribuida sin compartir clave privada |
 | **Rate Limit** | 5 req/min en `/auth/*` por IP; 100 req/min por usuario autenticado |
 

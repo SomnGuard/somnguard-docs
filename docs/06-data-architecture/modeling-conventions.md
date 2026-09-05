@@ -21,7 +21,7 @@ Convenciones transversales del modelo de datos de SomnGuard. Aplica a las 20 ent
 
 ## 1. Estándar de auditoría (columnas obligatorias)
 
-### Tablas transaccionales con UPDATE concurrente (user, device, device_config, notification, device_assignment, event_type)
+### Tablas transaccionales con UPDATE concurrente (user, device, device_config, notification, device_assignment, event, event_type)
 | Columna | Tipo | Nullable | Descripción |
 |---------|------|----------|-------------|
 | `created_at` | TIMESTAMPTZ | No | Momento de creación (UTC) |
@@ -42,13 +42,15 @@ Convenciones transversales del modelo de datos de SomnGuard. Aplica a las 20 ent
 | `created_by` | UUID | Sí | Usuario/Device que creó (FK `user.id` o `device.id`) |
 | `is_active` | BOOLEAN | No | **Soft delete** — por defecto TRUE. FALSE = inactivo. (Ausente en `device_config_history`.) |
 
-### Tablas catálogo (parameterization + security.role/module/feature/role_feature)
+### Tablas catálogo (parameterization + security.role/module/feature)
 | Columna | Tipo | Nullable | Descripción |
 |---------|------|----------|-------------|
 | `created_at` | TIMESTAMPTZ | No | Momento de creación (UTC) |
 | `created_by` | UUID | Sí | Usuario que creó (seed = SYSTEM_ACTOR_ID) |
 | `updated_at` | TIMESTAMPTZ | No | Última modificación (UTC) |
 | `updated_by` | UUID | Sí | Usuario que modificó |
+
+> `role_feature` y `user_role` son transaccionales (llevan `version`/`deleted_at`/`is_active`), no catálogos.
 
 > **Nota:** Catálogos con `is_active` (`role`, `event_type`) se desactivan con `is_active = false`; `module`/`feature`/`status_*` son inmutables (sin `is_active`, sin UPDATE).
 

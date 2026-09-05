@@ -39,8 +39,10 @@ Toda entidad con ciclo de vida usa **exactamente dos columnas**:
 
 | Columna | Tipo | Descripción |
 |---------|------|-------------|
-| `status_category` | VARCHAR(30) NOT NULL | Grupo semántico: `ACTIVE`, `INACTIVE`, `PENDING`, `ERROR`, `ARCHIVED` |
-| `status` | VARCHAR(50) NOT NULL | Valor específico dentro de la categoría |
+| `status_category` | VARCHAR(30) | Grupo semántico: `ACTIVE`, `INACTIVE`, `PENDING`, `ERROR`, `ARCHIVED` |
+| `status` | VARCHAR(50) | Valor específico dentro de la categoría |
+
+> Nulabilidad real: `NOT NULL DEFAULT` solo en `event_type` (`DRAFT`/`PENDING`); en `user, device, event, device_config, notification` ambas NULL (el estado inicial lo pone la app tras el INSERT).
 
 > **Regla:** `status_category` deriva de `status` via catálogo (no se guarda redundante en app; se hace JOIN o vista).
 

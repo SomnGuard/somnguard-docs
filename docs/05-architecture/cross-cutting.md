@@ -33,7 +33,7 @@
 | **Protocolo** | JWT RS256 (asymmetric) — ADR-001 |
 | **Access Token** | 15 min, `Authorization: Bearer <jwt>` |
 | **Refresh Token** | 7 días, rotación en cada uso, hash en BD, blocklist en logout |
-| **Claims obligatorios** | `sub` (user_id UUID), `roles` (array), `features` (array), `exp`, `iat`, `jti` |
+| **Claims obligatorios** | `sub` (user_id UUID), `email`, `roles` (array), `features` (array), `exp`, `iat`, `jti` |
 | **JWKS Endpoint** | `GET /.well-known/jwks.json` para verificación distribuida |
 | **Rate Limit Auth** | 5 req/min en `/auth/*` por IP en API (`Retry-After: 60`). Gateway permite 10/min burst 20 (ADR-008:122) como proteccion DDoS; el limite efectivo es 5/min |
 
@@ -202,10 +202,10 @@ Toda entidad con ciclo de vida usa **dos campos**:
 ### 5.2 Catálogo Base (Parameterization → `status_category`, `status`)
 | Entidad | status_category | status (ejemplos) |
 |---------|-----------------|-------------------|
-| `device` | `REGISTERED`, `ASSIGNED`, `ACTIVE`, `OFFLINE`, `SUSPENDED`, `RETIRED` | `REGISTERED`, `ASSIGNED`, `ACTIVE`, `OFFLINE`, `SUSPENDED`, `RETIRED` |
-| `event` | `DETECTED`, `REGISTERED`, `SYNCHRONIZED`, `ANALYZED`, `ARCHIVED` | `DETECTED`, `REGISTERED`, `SYNCHRONIZED`, `ANALYZED`, `ARCHIVED` |
-| `user` | `PENDING`, `ACTIVE`, `SUSPENDED`, `DELETED` | `PENDING_VERIFICATION`, `ACTIVE`, `SUSPENDED`, `SOFT_DELETED` |
-| `device_config` | `DRAFT`, `PUBLISHED`, `DEPRECATED` | `DRAFT`, `PUBLISHED`, `DEPRECATED` |
+| `device` | `PENDING`, `ACTIVE`, `INACTIVE`, `ARCHIVED` | `REGISTERED`, `ASSIGNED`, `ACTIVE`, `OFFLINE`, `SUSPENDED`, `RETIRED` |
+| `event` | `PENDING`, `ACTIVE`, `ARCHIVED` | `DETECTED`, `REGISTERED`, `SYNCHRONIZED`, `ANALYZED`, `ARCHIVED` |
+| `user` | `PENDING`, `ACTIVE`, `INACTIVE`, `ARCHIVED` | `PENDING_VERIFICATION`, `ACTIVE`, `SUSPENDED`, `SOFT_DELETED` |
+| `device_config` | `PENDING`, `ACTIVE`, `INACTIVE` | `DRAFT`, `PUBLISHED`, `DEPRECATED` |
 | `notification` | `PENDING`, `ACTIVE`, `ERROR` | `PENDING`, `SENT`, `DELIVERED`, `READ`, `FAILED` |
 
 > Nombres lógicos (sin prefijo) usados en diagramas y HUs; en BD van prefijados por entidad (`DEVICE_REGISTERED`, `EVENT_DETECTED`, `USER_ACTIVE`, `NOTIFICATION_SENT`...) con su categoría (`PENDING/ACTIVE/INACTIVE/ERROR/ARCHIVED`), ver seeds de `status`. Migración total a códigos prefijados queda como decisión futura.
@@ -256,7 +256,7 @@ Toda entidad con ciclo de vida usa **dos campos**:
 | 401 | `UNAUTHORIZED` | `INVALID_API_KEY` | Device key inválida |
 | 403 | `FORBIDDEN` | `FEATURE_REQUIRED` | Falta feature en role |
 | 404 | `NOT_FOUND` | `RESOURCE_NOT_FOUND` | Entidad no existe |
-| 409 | `CONFLICT` | `DUPLICATE_KEY` | `event_id` duplicado, email único |
+| 409 | `CONFLICT` | `DUPLICATE_KEY` | evidencia ya existente, email único |
 | 409 | `CONFLICT` | `STATE_TRANSITION_INVALID` | Transición estado no permitida |
 | 422 | `VALIDATION_ERROR` | `FIELD_VALIDATION` | @Valid falló |
 | 429 | `RATE_LIMITED` | `TOO_MANY_REQUESTS` | Rate limit excedido |

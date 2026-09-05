@@ -72,6 +72,7 @@ Todo documento `.md` debe iniciar con:
 | Pendiente | Archivo creado, sin contenido validado. |
 | En progreso | Contenido parcial o en revisión. |
 | Estable | Revisado, aprobado y vigente. |
+| Aceptada | ADR aprobada y vigente (solo `decisions/records/ADR-*.md`). |
 | Deprecado | Ya no aplica. |
 | Plantilla | Archivo `_template-*.md` reutilizable; no es un documento vigente. |
 
@@ -82,7 +83,7 @@ Todo documento `.md` debe iniciar con:
 |-----------|--------|
 | Documento sustituido por otro | Cambiar estado a **Deprecado**, agregar `> Reemplazado por: [enlace al nuevo]` al inicio, dejar en su ubicación actual |
 | Documento de sección eliminada o reestructurada | Mover a `../99-archive/deprecated/`, registrar el movimiento en `../../CHANGELOG.md` |
-| ADR obsoleta | Nunca mover — cambiar estado a `Deprecada` en `records/` y agregar `> Reemplazada por: ADR-NNN-nueva.md` |
+| ADR obsoleta | Nunca mover — cambiar estado a `Deprecado` en `records/` y agregar `> Reemplazada por: ADR-NNN-nueva.md` |
 
 
 ## Índices obligatorios

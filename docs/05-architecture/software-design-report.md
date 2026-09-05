@@ -504,7 +504,7 @@ El dispositivo a bordo no posee interfaz gráfica en esta versión; su interfaz 
 | Aspecto | Diseño |
 |---------|--------|
 | Autenticación | JWT (tokens de acceso y refresco) para el portal web y la app móvil; emisión y validación en el módulo Security. |
-| Autenticación de dispositivos | API keys por dispositivo, almacenadas como hash en `device_config`/credenciales de dispositivo; nunca en texto plano. |
+| Autenticación de dispositivos | API keys por dispositivo, almacenadas como hash en `device_management.device` (`api_key_hash`); nunca en texto plano. |
 | Contraseñas | Hash seguro (bcrypt o equivalente) con salt; política de complejidad y expiración; reseteo mediante token con expiración (`password_reset_request`). |
 | Autorización | Control de acceso por rol y permiso a nivel de API (RB-02); validación en la capa de aplicación. |
 | Auditoría | Registro de intentos de autenticación en `audit_login` (éxito/fracaso, fecha, IP, dispositivo). |
@@ -568,5 +568,5 @@ El dispositivo a bordo no posee interfaz gráfica en esta versión; su interfaz 
 
 ---
 
-*Documento alineado con el documento de arquitectura, los ADRs vigentes (ADR-001/002/003) y el modelo de datos vigente (20 entidades).*
+*Documento alineado con el documento de arquitectura, los ADRs vigentes (ADR-001..009) y el modelo de datos vigente (31 tablas).*
 

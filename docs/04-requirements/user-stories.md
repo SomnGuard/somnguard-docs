@@ -412,7 +412,7 @@
 |----------------|------|-------------|
 | HU-DB-001a | Bloqueante | Esquema `telemetry_service` |
 | HU-DEVICE-003 | Relacionada | Device envía lote |
-| HU-API-008 | Relacionada | Pull config tras ACK |
+| HU-API-005 | Relacionada | Pull config tras ACK |
 | RF-TEL-01..03, RF-EDGE-08 | Requisito | Base funcional |
 
 ---
@@ -765,7 +765,7 @@ Las siguientes HUs son **Could** (39 SP totales) y se mueven a backlog post-MVP.
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
 | HU-API-007 | Bloqueante | Endpoint ingesta |
-| HU-API-008 | Relacionada | Pull config tras sync |
+| HU-API-005 | Relacionada | Pull config tras sync |
 | RF-EDGE-08,10,12, RF-TEL-04,07 | Requisito | Base funcional |
 
 ---

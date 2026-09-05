@@ -35,8 +35,8 @@ Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01.
 | Prioridad | Épicas |
 |-----------|--------|
 | Must | Seguridad y cuentas, Gestión de dispositivos, Telemetría y sincronización, Monitoreo y notificaciones, Parametrización |
-| Should | Analítica y reportes |
-| Could | Resumen IA (dentro de Analítica) — se incluye, pero con la menor prioridad: se entrega al final del MVP |
+| Should | Analítica y reportes, Resumen IA (al final del MVP) |
+| Could | Video en tiempo real (post-MVP) |
 | Won't | Funcionalidades fuera del alcance definido |
 
 ## Estado por épica
@@ -67,4 +67,5 @@ Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01.
 - [Matriz de trazabilidad](../04-requirements/traceability-matrix.md)
 - [Análisis del software](../04-requirements/software-analysis.md)
 - [Plan de trabajo](../01-project-context/software-technical-proposal.md#7-plan-de-trabajo-y-cronograma)
+
 

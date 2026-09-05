@@ -410,24 +410,32 @@
 | `updated_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: última modificación |
 | `updated_by` | UUID | SÍ | — | `security.user(id)` | — | User ID modificador |
 
-**Seed clave (ver ADR-009 para completo):**
+**Seed clave (códigos reales prefijados por entidad):**
 | entity_type | code | status_category | is_initial | is_terminal |
 |-------------|------|-----------------|------------|-------------|
-| device | REGISTERED | PENDING | TRUE | FALSE |
-| device | ASSIGNED | PENDING | FALSE | FALSE |
-| device | ACTIVE | ACTIVE | FALSE | FALSE |
-| device | OFFLINE | INACTIVE | FALSE | FALSE |
-| device | SUSPENDED | INACTIVE | FALSE | FALSE |
-| device | RETIRED | ARCHIVED | FALSE | TRUE |
-| event | DETECTED | PENDING | TRUE | FALSE |
-| event | REGISTERED | PENDING | FALSE | FALSE |
-| event | SYNCHRONIZED | ACTIVE | FALSE | FALSE |
-| event | ANALYZED | ACTIVE | FALSE | FALSE |
-| event | ARCHIVED | ARCHIVED | FALSE | TRUE |
-| user | PENDING_VERIFICATION | PENDING | TRUE | FALSE |
-| user | ACTIVE | ACTIVE | FALSE | FALSE |
-| user | SUSPENDED | INACTIVE | FALSE | FALSE |
-| user | SOFT_DELETED | ARCHIVED | FALSE | TRUE |
+| device | DEVICE_REGISTERED | PENDING | TRUE | FALSE |
+| device | DEVICE_ASSIGNED | PENDING | FALSE | FALSE |
+| device | DEVICE_ACTIVE | ACTIVE | FALSE | FALSE |
+| device | DEVICE_OFFLINE | INACTIVE | FALSE | FALSE |
+| device | DEVICE_SUSPENDED | INACTIVE | FALSE | FALSE |
+| device | DEVICE_RETIRED | ARCHIVED | FALSE | TRUE |
+| event | EVENT_DETECTED | PENDING | TRUE | FALSE |
+| event | EVENT_REGISTERED | PENDING | FALSE | FALSE |
+| event | EVENT_SYNCHRONIZED | ACTIVE | FALSE | FALSE |
+| event | EVENT_ANALYZED | ACTIVE | FALSE | FALSE |
+| event | EVENT_ARCHIVED | ARCHIVED | FALSE | TRUE |
+| user | USER_PENDING_VERIFICATION | PENDING | TRUE | FALSE |
+| user | USER_ACTIVE | ACTIVE | FALSE | FALSE |
+| user | USER_SUSPENDED | INACTIVE | FALSE | FALSE |
+| user | USER_SOFT_DELETED | ARCHIVED | FALSE | TRUE |
+| device_config | DEVICE_CONFIG_DRAFT | PENDING | TRUE | FALSE |
+| device_config | DEVICE_CONFIG_PUBLISHED | ACTIVE | FALSE | FALSE |
+| device_config | DEVICE_CONFIG_DEPRECATED | INACTIVE | FALSE | FALSE |
+| notification | NOTIFICATION_PENDING | PENDING | TRUE | FALSE |
+| notification | NOTIFICATION_SENT | ACTIVE | FALSE | FALSE |
+| notification | NOTIFICATION_DELIVERED | ACTIVE | FALSE | FALSE |
+| notification | NOTIFICATION_READ | ACTIVE | FALSE | FALSE |
+| notification | NOTIFICATION_FAILED | ERROR | FALSE | TRUE |
 
 ---
 

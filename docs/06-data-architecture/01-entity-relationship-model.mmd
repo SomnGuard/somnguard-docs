@@ -69,6 +69,7 @@ erDiagram
         VARCHAR ip_address
         TEXT user_agent
         TIMESTAMPTZ attempted_at
+        BOOLEAN is_active
     }
 
     %% =========================
@@ -208,12 +209,12 @@ erDiagram
     DEVICE ||--o{ DEVICE_ASSIGNMENT : assigned
     USER ||--o{ DEVICE_ASSIGNMENT : receives
 
-    DEVICE ||--o{ DEVICE_CONFIG : configured
+    DEVICE ||--o| DEVICE_CONFIG : configured
 
     DEVICE ||--o{ EVENT : generates
     EVENT_TYPE ||--o{ EVENT : type
 
-    EVENT ||--o{ EVIDENCE : has
+    EVENT ||--o| EVIDENCE : has
     MEDIA_TYPE ||--o{ EVIDENCE : format
 
     EVENT ||--o{ ALERT_LOG : triggers
@@ -222,4 +223,5 @@ erDiagram
 
     USER ||--o{ NOTIFICATION : receives
     ALERT_LOG ||--o{ NOTIFICATION : causes
+
 
