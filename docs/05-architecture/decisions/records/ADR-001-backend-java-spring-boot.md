@@ -42,7 +42,7 @@ Se decide un **modelo dual** según tipo de cliente:
 | **Algoritmo** | RS256 (RSA 2048 bits, firma asimétrica) |
 | **Access Token** | JWT, 15 min, `Authorization: Bearer <jwt>` |
 | **Refresh Token** | Opaco, 7 días, rotación en cada uso, hash en BD, blocklist en logout |
-| **Claims obligatorios** | `sub` (user_id UUID), `roles` (array), `features` (array), `exp`, `iat`, `jti` |
+| **Claims obligatorios** | `sub` (user_id UUID), `email`, `roles` (array), `features` (array), `exp`, `iat`, `jti` |
 | **JWKS Endpoint** | `GET /.well-known/jwks.json` para verificación distribuida sin compartir clave privada |
 | **Rate Limit** | 5 req/min en `/auth/*` por IP; 100 req/min por usuario autenticado |
 
@@ -60,7 +60,7 @@ Se decide un **modelo dual** según tipo de cliente:
 - Modelo: `role` ↔ `feature` (N:M via `role_feature`) → `user_role` (N:M)
 - Roles base: `admin` (todas las features), `user` (features propias)
 - Enforcement: Middleware `@RequireFeature("feature.code")` en cada endpoint
-- Denegación: 403 con `{code: "FORBIDDEN", message: "Feature X required"}`
+- Denegación: 403 con envelope `{"error":{"code":"FORBIDDEN","message":"Feature X required",...}}` (ver `guidelines.md`)
 
 ---
 
@@ -75,7 +75,7 @@ Se decide un **modelo dual** según tipo de cliente:
 - Liquibase se mantiene, por lo que el versionado del esquema no cambia respecto al plan original.
 - **Auth dual**: Separación clara user vs device; JWT RS256 permite verificación distribuida via JWKS; API Key simple para device sin complejidad de certificados.
 - **Revocation**: Refresh token blocklist + rotación = logout real; API Key regenerable por admin.
-- **Estándares**: RFC 7519 (JWT), RFC 7807 (errors), librerías maduras en Java/Python/JS.
+- **Estándares**: RFC 7519 (JWT), envelope propio `{"error":{}}` (ver `guidelines.md`), librerías maduras en Java/Python/JS.
 
 ### Negativas / Trade-offs
 
@@ -117,7 +117,7 @@ Se decide un **modelo dual** según tipo de cliente:
 - Reglas de documentación de módulos: `../../../00-documentation-governance/structure-rules.md`
 - Preguntas abiertas: `../../../15-project-control/open-questions.md`
 - **Autenticación detallada:** [`../../../07-api-design/authentication.md`](../../../07-api-design/authentication.md)
-- **Cross-cutting concerns:** [`../cross-cutting.md`](../cross-cutting.md#1-autenticación-y-autorización)
+- **Cross-cutting concerns:** [`../../cross-cutting.md`](../../cross-cutting.md#1-autenticación-y-autorización)
 - **ADR-002 (Hexagonal):** `./ADR-002-hexagonal-architecture.md`
 - **RFC 7519:** https://tools.ietf.org/html/rfc7519
 - **Spring Security JWT:** https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html

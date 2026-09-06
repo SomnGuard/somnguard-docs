@@ -72,6 +72,9 @@ flowchart LR
 | **Notificaciones push (FCM/APNs)** | Servicio externo | Notificaciones de eventos críticos | Sin decidir (Q-008) | R-008 |
 | **Modelo IA (resumen)** | Servicio externo | Resumen de eventos en analytics | Sin decidir | R-010 |
 | **Docker** | Runtime local | Levantar PostgreSQL y servicios | En uso local | — |
+| **Traefik** | Edge gateway | TLS, rate-limit, CORS (ver ADR-008) | Definido (ADR-008) | — |
+| **Redis** | Cache/rate-limit | Blocklist refresh tokens, conteo por IP/device | Previsto (ver `cross-cutting.md`) | — |
+| **OTel + LGTM** | Observabilidad | Trazas/métricas/logs (Tempo/Prom/Loki/Grafana, ver ADR-007) | Definido (ADR-007) | — |
 | **Secret Manager** | Gestión de secretos | Credenciales (hoy en `.env.*` fuera de git) | Pendiente | R-001 |
 
 ## Orden de construcción recomendado

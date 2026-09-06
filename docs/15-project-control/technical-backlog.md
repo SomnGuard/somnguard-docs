@@ -31,11 +31,12 @@ Deuda técnica conocida y pendientes de construcción del proyecto SomnGuard. El
 |----|-------------|---------|-----------|----------------------|--------|
 | TD-001 | **Secretos `.env.*` versionados**: los archivos de entorno con credenciales de conexión están bajo control de versiones. Requiere purga del historial, rotación de credenciales y mover secretos a un gestor (Secret Manager). | Alto | P0 | Todos | Abierto |
 | TD-002 | **Capa de aplicación no construida**: no existe aún la implementación de los módulos en Java (solo estructura de carpetas). Es la mayor pieza pendiente; condiciona la validación real de contratos, RBAC y eventos. Se aborda por épicas (ver [product backlog](../03-product-definition/product-backlog.md)). | Alto | P1 | Todos los módulos | Abierto |
-| TD-003 | **Contratos OpenAPI no publicados**: la API se documenta en `07-api-design/` pero sin especificación OpenAPI versionable. | Medio | P2 | Todos los módulos | Abierto |
-| TD-004 | **Plantilla de módulo sin instanciar**: `09-modules/modules/_template/` está lista pero ningún módulo tiene aún su documentación por módulo. | Medio | P2 | 09-modules | Abierto |
-| TD-005 | **Catálogos sin semillas definidas**: los valores iniciales de `parameterization` (categorías, severidades, sonidos) no están fijados. | Medio | P2 | parameterization | Abierto |
-| TD-006 | **Estados de negocio sin decisión**: si usar catálogo parametrizable genérico o `VARCHAR + CHECK` para estados de dispositivo/evento (ver [modeling-conventions](../06-data-architecture/modeling-conventions.md) y Q-013 en [open-questions](./open-questions.md)). | Medio | P2 | telemetry-service, device-management | Abierto |
+| TD-003 | **Contratos OpenAPI no publicados**: la API se documenta en `07-api-design/` pero sin especificación OpenAPI versionable (decisión SpringDoc tomada en QR-011; faltan los 6 `openapi/*.yaml`). | Medio | P2 | Todos los módulos | Abierto |
+| TD-004 | **Documentación por módulo**: `09-modules/modules/_template/` lista; `modules/security/` documentado desde 2026-09-01 (README, data-model, events, decisions, features-analysis; runbook pendiente). | Medio | P2 | 09-modules | Resuelto (instancia security 2026-09-01; runbook → TD-008) |
+| TD-005 | **Catálogos sin semillas definidas**: valores iniciales de `parameterization` fijados en `data-dictionary.md` y seeds `001..008` (categorías, severidades, sonidos, tipos, estados). | Medio | P2 | parameterization | Resuelto (verificado 2026-09-05) |
+| TD-006 | **Estados de negocio sin decisión**: si usar catálogo parametrizable genérico o `VARCHAR + CHECK` para estados de dispositivo/evento (ver [modeling-conventions](../06-data-architecture/modeling-conventions.md) y QR-013 en [open-questions](./open-questions.md)). | Medio | P2 | telemetry-service, device-management | Resuelto (ADR-009 aceptada 2026-08-22: `status_category` + `status`) |
 | TD-007 | **Driver JDBC / dependencias de build sin fijar**: el `pom.xml` del backend aún no está definido. | Medio | P1 | backend-java | Abierto |
+| TD-008 | **Runbook de security pendiente**: `modules/security/` documentado salvo `runbook.md` exigido por la plantilla. | Bajo | P3 | 09-modules | Abierto |
 
 ## Trabajo estructural pendiente (capa de aplicación)
 
@@ -58,3 +59,5 @@ Un ítem entra aquí cuando: (1) está identificado con módulo y evidencia conc
 - [Product backlog](../03-product-definition/product-backlog.md)
 - [Riesgos](./risks.md)
 - [Dependencias](./dependencies.md)
+
+

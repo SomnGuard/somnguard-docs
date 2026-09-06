@@ -69,7 +69,7 @@ Ver [política de seguridad](../00-documentation-governance/security-policy.md).
 
 ## Referencias
 
-- [NFR](../04-requeriments/non-functional.md)
+- [NFR](../04-requirements/non-functional.md)
 - [Documento de arquitectura](./architecture-document.md)
 - [Autenticación API](../07-api-design/authentication.md)
 - OWASP Top 10: https://owasp.org/www-project-top-ten/

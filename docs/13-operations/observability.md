@@ -45,7 +45,7 @@ Formato de log **estructurado en JSON** con campos mínimos por evento: `timesta
 ## Pilar 3 — Trazas
 
 - Al existir comunicación entre módulos (puertos) y AMQP, se instrumentarán trazas con propagación de contexto (W3C TraceContext) y correlación por `event_id`/`requestId`.
-- Herramienta APM: **punto abierto**.
+- Herramienta APM: Tempo (parte del stack OTel+LGTM de ADR-007).
 
 ## Healthchecks
 
@@ -69,18 +69,18 @@ Marco de alertas (umbrales de referencia hasta fijar SLOs reales):
 | Alta tasa de errores 5xx | Error rate > umbral | P1 | Pendiente: con aplicación |
 | Latencia alta | p95 > SLO | P2 | Pendiente: con aplicación |
 
-El enrutamiento de alertas y la herramienta de alerting son un **punto abierto** (ver [incident-management.md](./incident-management.md)).
+El enrutamiento de alertas usa Alertmanager + Grafana (ver ADR-007 §6: `APIHighErrorRate`, `DeviceOffline`).
 
 ## Puntos abiertos
 
-- Stack concreto de logs/métricas/trazas: sin decisión tomada.
+- Stack concreto de logs/métricas/trazas: **decidido en ADR-007** (OTel + Loki/Prometheus/Tempo/Grafana); pendiente despliegue.
 - Umbrales definitivos: dependen de los SLO (usar [_template-sla-slo-sli.md](./_template-sla-slo-sli.md)).
-- Dashboards: por crear cuando exista el stack.
+- Dashboards: por crear sobre el stack ADR-007.
 
 ## Referencias
 
 - [_template-observability.md](./_template-observability.md)
 - [incident-management.md](./incident-management.md)
 - [backup-and-recovery.md](./backup-and-recovery.md)
-- [Requisitos no funcionales](../04-requeriments/non-functional.md)
+- [Requisitos no funcionales](../04-requirements/non-functional.md)
 - [Documento de arquitectura](../05-architecture/architecture-document.md#15-observabilidad-y-auditoría)

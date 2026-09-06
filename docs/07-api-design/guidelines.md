@@ -25,7 +25,7 @@ Convenciones REST que rigen las APIs de SomnGuard. Complementa el diseño de API
 - Nombres de campos en `snake_case` (coherente con el modelo de datos y el JWT).
 - Fechas y horas en **ISO 8601 UTC** (`2026-08-01T14:30:00Z`).
 - Identificadores públicos: **UUID** (nunca IDs autoincrementales expuestos).
-- Cargas de archivo (evidencia multimedia) vía `multipart/form-data` en el módulo `telemetry-service`.
+- Cargas de archivo (evidencia multimedia) vía `multipart/form-data` **solo en `POST /telemetry/events/{eventId}/evidence` (1 archivo por evento)**. El lote `POST /telemetry/events` es **solo JSON** `{"events":[]}` sin archivos inline (descartado `base64 en event_json`: infla 33% y rompe límite 50MB).
 
 ## 2. Versionado
 
@@ -60,15 +60,14 @@ Convenciones REST que rigen las APIs de SomnGuard. Complementa el diseño de API
 | `401 Unauthorized` | Token ausente, inválido o expirado |
 | `403 Forbidden` | Permiso insuficiente (RBAC) |
 | `404 Not Found` | Recurso inexistente o fuera del scope del usuario |
-| `409 Conflict` | Conflicto de estado (p. ej. evento duplicado, asignación inválida) |
+| `409 Conflict` | Conflicto de estado (p. ej. evidencia ya existente, asignación inválida). En lote de telemetría NO hay 409: duplicados van en `duplicate_ids` del `201` |
 | `422 Unprocessable Entity` | Reglas de negocio no satisfechas con payload sintácticamente válido |
 | `429 Too Many Requests` | Límite de tasa superado |
 | `500 Internal Server Error` | Error no controlado (nunca filtrar stack traces) |
 
 ## 6. Paginación, filtrado y ordenamiento
 
-- Paginación por offset: `?page=1&page_size=20` (`page_size` máximo 100).
-- Para colecciones de crecimiento continuo (eventos, evidencia), paginación por cursor: `?cursor=<opaco>&limit=50`.
+- Paginación por offset: `?page=1&page_size=20` (`page_size` máximo 100). Para timeline de eventos (`GET /api/v1/events`, `GET /api/v1/analytics/timeline`), paginación por cursor: `?cursor=<opaco>&limit=50`.
 - Respuesta de colección envuelta con metadatos:
 
 ```json
@@ -83,8 +82,8 @@ Convenciones REST que rigen las APIs de SomnGuard. Complementa el diseño de API
 }
 ```
 
-- Filtrado por query params explícitos: `?device_id=<uuid>&severity=CRITICAL`.
-- Ordenamiento: `?sort=created_at:desc` (campo permitido por endpoint, no arbitrario).
+- Filtrado por query params explícitos: `?device_id=<uuid>&severity=critical` (códigos en minúscula, ver catálogo `severity`).
+- Ordenamiento: `?sort=created_at:desc` (campo permitido por endpoint, no arbitrario). En `cross-cutting.md` la notación `-occurred_at` equivale a `occurred_at:desc`.
 
 ## 7. Formato de errores
 
@@ -111,7 +110,7 @@ Cuerpo de error uniforme en toda la plataforma (alineado con `platform/error-han
 ## 8. Autenticación y autorización
 
 - Autenticación vía **JWT Bearer** (RS256, clave pública JWKS) para usuarios de plataforma y clientes web/móvil.
-- **API keys** por dispositivo para el envío de telemetría desde el edge (sin JWT de usuario).
+- **API keys** por dispositivo para el envío de telemetría desde el edge (sin JWT de usuario): headers obligatorios `X-Device-ID + X-API-Key` (ver `authentication.md`).
 - Autorización **RBAC por `feature`**: el token trae los permisos pre-calculados; cada endpoint declara el permiso que exige.
 - Detalle en [authentication.md](./authentication.md).
 
@@ -119,7 +118,7 @@ Cuerpo de error uniforme en toda la plataforma (alineado con `platform/error-han
 
 | Módulo | Ejemplos de recursos |
 |--------|----------------------|
-| security | `POST /api/v1/auth/login`, `POST /api/v1/auth/password-reset`, `GET /api/v1/users`, roles y features |
+| security | `POST /api/v1/auth/login`, `POST /api/v1/auth/forgot-password`, `GET /api/v1/users`, roles y features |
 | device-management | `POST /api/v1/devices`, `POST /api/v1/devices/{id}/assign`, `GET /api/v1/devices/{id}/config` |
 | telemetry-service | `POST /api/v1/telemetry/events` (API key, lote), `GET /api/v1/events`, evidencia multimedia |
 | monitoring | `GET /api/v1/notifications`, `POST /api/v1/notifications/{id}/read` |
@@ -130,9 +129,9 @@ Cuerpo de error uniforme en toda la plataforma (alineado con `platform/error-han
 
 ## 10. Convenciones transversales
 
-- **Idempotencia** en escritura sensible: header `Idempotency-Key` en `POST` que crean recursos con efecto de negocio (sincronización de eventos, RN-08).
+- **Idempotencia (dos mecanismos, no mezclados):** telemetría usa `event_id UUIDv7` único: el lote `POST /telemetry/events` **siempre responde `201 {acked_ids[], duplicate_ids[]}`** y el device borra local ambos (RN-08). `409` solo en `POST /telemetry/events/{id}/evidence` si ya existe evidencia. Header `Idempotency-Key` **solo** en `POST` no-telemetría (`/devices`, `/{id}/assign`, `/auth/*`) y en `PATCH /devices/{id}/config` y `PATCH /rotate-key` (reintentos del portal). No usar header en `/telemetry/events`.
 - **Correlación**: propagar `trace_id` entre módulos y hacia logs/eventos.
-- **Rate limiting**: respuesta `429` con `Retry-After`; límites por identidad.
+- **Rate limiting**: respuesta `429` con `Retry-After`; límites en `cross-cutting.md` (auth 5/min API, device 1000/min gateway + 60/2/10 por endpoint).
 - **Compatibilidad**: nunca romper un contrato publicado sin subir versión mayor.
 
 ## Ver también

@@ -253,13 +253,13 @@ Dentro de cada módulo (security, parameterization, device-management, telemetry
 | Módulo | Depende de | Justificación |
 |--------|------------|---------------|
 | `security` | Ninguna | Tabla base: users, roles, features - el foundation |
-| `parameterization` | Independiente | Catálogos independientes (event_type, severity, media_type, sound_pattern, status_category, status); no tienen FKs a security |
+| `parameterization` | Independiente | Catálogos independientes (event_type, severity, media_type, sound_pattern, status_category, status); sin constraints FK físicos a security (`created_by` es UUID lógico; FKs en `04_alter` solo intra-catálogo) |
 | `device-management` | `security` | Devices → user asignation; FKs a users/roles para config y asignaciones |
 | `telemetry-service` | `device-management` + `parameterization` | Events → device FK, event_type/severity FK a catálogos |
 | `monitoring` | `telemetry-service` | Notifications → alert_log FK, user FK a security.user |
 | `analytics` | Todas (solo lectura) | Vistas materializadas sobre tables de todos los módulos anteriores |
 
-**Regla de oro:** El orden de módulos es: `security` → `device-management` → `parameterization` → `telemetry-service` → `monitoring` → `analytics`. `parameterization` es independiente y puede aplicarse antes o después que `security` sin conflictos de FK.
+**Regla de oro:** El orden real es: `security` → `parameterization` → `device-management` → `telemetry-service` → `monitoring` → `analytics` (tablas 001→031; FKs cross-esquema en fase `04_alter`).
 
 ### 3.3 Aplicación por módulo (para desarrollo paralelo)
 
@@ -307,8 +307,8 @@ CREATE TABLE security.user (
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     phone VARCHAR(30) UNIQUE,
-    status VARCHAR(50) NOT NULL DEFAULT 'PENDING_VERIFICATION',
-    status_category VARCHAR(30) NOT NULL DEFAULT 'PENDING',
+    status VARCHAR(50),
+    status_category VARCHAR(30),
     email_verified_at TIMESTAMPTZ,
     last_login_at TIMESTAMPTZ,
     failed_login_attempts SMALLINT NOT NULL DEFAULT 0,
@@ -354,7 +354,7 @@ Todos los seeds están en `02_dml/`, cada uno es un archivo `.sql` independiente
 
 | Archivo SQL | Contenido | Referencia |
 |-------------|-----------|------------|
-| `001_insert_event_category.sql` | AS-01..AS-09, SOMNOLENCE, DISTRACTION, SEATBELT, SYSTEM | `data-dictionary.md` |
+| `001_insert_event_category.sql` | SOMNOLENCE, DISTRACTION, SEATBELT, SYSTEM | `data-dictionary.md` |
 | `002_insert_severity.sql` | info, warning, high, critical | `data-dictionary.md` |
 | `003_insert_media_type.sql` | image_jpeg, video_mp4 | `data-dictionary.md` |
 | `004_insert_sound_pattern.sql` | AS-01..AS-09 con freq/dur/repeticiones | `data-dictionary.md` |
@@ -374,9 +374,11 @@ ON CONFLICT (code) DO UPDATE SET
 ### 5.4 Roles y estados iniciales
 
 Archivos en `02_dml/00_inserts/`:
-- `006_insert_roles.sql` - roles admin, user
-- `007_insert_user_role.sql` - asignaciones base
-- `010_insert_status_init.sql` - estados device: REGISTERED, ASSIGNED, ACTIVE
+- `009_insert_security_roles.sql` - roles admin, user
+- `011_insert_security_features.sql` - 17 features (`recurso.accion`)
+- `012_insert_security_role_feature.sql` - asignaciones base rol-feature
+- `007_insert_status.sql` - estados prefijados (`DEVICE_*`, `EVENT_*`, `USER_*`, `NOTIFICATION_*`, `DEVICE_CONFIG_*`)
+- `008_insert_status_transition.sql` - transiciones permitidas
 
 ### 5.5 Estrategia de aplicación
 

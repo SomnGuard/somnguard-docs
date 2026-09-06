@@ -256,11 +256,12 @@ groups:
 
 ## Referencias
 
-- [cross-cutting.md](../cross-cutting.md#3-observabilidad-logs-métricas-trazas)
-- [functional.md](../../../04-requeriments/functional.md) → RF-TEL-*, RF-MON-*, RF-ANA-*
+- [cross-cutting.md](../../cross-cutting.md#3-observabilidad-logs-métricas-trazas)
+- [functional.md](../../../04-requirements/functional.md) → RF-TEL-*, RF-MON-*, RF-ANA-*
 - [architecture-document.md](../../architecture-document.md) §Observabilidad
 - [local-setup.md](../../../10-devops/local-setup.md) (Docker Compose profiles)
 - **OpenTelemetry:** https://opentelemetry.io/docs/
 - **Grafana LGTM:** https://grafana.com/oss/lgtm/
 - **OTel Collector Contrib:** https://github.com/open-telemetry/opentelemetry-collector-contrib
 - **Spring Boot OTel:** https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.opentelemetry
+

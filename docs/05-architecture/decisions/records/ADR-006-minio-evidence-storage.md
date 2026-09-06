@@ -36,17 +36,18 @@ Requisitos:
 | **Versiónamiento** | **Habilitado** (protege contra borrado accidental) |
 | **Cifrado** | SSE-S3 (AES-256) en reposo; TLS 1.3 en tránsito |
 
-### 2. Flujo de Subida (Ingesta)
+### 2. Flujo de Subida (Ingesta en 2 fases, 1 evidencia por evento MVP)
 | Origen | Método | Detalle |
 |--------|--------|---------|
-| **Device → API** | Multipart en `POST /telemetry/events` | API valida → sube a MinIO → guarda `evidence_id` + key en BD |
-| **Device → MinIO (futuro)** | Pre-signed PUT URL | API genera URL firmada (TTL 15 min) → device sube directo → notifica API |
-| **Portal/App** | Pre-signed GET URL | API genera URL firmada (TTL 1 hora) → cliente descarga/visualiza |
+| **Device → API (fase 1 metadata)** | `POST /telemetry/events` JSON `{"events":[]}` lote máx 100 | API valida `X-Device-ID+X-API-Key` + `event_id` único -> `201 {acked_ids[], duplicate_ids[]}`. Sin archivos inline |
+| **Device → API (fase 2 evidencia)** | `POST /telemetry/events/{eventId}/evidence` multipart single file | API valida -> sube a MinIO -> guarda `evidence_id` + `minio_key {device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` + `checksum_sha256` (64 hex, obligatorio) en BD. Mapeo 1:1 por `evidence.event_id UNIQUE` |
+| **Device → MinIO (futuro)** | Pre-signed PUT URL | API genera URL firmada (TTL 15 min) -> device sube directo -> notifica API |
+| **Portal/App** | Pre-signed GET URL | API genera URL firmada (TTL 1 hora) -> cliente descarga/visualiza |
 
 ### 3. Metadatos en Base de Datos (no en MinIO)
 | Tabla | Columnas Clave |
 |-------|----------------|
-| `telemetry.evidence` | `id` (PK UUID), `event_id` (FK), `minio_key` (VARCHAR), `media_type_id` (FK), `size_bytes`, `checksum_sha256`, `created_at`, `created_by` (device_id) |
+| `telemetry.evidence` | `id` (PK UUID), `event_id` (FK), `minio_key` (VARCHAR), `media_type_id` (FK), `size_bytes`, `checksum_sha256` (64 hex), `created_at`, `created_by` (device_id) |
 
 > **Regla:** MinIO **solo almacena bytes**. Metadatos, permisos, relaciones → PostgreSQL.
 
@@ -91,8 +92,8 @@ Requisitos:
 | **Versiones antiguas** | Mantener últimas 3 versiones; purgar anteriores |
 | **Bucket size alert** | Prometheus alert si `bucket_size > 500 GB` |
 
-### 6. Device — Subida de Evidencia
-- **Opción actual (MVP):** Device envía base64 en `event_json` + `evidence_base64` aparte → API decodifica + sube a MinIO
+### 6. Device — Subida de Evidencia (2 fases)
+- **MVP (definido):** Fase 1 `POST /telemetry/events JSON {"events":[]}` solo metadata -> `201`. Fase 2 `POST /telemetry/events/{id}/evidence multipart` 1 JPG por evento. Descartado `base64 en event_json` (infla 33%, rompe límite 50MB, contradice §Alternativas: base64 en BD mala idea).
 - **Opción futura (optimización):** API devuelve pre-signed PUT URL en `GET /devices/{id}/config` → device sube directo a MinIO → reduce bandwidth API
 
 ### 7. Portal/App — Visualización
@@ -149,10 +150,11 @@ Requisitos:
 
 ## Referencias
 
-- [cross-cutting.md](../cross-cutting.md) — (storage strategy implícita en observabilidad)
-- [functional.md](../../../04-requeriments/functional.md) → RF-TEL-02, RF-EDGE-08, RF-ANA-05
+- [cross-cutting.md](../../cross-cutting.md) — (storage strategy implícita en observabilidad)
+- [functional.md](../../../04-requirements/functional.md) → RF-TEL-02, RF-EDGE-08, RF-ANA-05
 - [architecture-document.md](../../architecture-document.md) §7 (Storage)
 - [module-catalog.md](../../../09-modules/module-catalog.md) → `telemetry_service` adapter/out/storage
 - MinIO docs: https://min.io/docs
 - S3 API reference: https://docs.aws.amazon.com/AmazonS3/latest/API/API_Operations.html
 - Spring Cloud AWS S3: https://spring.io/projects/spring-cloud-aws
+

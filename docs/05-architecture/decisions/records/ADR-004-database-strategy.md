@@ -38,20 +38,19 @@ Necesitamos una estrategia de base de datos que:
 | `parameterization` | Parameterization | `event_category`, `severity`, `media_type`, `sound_pattern`, `event_type`, `status_category`, `status`, `status_transition` |
 | `device_management` | Device Management | `device`, `device_assignment`, `device_config`, `device_config_history` |
 | `telemetry_service` | Telemetry Service | `event`, `evidence`, `alert_log` |
-| `monitoring` | Monitoring | `notification`, `notification_delivery` |
+| `monitoring` | Monitoring | `notification` (tracking vía `sent/delivered/read_at`; tabla `notification_delivery` futura, sin DDL) |
 | `analytics` | Analytics | **Sin tablas propias** — vistas materializadas y proyecciones sobre esquemas ajenos |
 
 > **Regla:** Un módulo **solo escribe** en su esquema. Puede **leer** de otros esquemas **solo via puertos de entrada** (use cases) del módulo owner — nunca `JOIN` directo ni `SELECT` crudo cross-esquema en código de aplicación.
 
 ### 3. Migraciones con Liquibase por módulo
-- Cada módulo tiene su `changelog/changelog-master.yaml` en `somnguard-db/<modulo>/`
-- `changelog-master.yaml` incluye changesets ordenados (001_create_tables, 002_add_fks, 003_seed_data...)
-- **Orden de ejecución global** (respetando FKs cross-esquema):
-  1. `parameterization` (catálogos base, sin deps)
-  2. `security` (users, roles; FK a parameterization.status)
-  3. `device_management` (device; FK a security.user)
-  4. `telemetry_service` (event, evidence, alert_log; FK a device, parameterization)
-  5. `monitoring` (notification; FK a telemetry.event, security.user)
+- Changelogs por tipo de cambio (`01_ddl/`, `02_dml/...`, `04_tcl/`, `05_rollbacks/`), con `sqlFile` externos por tabla (ej. `01_ddl/03_tables/017_create_device_management_device.sql` + rollback espejo).
+- **Orden de ejecución global real** (tablas 001→031; FKs cross-esquema en fase `04_alter`):
+  1. `security` (users, roles, audit; 001-008 + 030-031)
+  2. `parameterization` (catálogos + estados; 009-016)
+  3. `device_management` (device, assignment, config; 017-020)
+  4. `telemetry_service` (event, evidence, alert_log; 021-023)
+  5. `monitoring` (notification; 024)
   6. `analytics` (vistas materializadas; depende de todos)
 
 - **Runner único** en Docker Compose (`somnguard-docker-infra`): perfil `tooling` ejecuta Liquibase contra la BD única aplicando todos los changelogs en orden.
@@ -66,7 +65,7 @@ Necesitamos una estrategia de base de datos que:
   - `version` INTEGER NOT NULL DEFAULT 1 (optimistic locking)
   - `deleted_at` TIMESTAMPTZ NULL (soft delete)
   - `deleted_by` UUID NULL
-- **Estados parametrizados (ADR-009 — solo 5 tablas core):** `status` + `status_category` con FK a `parameterization.status` / `status_category`
+- **Estados parametrizados (ADR-009 — 5 core + `event_type`):** `status` + `status_category` con FK a `parameterization.status` / `status_category` en `user, device, event, device_config, notification` + `event_type` (workflow `DRAFT/PUBLISHED/DEPRECATED`). `device_assignment` sin estado.
 - **Soft delete:** Nunca `DELETE` físico; `UPDATE SET deleted_at = now(), deleted_by = ? WHERE id = ? AND deleted_at IS NULL`
 - **JSONB** para configuraciones flexibles (`device_config.config_json`, `event.metadata`)
 - **FKs** con `ON DELETE RESTRICT` (integridad referencial estricta)
@@ -114,7 +113,7 @@ Necesitamos una estrategia de base de datos que:
 
 ## Referencias
 
-- [cross-cutting.md](../cross-cutting.md#2-auditoría-y-trazabilidad-de-datos)
+- [cross-cutting.md](../../cross-cutting.md#2-auditoría-y-trazabilidad-de-datos)
 - [modeling-conventions.md](../../../06-data-architecture/modeling-conventions.md)
 - [migration-strategy.md](../../../06-data-architecture/migration-strategy.md)
 - [software-design-report.md](../../software-design-report.md) §3.2

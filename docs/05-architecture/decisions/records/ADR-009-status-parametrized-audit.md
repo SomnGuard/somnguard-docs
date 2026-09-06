@@ -23,7 +23,7 @@ Problemas del enfoque "un campo `status` VARCHAR por tabla":
 - **Difícil consulta:** "Todos los dispositivos activos" = `WHERE status IN ('Activo', 'ACTIVE', 'active', ...)`
 - **Auditoría inexistente:** No hay histórico de cambios de estado
 
-Requisitos (SRS, cross-cutting.md, guía ADR-004):
+Requisitos (SRS, cross-cutting.md, guía de modelado):
 - **Estados parametrizados** (configurables sin deploy)
 - **Transiciones validadas** (reglas de negocio)
 - **Auditoría append-only** (histórico inmutable de cambios)
@@ -39,8 +39,10 @@ Toda entidad con ciclo de vida usa **exactamente dos columnas**:
 
 | Columna | Tipo | Descripción |
 |---------|------|-------------|
-| `status_category` | VARCHAR(30) NOT NULL | Grupo semántico: `ACTIVE`, `INACTIVE`, `PENDING`, `ERROR`, `ARCHIVED` |
-| `status` | VARCHAR(50) NOT NULL | Valor específico dentro de la categoría |
+| `status_category` | VARCHAR(30) | Grupo semántico: `ACTIVE`, `INACTIVE`, `PENDING`, `ERROR`, `ARCHIVED` |
+| `status` | VARCHAR(50) | Valor específico dentro de la categoría |
+
+> Nulabilidad real: `NOT NULL DEFAULT` solo en `event_type` (`DRAFT`/`PENDING`); en `user, device, event, device_config, notification` ambas NULL (el estado inicial lo pone la app tras el INSERT).
 
 > **Regla:** `status_category` deriva de `status` via catálogo (no se guarda redundante en app; se hace JOIN o vista).
 
@@ -258,7 +260,7 @@ SELECT * FROM device_management.device WHERE deleted_at IS NULL;
 - **Transiciones seguras:** Validadas en domain service; imposible estado inválido en BD
 - **Auditoría completa:** Histórico inmutable de cada cambio (quién, cuándo, de qué a qué)
 - **Consultas simples:** `WHERE status_category = 'ACTIVE'` funciona para device, event, user
-- **Soft delete universal:** `deleted_at` en todas las tablas; vistas activas por defecto
+- **Soft delete:** `deleted_at` en transaccionales (catálogos `module`/`feature`/`status_*` sin soft delete, por diseño inmutables)
 
 ### Negativas / Trade-offs
 - **Overhead inicial:** Catálogo + triggers + domain service por entidad
@@ -286,9 +288,11 @@ SELECT * FROM device_management.device WHERE deleted_at IS NULL;
 
 ## Referencias
 
-- [cross-cutting.md](../cross-cutting.md#5-estados-parametrizados-adr-004-guía-adaptado)
+- [cross-cutting.md](../../cross-cutting.md#5-estados-parametrizados-adr-009)
 - [modeling-conventions.md](../../../06-data-architecture/modeling-conventions.md) — campos auditoría obligatorios
-- [functional.md](../../../04-requeriments/functional.md) → RF-DEV-05, RF-TEL-*, RF-MON-*, RF-SEC-08
+- [functional.md](../../../04-requirements/functional.md) → RF-DEV-05, RF-TEL-*, RF-MON-*, RF-SEC-08
 - [entities-and-rules.md](../../../02-domain/entities-and-rules.md) — RN-DEV-06, RN-TEL-*, RN-SEC-*
-- Guía ADR-004 (SENA): `status_category` + `status` + append-only audit
+- Guía de modelado ([modeling-conventions.md](../../../06-data-architecture/modeling-conventions.md)): `status_category` + `status` + auditoría append-only
 - PostgreSQL Triggers: https://www.postgresql.org/docs/current/triggers.html
+
+

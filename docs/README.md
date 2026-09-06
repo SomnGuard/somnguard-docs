@@ -27,7 +27,7 @@
 | [01-project-context](./01-project-context/README.md) | Contexto del proyecto y cronograma |
 | [02-domain](./02-domain/README.md) | Dominio del negocio: mapa de procesos |
 | [03-product-definition](./03-product-definition/README.md) | Definición del producto e investigación |
-| [04-requeriments](./04-requeriments/README.md) | SRS, funcionalidades, estructura por módulo |
+| [04-requirements](./04-requirements/README.md) | SRS, funcionalidades, estructura por módulo |
 | [05-architecture](./05-architecture/README.md) | Documento de arquitectura, informe de diseño y ADRs |
 | [06-data-architecture](./06-data-architecture/README.md) | Modelo entidad-relación, módulos y entidades |
 | [07-api-design](./07-api-design/README.md) | Diseño de API |

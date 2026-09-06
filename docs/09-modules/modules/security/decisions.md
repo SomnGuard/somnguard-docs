@@ -180,14 +180,14 @@
 
 ---
 
-### SEC-008: Audit_login append-only sin soft delete
+### SEC-008: Audit_login append-only sin UPDATE ni DELETE
 
 **Fecha:** 2026-09-01
 **Estado:** Aceptada
 
 **Contexto:** Logs de auditoría deben ser inmutables.
 
-**Decisión:** Tabla `audit_login` sin `deleted_at`, `is_active`, `updated_at`. Solo `created_at`, `created_by`.
+**Decisión:** Tabla `audit_login` sin `deleted_at` ni `updated_at` (sí `is_active`). Solo INSERT.
 
 **Consecuencias:**
 - + Inmutabilidad garantizada por diseño
@@ -203,12 +203,11 @@
 
 **Contexto:** Seguridad del flujo de reset de contraseña.
 
-**Decisión:** Almacenar `token_hash` (BCrypt) en `password_reset_request`. Token en claro solo via email (expira 1h).
+**Decisión:** Almacenar `token_hash` (SHA-256) en `password_reset_request`. Token en claro solo via email (expira 1h).
 
 **Consecuencias:**
 - + Si BD comprometida, tokens no servibles
-- + Verificación: `BCrypt.check(token_plano, token_hash)`
-- - Costo BCrypt en validación (aceptable: flujo raro)
+- + Verificación: `SHA-256(token_plano) == token_hash` (búsqueda directa por hash)
 
 ---
 
@@ -223,7 +222,7 @@
 - `failed_login_attempts` incrementa en cada fallo
 - `locked_until = NOW() + 15 minutos` al alcanzar 5
 - Reset contador en login exitoso o desbloqueo manual
-- Log en `audit_login` con `outcome = FAILED_LOCKED`
+- Log en `audit_login` con `outcome = ACCOUNT_LOCKED`
 
 **Consecuencias:**
 - + Protección básica sin dependencias externas
@@ -234,7 +233,7 @@
 
 ## Referencias cruzadas
 
-- [ADR-003: Analytics module](../../../../05-architecture/decisions/records/ADR-003-analytics-module.md)
-- [ADR-009: Estados de negocio parametrizados](../../../../05-architecture/decisions/records/ADR-009-parametrized-status.md)
+- [ADR-003: Analytics module](../../../05-architecture/decisions/records/ADR-003-analytics-module.md)
+- [ADR-009: Estados de negocio parametrizados](../../../05-architecture/decisions/records/ADR-009-status-parametrized-audit.md)
 - [Modelo de datos](./data-model.md)
 - [Catálogo de módulos](../../module-catalog.md)

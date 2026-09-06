@@ -59,7 +59,7 @@ git pull origin develop
 git switch -c hu-api-012-dev
 
 git add <archivos>
-git commit -m "docs(04-requeriments): add user story for event ingestion"
+git commit -m "docs(04-requirements): add user story for event ingestion"
 git push origin hu-api-012-dev
 ```
 
@@ -111,7 +111,7 @@ No usar `feat`, `style`, `test`, `perf`, `build` ni `ci` para commits de este re
 Ejemplos:
 
 ```bash
-docs(04-requeriments): add traceability matrix
+docs(04-requirements): add traceability matrix
 docs(09-modules): register auth module
 fix(01-project-context): clarify project scope
 chore(08-uml): export sequence diagrams to PNG

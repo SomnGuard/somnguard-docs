@@ -7,7 +7,7 @@ sequenceDiagram
     participant PDF as Generador de Reportes
 
     USR->>WEB: Solicita reporte consolidado (rango, dispositivo)
-    WEB->>API: POST /api/v1/reports/generate
+    WEB->>API: POST /api/v1/analytics/reports (solicita generación; propuesta, async 202)
     API->>DB: Consulta eventos del período
     API->>IA: Solicita resumen descriptivo
     IA-->>API: Resumen generado

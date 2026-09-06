@@ -7,13 +7,16 @@ sequenceDiagram
 
     ADM->>WEB: Registra dispositivo (serial, modelo)
     WEB->>API: POST /api/v1/devices
-    API->>DB: Crea device (estado: pendiente)
-    API-->>WEB: 201 (id + API key)
+    API->>DB: Crea device (estado: REGISTERED/Registrado)
+    API-->>WEB: 201 (id + API key una sola vez)
     ADM->>WEB: Asigna dispositivo a su cuenta
-    WEB->>API: POST /api/v1/devices/{id}/assignment
+    WEB->>API: POST /api/v1/devices/{id}/assign
     API->>DB: Crea device_assignment
     API->>DB: Inicializa device_config (sonido, sensibilidad)
-    API-->>WEB: 200 (asignación confirmada)
+    API-->>WEB: 200 (asignación confirmada, estado: ASSIGNED/Asignado)
 
+    DEV->>API: POST /api/v1/devices/{id}/heartbeat (X-Device-ID + X-API-Key, primera conexión/saludo)
+    API->>DB: Actualiza last_heartbeat_at, last_seen_ip (ASSIGNED->ACTIVE/Activo)
+    API-->>DEV: 204 (saludo OK, device ya puede enviar telemetría)
     DEV->>API: GET /api/v1/devices/{id}/config (primera conexión)
-    API-->>DEV: Configuración básica y credenciales de dispositivo
+    API-->>DEV: Configuración básica (merge defaults + overrides)

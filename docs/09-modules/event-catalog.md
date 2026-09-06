@@ -22,7 +22,7 @@
 > **Convención de naming:** `<entidad>.<accion>` — todo en minúsculas con puntos, en inglés, verbo en pasado.
 > Ejemplo: `device.synced`, `event.recorded`, `alert.generated`
 >
-> **Fuente de verdad:** `docs/02-domain/domain-events.md`, `data-dictionary.md` (codes EV-SOM-*, EV-DIS-*, EV-CIN-*, EV-SYS-*), `cross-cutting.md` (reglas de sincronización), `ADR-005` (offline-first device).
+> **Fuente de verdad:** `../02-domain/domain-events.md`, `../06-data-architecture/data-dictionary.md` (codes EV-SOM-*, EV-DIS-*, EV-CIN-*, EV-SYS-*), `../05-architecture/cross-cutting.md` (reglas de sincronización), `ADR-005` (offline-first device).
 
 ---
 
@@ -54,7 +54,7 @@
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
 | `event.recorded` | Evento detectado recibido, persistido en BD (idempotente) | `telemetry_service` (propia tabla), `analytics` (línea de tiempo), `monitoring` (alertas) | RN-TEL-01, HU-API-007, HU-DEVICE-003 |
-| `alert.generated` | Evento crítico detectado, registrado en alert_log | `monitoring` (notificaciones), `audit-service` (historial) | RF-TEL-03, HU-API-009 |
+| `alert.generated` | Evento crítico detectado, registrado en alert_log | `monitoring` (notificaciones), `security` (historial en `audit_login`) | RF-TEL-03, HU-API-009 |
 | `evidence.uploaded` | Evidencia multimedia (imagen/video) subida a MinIO | `telemetry_service` (guarda minio_key), `monitoring` (thumbnails) | RF-TEL-02, HU-API-007 |
 | `event.sync.failed` | Sincronización fallida después de reintentos exponenciales | `device_management` (actualiza buffer retry), `monitoring` (métricas) | RF-EDGE-12, HU-DEVICE-003 |
 
@@ -62,23 +62,23 @@
 
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
-| `notification.sent` | Notificación entregada al usuario (push, email, in-app) | `audit-service` (historial), `app` (confirmación UI) | RF-MON-01, HU-API-009, HU-APP-001 |
-| `notification.delivered` | Notificación entregada exitosamente al canal | `audit-service`, `app` (tracking) | RF-MON-03, HU-MON-03 |
-| `notification.read` | Notificación leída por usuario (in-app) | `audit-service` (statísticas) | RF-MON-03 (opcional) |
+| `notification.sent` | Notificación entregada al usuario (push, email, in-app) | `security` (historial), app (confirmación UI) | RF-MON-01, HU-API-009, HU-APP-001 |
+| `notification.delivered` | Notificación entregada exitosamente al canal | `security`, app (tracking) | RF-MON-03, HU-API-009 |
+| `notification.read` | Notificación leída por usuario (in-app) | `security` (estadísticas) | RF-MON-03 (opcional), HU-API-009 |
 
 ### 2.4 `analytics` (Línea de tiempo y reportes)
 
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
-| `analytics.metrics.updated` | Métricas agregadas actualizadas (freq, severidad, tendencia) | `portal`, `app` (dashboard) | RF-ANA-02, HU-PORTAL-002, HU-APP-002 |
-| `analytics.summary.generated` | Resumen IA generado para un usuario/periodo | `portal`, `app` (botón "Resumen IA") | RF-ANA-03, HU-PORTAL-003, HU-APP-002 |
+| `analytics.metrics.updated` | Métricas agregadas actualizadas (freq, severidad, tendencia) | portal (dashboard) | RF-ANA-02, HU-PORTAL-003 |
+| `analytics.summary.generated` | Resumen IA generado para un usuario/periodo | portal, app (botón "Resumen IA") | RF-ANA-03, HU-PORTAL-004, HU-APP-003 |
 
 ### 2.5 `security` (Autenticación y autorización)
 
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
-| `auth.login.attempt` | Intento de login (éxito o fallo, con IP, user-agent) | `audit-service` (persiste audit_login) | RF-SEC-09, cross-cutting.md §7.2 |
-| `auth.logout` | Cierre de sesión de usuario | `audit-service`, `monitoring` (tracking sesiones) | RF-SEC-03, cross-cutting.md §7.2 |
+| `auth.login.attempt` | Intento de login (éxito o fallo, con IP, user-agent; cubre `LoginSucceeded`/`LoginFailed` de `security/events.md`) | `security` (persiste `audit_login`) | RF-SEC-09, cross-cutting.md §7.2 |
+| `auth.logout` | Cierre de sesión de usuario | `security`, `monitoring` (tracking sesiones) | RF-SEC-03, cross-cutting.md §7.2 |
 
 ---
 
@@ -125,7 +125,7 @@ Todos los eventos siguen un **envelope estándar** con campos de cabecera obliga
 
 ## 4. Eventos Internos de Servicio (No cruzan frontera)
 
-Estos eventos son de **orquestación interna** de un módulo (worker↔worker, scheduler/cron) y **no son contratos de integración** que consume otro módulo. Se documentan aquí para trazabilidad.
+Estos eventos son de **orquestación interna** de un módulo (worker↔worker, scheduler/cron) y **no son contratos de integración** que consume otro módulo. Se documentan aquí para trazabilidad. `document-service`/`pdf-renderer`/`monitoring-service` no son módulos del monolito (ver `module-catalog.md`): son workers futuros/post-MVP.
 
 | Evento interno | Servicio | Propósito |
 |----------------|----------|-----------|
@@ -150,11 +150,11 @@ Estos eventos son de **orquestación interna** de un módulo (worker↔worker, s
 
 ## 6. Nota de Migración
 
-Los nombres de evento en SomnGuard siguen la convención `<entidad>.<accion>` en inglés, basada en el catálogo de dominio (`docs/02-domain/domain-events.md`). Cambios previos de nombres (ej. en versiones anteriores del proyecto) deben ser_trackeados en este catálogo para:
+Los nombres de evento en SomnGuard siguen la convención `<entidad>.<accion>` en inglés, basada en el catálogo de dominio (`../02-domain/domain-events.md`). Cambios previos de nombres (ej. en versiones anteriores del proyecto) deben ser_trackeados en este catálogo para:
 
 1. **Actualizar consumidores**: Cuando se renombra un evento, todos los módulos que lo suscriban deben actualizarse en paralelo
 2. **Compatibilidad hacia atrás**: El `event_id` UUID v7 permite correlación incluso si el nombre cambia
-3. **Wildcard en audit-worker**: El `audit-service` suscribe por wildcard, por lo que cambios de naming no afectan su lógica de consumo
+3. **Wildcard en `security`**: suscribe por wildcard (`audit_login`), por lo que cambios de naming no afectan su lógica
 4. **Contratos API**: Cualquier endpoint que acepte/retorne nombres de eventos (ej. `GET /telemetry/events?event_type=XX`) debe actualizarse en la misma PR
 
 ---
@@ -163,23 +163,23 @@ Los nombres de evento en SomnGuard siguen la convención `<entidad>.<accion>` en
 
 | Documento | Sección | Qué aporta |
 |-----------|---------|------------|
-| `domain-events.md` | `02-domain/domain-events.md` | Catálogo base con 4 eventos dominio (`device.synced`, `event.recorded`, `alert.generated`, `notification.sent`) |
-| `domain-events.md` | `02-domain/domain-events.md` | Eventos de negocio; complementa el catálogo por módulo |
-| `data-dictionary.md` | `06-data-architecture/data-dictionary.md` | Codes EV-SOM-*, EV-DIS-*, EV-CIN-*, EV-SYS-* y estructura de event_type |
-| `cross-cutting.md` | `05-architecture/cross-cutting.md` | Reglas de sincronización, IDs únicos, formatos de envelope, idempotencia |
-| `ADR-005` | `05-architecture/decisions/records/ADR-005-offline-first-device.md` | Offline-first, sync automático, backoff exponencial, UUID v7 para event_id |
-| `ADR-009` | `05-architecture/decisions/records/ADR-009-status-parametrized-audit.md` | `status_category` + `status` en eventos (DETECTED, REGISTERED, SYNCHRONIZED, ANALYZED, ARCHIVED) |
-| `guidelines.md` | `07-api-design/guidelines.md` | Contratos API para `/telemetry/events` y filtros/frecuentes |
-| `module-catalog.md` | `09-modules/module-catalog.md` | Módulos que publican/consumen cada evento |
+| `domain-events.md` | `../02-domain/domain-events.md` | Catálogo base con 4 eventos dominio (`device.synced`, `event.recorded`, `alert.generated`, `notification.sent`) |
+| `domain-events.md` | `../02-domain/domain-events.md` | Eventos de negocio; complementa el catálogo por módulo |
+| `data-dictionary.md` | `../06-data-architecture/data-dictionary.md` | Codes EV-SOM-*, EV-DIS-*, EV-CIN-*, EV-SYS-* y estructura de event_type |
+| `cross-cutting.md` | `../05-architecture/cross-cutting.md` | Reglas de sincronización, IDs únicos, formatos de envelope, idempotencia |
+| `ADR-005` | `../05-architecture/decisions/records/ADR-005-offline-first-device.md` | Offline-first, sync automático, backoff exponencial, UUID v7 para event_id |
+| `ADR-009` | `../05-architecture/decisions/records/ADR-009-status-parametrized-audit.md` | `status_category` + `status` en eventos (DETECTED, REGISTERED, SYNCHRONIZED, ANALYZED, ARCHIVED) |
+| `guidelines.md` | `../07-api-design/guidelines.md` | Contratos API para `/telemetry/events` y filtros/frecuentes |
+| `module-catalog.md` | `./module-catalog.md` | Módulos que publican/consumen cada evento |
 
 ---
 
 ## Próximos Pasos
 
 1. **Validar** este catálogo con el equipo de arquitectura y el team de device (revisión 30 min)
-2. **Añadir** a `LISTA_DOCS_OTRO-PROJECT-PARA-SOMNGUARD.md` como entregable de PRIORIDAD 2
+2. **Añadir** a [`../15-project-control/technical-backlog.md`](../15-project-control/technical-backlog.md) como entregable de PRIORIDAD 2
 3. **Integrar** en la `ci-cd-strategy.md` validación de nombres de eventos en PRs (validar que nuevos events sigan convención `<entidad>.<accion>`)
-4. **Crear** `_template/service/events.md` plantilla estándar para nuevos eventos por módulo
-5. **Actualizar** `domain-events.md` con los eventos nuevos que añada este catálogo
+4. **Crear** `modules/_template/module/events.md` plantilla estándar para nuevos eventos por módulo
+5. **Actualizar** `../02-domain/domain-events.md` con los eventos nuevos que añada este catálogo
 6. **Definir** nombres canónicos en la sección "Normalización Pendiente" tras decisión del equipo
 7. **Documentar** en los `ADR` correspondientes decisiones sobre nombres de eventos que tengan impacto transversal

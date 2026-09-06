@@ -30,13 +30,15 @@ Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01.
 | Parametrización | parameterization | F-10 (administración de catálogos) |
 | Analítica y reportes | analytics | F-06 (análisis de datos y reportes) |
 
+> `Setup y Foundation` y `Device Edge` no son épicas de producto: son fases de trabajo en `user-stories.md`/`traceability-matrix.md`.
+
 ## Priorización MoSCoW (MVP)
 
 | Prioridad | Épicas |
 |-----------|--------|
 | Must | Seguridad y cuentas, Gestión de dispositivos, Telemetría y sincronización, Monitoreo y notificaciones, Parametrización |
-| Should | Analítica y reportes |
-| Could | Resumen IA (dentro de Analítica) — se incluye, pero con la menor prioridad: se entrega al final del MVP |
+| Should | Analítica y reportes, Resumen IA (al final del MVP) |
+| Could | Video en tiempo real (post-MVP) |
 | Won't | Funcionalidades fuera del alcance definido |
 
 ## Estado por épica
@@ -44,26 +46,28 @@ Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01.
 | Épica | Estado | Nota |
 |-------|--------|------|
 | Seguridad y cuentas | Pendiente | Base para el resto del sistema; capa de aplicación aún no construida (TD-002) |
-| Gestión de dispositivos | Backlog | Depende de Seguridad (roles) |
-| Telemetría y sincronización | Backlog | Depende de Gestión de dispositivos |
-| Monitoreo y notificaciones | Backlog | Depende de Telemetría (eventos) |
-| Parametrización | Backlog | Requisito de Telemetría (catálogos validan eventos) |
-| Analítica y reportes | Backlog | Depende de Telemetría y Monitoreo |
+| Gestión de dispositivos | Pendiente | Depende de Seguridad (roles) |
+| Telemetría y sincronización | Pendiente | Depende de Gestión de dispositivos |
+| Monitoreo y notificaciones | Pendiente | Depende de Telemetría (eventos) |
+| Parametrización | Pendiente | Requisito de Telemetría (catálogos validan eventos) |
+| Analítica y reportes | Pendiente | Depende de Telemetría y Monitoreo |
 
-## Historias de usuario (ejemplos iniciales)
+## Historias de usuario (ejemplos iniciales — canónicas en `user-stories.md`)
 
 | HU | Título (GitHub Projects) | Repo |
 |----|--------------------------|------|
-| `HU-API-###` | Autenticar usuario en la plataforma | API |
-| `HU-API-###` | Registrar evento de telemetría de forma idempotente | API |
-| `HU-DB-###` | Crear esquema de catálogos de parametrización | DB |
-| `HU-DEVICE-###` | Sincronizar lote de eventos con respaldo offline | DEVICE |
-| `HU-PORTAL-###` | Consultar línea de tiempo de eventos del conductor | PORTAL |
-| `HU-APP-###` | Recibir notificación de evento crítico | APP |
+| `HU-API-001` | Autenticar usuario en la plataforma | API |
+| `HU-API-007` | Registrar evento de telemetría de forma idempotente | API |
+| `HU-DB-001a` | Crear esquema de catálogos de parametrización | DB |
+| `HU-DEVICE-003` | Sincronizar lote de eventos con respaldo offline | DEVICE |
+| `HU-PORTAL-002` | Consultar línea de tiempo de eventos del conductor | PORTAL |
+| `HU-APP-002` | Recibir notificación de evento crítico | APP |
 
 ## Ver también
 
 - [Convenciones ágiles](../00-documentation-governance/agile-conventions.md)
-- [Matriz de trazabilidad](../04-requeriments/traceability-matrix.md)
-- [Análisis del software](../04-requeriments/software-analysis.md)
+- [Matriz de trazabilidad](../04-requirements/traceability-matrix.md)
+- [Análisis del software](../04-requirements/software-analysis.md)
 - [Plan de trabajo](../01-project-context/software-technical-proposal.md#7-plan-de-trabajo-y-cronograma)
+
+

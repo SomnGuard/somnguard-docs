@@ -2,6 +2,26 @@
 
 ## [Unreleased]
 
+### Fixed (2026-09-05, cont.)
+- **Trazabilidad RF↔HU bidireccional:** HU deps a HUs que declaran el RF (`HU-API-005`, `HU-DEVICE-002`), `RF-SEC-04→HU-API-002`, `RF-EDGE-11/RF-TEL-04/RF-TEL-05` con cobertura device+API, `RF-DEV-06/07` movidos a su sección, `RF-SEC-06/07` reservados, resumen HU con SP 65/44 no aditivos, backlog con IDs reales y fases aclaradas.
+- **Seeds y estados:** tabla de seeds con 23 códigos prefijados (+nota `event_type` bare en seeds), categorías reales en §5.2 con alias lógicos, transiciones `unassign` pendientes en seeds, `migration-strategy:379` con archivos reales, `checksum_sha256` requerido (DDL lo exige), catálogos con `is_active` matizado, `AS-09`/`EV-SYS-04/05` a seeds.
+- **Gobierno:** `Aceptada` en estados permitidos, `RN-<MOD>` canónico, `QR-019` ordenado con nota de numeración, TD-004→TD-008 runbook, `05-README` En progreso, `incident-management` con Alertmanager, `99-archive/README` y README historial al día.
+- **Tablas:** filas `status`/`is_active`/`created_*` con celdas completas en `data-dictionary.md`, `02-modules-entities.md` y `.mmd` 1:1 (`DEVICE→CONFIG`, `EVENT→EVIDENCE`, `AUDIT_LOGIN.is_active`, `cd-domain` +4 relaciones).
+
+### Fixed (2026-09-05)
+- **Modelo 06 a DDL real:** `device_config` un solo `version`, `status` en `user`, `is_active` en `role`/`evidence`/`audit_login`, `event` transaccional (no append-only), `evidence` 1:1 sin `checksum` (integridad v1 `size_bytes` + ETag), Resumen 31 tablas, orden real de migración, `.mmd` sin `file_url` y con `device_id`, `v_metrics_daily` vía `device_assignment`, `is_active`/FK matizados.
+- **Auth/UML a código y api-design:** `token_hash` SHA-256, `outcome` de catálogo, expiración reset 1h, `created_by` NULL, features en minúscula, `POST` notificaciones-read y `POST /analytics/reports` propuesta, `PUT→PATCH` catálogos, `es-event` vía `ANALYZED`, `audit-login`/`users`/`role-features`/`/api/v1`/dueño config en `dependency-map`, envelope de errores y rate-limits con cifras, `Idempotency-Key` en api-design.
+- **Eventos y features:** consumidores a módulos reales (sin `audit-service`/Kafka/`DriverCreated`, CloudEvents como transporte futuro), `features-analysis` 23 propuestas vs 17 implementadas, `event-catalog` con HUs/RFs reales.
+- **Trazabilidad y gobierno:** `RF-DEV-06/07` a su sección, SP 65/44 sin doble conteo, ejemplos con IDs reales, `es-device`/`unassign` pendientes en seeds documentados, `notification_delivery` futura, Q-007→QR-019, TD-004/005/006 cerrados con fecha, observabilidad/onboarding/dependencies/SP/stream/scope/backlog actualizados, pdf duplicado exacto eliminado.
+- **Contratos device-API:** `POST /devices/{id}/heartbeat` (saludo, `ASSIGNED->ACTIVE`) y `PATCH /devices/{id}/rotate-key` definidos en `api-design.md`, `authentication.md`, `HU-API-006` (RF-DEV-09); sync two-phase (`POST /telemetry/events` JSON + `POST /telemetry/events/{id}/evidence` multipart, base64 descartado); idempotencia `201 {acked_ids, duplicate_ids}` (`409` solo evidencia); `event_type/severity` por código; UML (`es-device`, `sd-offline-sync`, `sd-device-registration`) alineado.
+- **Endpoints security alineados a HU:** `forgot-password`/`reset-password`, `register`, `verify-email`, CRUD roles/features, `POST /role-features`, `PATCH /users/{id}` + `PATCH /users/me`; `GET /audit-login`; prefijo `/api/v1` en `dependency-map.md`.
+- **IDs y trazabilidad:** duplicados `RF-DEV-06/07/08/09` y `HU-PORTAL-004` resueltos (video → `HU-PORTAL-005`); conteo real 26 MVP + 4 post-MVP (209 SP); tabla RF→HU de `functional.md` remapeada a HUs existentes; equivalencia `RN-01..10 ↔ RN-XXX` en `entities-and-rules.md`; estados a `En progreso`/`Pendiente` según gobernanza.
+- **Links rotos:** `../cross-cutting.md` → `../../` en 7 ADRs; `event-catalog.md`, `module-catalog.md`, `data-dictionary.md`, logos UML, deprecado `03-data-dictionary.md` → `data-dictionary.md`; `decisions/README.md` con ADR-001..009.
+
+### Changed (2026-09-04)
+- **Rename:** `docs/04-requeriments/` → `docs/04-requirements/` (typo) con 25 referencias actualizadas.
+- **Licencia:** `LICENSE` MIT 2026 SomnGuard (estaba pendiente).
+
 ### Fixed (2026-08-20)
 - **Acta de kick-off fiel al stack original (C#/.NET)** con nota histórica de migración a Java (ADR-001); fecha de última actualización corregida.
 - **Paquetes Java en snake_case** (`com.somnguard.telemetry_service`, `com.somnguard.device_management`) en arquitectura, diseño, ADR-002, análisis y onboarding, con nota de convención (módulos kebab-case en catálogo).
@@ -19,7 +39,7 @@
   - `01-project-context`: `overview.md`, `project-profile.md` y `scope-declaration.md`.
   - `02-domain`: `domain-map.md`, `entities-and-rules.md` (RN-01..RN-10 ↔ RB-01..RB-10) y `domain-events.md`.
   - `03-product-definition`: `product-backlog.md` (épicas desde F-01..F-10) y `_template-backlog.md`.
-  - `04-requeriments`: `non-functional.md` (NFR-01..NFR-08), `traceability-matrix.md` y `_template-hu.md`.
+  - `04-requirements`: `non-functional.md` (NFR-01..NFR-08), `traceability-matrix.md` y `_template-hu.md`.
   - `05-architecture`: `security-threat-model.md` (STRIDE), `pattern-guide.md` y `_template-adr.md`.
   - `06-data-architecture`: `modeling-conventions.md` (auditoría, estados, orden DDL Liquibase).
   - `07-api-design`: `guidelines.md`, `authentication.md` (JWT/RBAC/API keys) y `contracts/` (destino de OpenAPI por módulo).
@@ -34,7 +54,7 @@
 - **Estructura del backend Java:** `somnguard-api/backend-java/` (repositorio aparte, aún en borrador) con el árbol de carpetas completo del backend hexagonal (solo estructura, con `.gitkeep`), alineado a docs y ADRs: 6 módulos (security, parameterization, device-management, telemetry-service, monitoring, analytics) × `application/port/{in,out}`, `application/usecase`, `domain/{model,service}`, `adapter/in/{web,amqp}`, `adapter/out/{persistence,storage}`, más `platform/{error-handling,logging,observability}`.
 - **Diagramas UML:** 8 diagramas de secuencia en `docs/08-uml/diagrams/source/` (detección y alerta, sincronización offline, autenticación, restablecimiento de contraseña, alta de dispositivo, consulta de eventos, notificación crítica y generación de reportes) con sus exportaciones en `exports/`; 1 diagrama de clases de dominio (`cd-domain.mmd`).
 - **Propuesta técnica:** `docs/01-project-context/software-technical-proposal.md` — solución propuesta, arquitectura, stack tecnológico, diseño, metodología, plan de trabajo, recursos, costos referenciales, riesgos y entregables.
-- **Análisis del software:** `docs/04-requeriments/software-analysis.md` — modelo de dominio, casos de uso, vistas estáticas y vistas dinámicas (secuencia, actividades y estados) con trazabilidad funcionalidad → caso de uso → módulo → pruebas.
+- **Análisis del software:** `docs/04-requirements/software-analysis.md` — modelo de dominio, casos de uso, vistas estáticas y vistas dinámicas (secuencia, actividades y estados) con trazabilidad funcionalidad → caso de uso → módulo → pruebas.
   - Nuevos diagramas en `docs/08-uml/diagrams/source/`: 4 de actividades (`ac-*.mmd`) y 3 de estados (`es-*.mmd`), con sus exportaciones en `exports/`.
 
 ### Changed (2026-08-19)
@@ -71,3 +91,5 @@
   - `docs/02-domain/glossary.md` — glosario del dominio, técnico y de proceso.
   - `docs/15-project-control/open-questions.md` — preguntas abiertas y decisiones resueltas.
   - `docs/05-architecture/software-design-report.md` — informe de diseño de software (modelo arquitectónico, componentes, modelo de datos, interfaces, patrones de diseño, reglas de negocio, seguridad y especificaciones técnicas).
+
+

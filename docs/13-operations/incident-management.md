@@ -70,7 +70,7 @@ Regla de mejora continua: toda acción correctiva se convierte en un ticket rast
 
 ## Puntos abiertos
 
-- Guardia on-call, canales reales y herramienta de alerting/paging.
+- Guardia on-call y canales reales (herramienta: Alertmanager + Grafana según ADR-007 §6).
 - Umbrales de severidad ligados a SLO por servicio.
 
 ## Referencias

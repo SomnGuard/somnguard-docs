@@ -4,6 +4,5 @@ stateDiagram-v2
     Registrado --> Sincronizado: Lote confirmado por la API
     Registrado --> Registrado: Sin conectividad (permanece en cola)
     Sincronizado --> Analizado: Consultado en la plataforma o incluido en reporte
-    Sincronizado --> Archivado: Política de retención cumplida
-    Analizado --> Archivado
+    Analizado --> Archivado: Política de retención cumplida
     Archivado --> [*]

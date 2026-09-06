@@ -39,4 +39,6 @@ La documentación detallada de un módulo real se organiza en:
 09-modules/modules/<nombre-del-modulo>/
 ```
 
+Plantilla vs instancia: la plantilla vive en `09-modules/modules/_template/module/` (con `README.md`, `data-model.md`, `events.md`, etc.). Para documentar un módulo real se copia `modules/_template/module/` → `modules/<nombre-del-modulo>/` (se aplana, sin nivel `module/`). Ejemplo: `modules/security/` ya existe como instancia.
+
 El nombre de la carpeta debe coincidir con el nombre del módulo registrado en el catálogo y con el módulo en el código.

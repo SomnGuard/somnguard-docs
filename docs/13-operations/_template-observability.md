@@ -24,6 +24,8 @@
 
 ## Stack de observabilidad
 
+> Valores de referencia del proyecto: ver ADR-007 (OpenTelemetry + Loki/Prometheus/Tempo/Grafana). Reemplazar la tabla al instanciar.
+
 | Pilar | Herramienta | Destino | Estado |
 |-------|-------------|---------|--------|
 | Logs | [ELK / Loki / CloudWatch] | [URL dashboard] | Pendiente |
@@ -122,5 +124,5 @@
 
 - [SLA/SLO/SLI](./_template-sla-slo-sli.md)
 - [Runbook](./_template-runbook.md)
-- [NFR](../04-requeriments/non-functional.md)
+- [NFR](../04-requirements/non-functional.md)
 - [Arquitectura](../05-architecture/architecture-document.md)

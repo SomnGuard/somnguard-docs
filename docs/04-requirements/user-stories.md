@@ -10,7 +10,7 @@
 
 ## Historias de Usuario — HU-<REPO>-NNN
 
-**Estado:** Borrador
+**Estado:** En progreso
 **Fecha:** 2026-08-23
 
 </div>
@@ -30,15 +30,15 @@
 | Épica | Repo | HUs | Prioridad |
 |-------|------|-----|-----------|
 | Setup y Foundation | API, DB | 3 | Must |
-| Seguridad y cuentas | API, PORTAL, APP | 7 | Must |
-| Gestión de dispositivos | API, DB | 3 | Must |
-| Parametrización | API, DB | 2 | Must |
-| Telemetría y sincronización | API, DB, DEVICE | 6 | Must |
+| Seguridad y cuentas | API, PORTAL, APP | 5 | Must |
+| Gestión de dispositivos | API, DB | 2 | Must |
+| Parametrización | API, DB | 1 | Must |
+| Telemetría y sincronización | API, DB, DEVICE | 3 | Must |
 | Monitoreo y notificaciones | API, APP | 2 | Must |
-| Analítica y reportes | API, PORTAL, APP | 4 | Should |
-| Device Edge (visión, alertas, offline) | DEVICE | 5 | Must |
+| Analítica y reportes | API, PORTAL, APP, DB | 6 | Must/Should |
+| Device Edge (visión, alertas, offline) | DEVICE | 4 | Must |
 
-**Total MVP: 32 HUs** (Must: 28, Should: 4) | **Post-MVP: 4 HUs** (Could: 39 SP)
+**Total MVP: 26 HUs** (Must: 23, Should: 3) | **Post-MVP: 4 HUs** (Could: 39 SP)
 
 ---
 
@@ -93,7 +93,7 @@
 |----|----------|-----------|
 | AC-001 | 6 esquemas: `security`, `parameterization`, `device_management`, `telemetry_service`, `monitoring`, `analytics` | Sí |
 | AC-002 | `changelog/changelog-master.yaml` incluye todos los módulos; orden de ejecución definido | Sí |
-| AC-003 | Changesets por tabla (20 tablas): snake_case, PK UUID, auditoría, soft delete, JSONB, FKs, checks | Sí |
+| AC-003 | Changesets por tabla (31 tablas): snake_case, PK UUID, auditoría, soft delete, JSONB, FKs, checks | Sí |
 | AC-004 | `docker compose --profile tooling run liquibase update` aplica todo en orden | Sí |
 
 ### Dependencias
@@ -181,7 +181,7 @@
 | AC-002 | Pantalla Register: datos cuenta, términos, POST `/api/v1/auth/register`, auto-login tras registro | Sí |
 | AC-003 | Pantalla Reset Password: solicitud + confirmación token (POST `/auth/forgot-password`, `/auth/reset-password`) | Sí |
 | AC-004 | Almacenamiento seguro JWT (Keychain/Keystore); refresh token automático; logout limpia credenciales | Sí |
-| AC-005 | Registro token FCM/APNs al login; asociación a `user_id` para push (ver HU-APP-003) | Sí |
+| AC-005 | Registro token FCM/APNs al login; asociación a `user_id` para push (ver HU-APP-002) | Sí |
 | AC-006 | Deep links: `somnguard://event/{id}` abre detalle evento desde notificación | Sí |
 
 ### Dependencias
@@ -224,7 +224,7 @@
 
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
-| RF-SEC-01..04,09 | Requisito | Base funcional |
+| RF-SEC-01..03,09 | Requisito | Base funcional |
 | ADR-001 (JWT RS256) | Decisión | Arquitectura auth |
 
 ### Trazabilidad
@@ -233,7 +233,7 @@
 |------|----|------------|
 | Épica | EPC-SEC | Seguridad y cuentas |
 | Feature | FEA-SEC-AUTH | Autenticación y sesión |
-| RF | RF-SEC-01..04,09 | [functional.md](./functional.md) |
+| RF | RF-SEC-01..03,09 | [functional.md](./functional.md) |
 | ADR | ADR-001 | [decisions/records/](../05-architecture/decisions/records/) |
 
 ---
@@ -262,7 +262,7 @@
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
 | HU-API-001 | Bloqueante | Requiere auth funcionando |
-| RF-SEC-05,08 | Requisito | Base funcional |
+| RF-SEC-04,05,08 | Requisito | Base funcional |
 
 ---
 
@@ -319,7 +319,7 @@
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
 | HU-DB-001a | Bloqueante | Esquemas BD creados |
-| RF-PAR-01..03 | Requisito | Base funcional |
+| RF-PAR-01..03, RF-PAR-05 | Requisito | Base funcional (incl. versionado AC-004) |
 
 ---
 
@@ -339,7 +339,7 @@
 |----|----------|-----------|
 | AC-001 | PATCH `/devices/{id}/config` valida JSON contra schema, persiste en `device_config` | Sí |
 | AC-002 | GET `/devices/{id}/config` retorna config vigente (merge defaults + overrides) | Sí |
-| AC-003 | Device pulla config tras sync exitosa (ver HU-DEVICE-004) | Sí |
+| AC-003 | Device pulla config tras sync exitosa (ver HU-DEVICE-002) | Sí |
 | AC-004 | Historial de cambios de config con auditoría | Sí |
 
 ### Dependencias
@@ -347,8 +347,8 @@
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
 | HU-API-006 | Bloqueante | Requiere device registrado |
-| HU-DEVICE-004 | Relacionada | Pull config en device |
-| RF-DEV-03, RF-TEL-05, RF-EDGE-11 | Requisito | Base funcional |
+| HU-DEVICE-002 | Relacionada | Pull config en device |
+| RF-DEV-03, RF-TEL-05, RF-PAR-04, RF-EDGE-11 | Requisito | Base funcional |
 
 ---
 
@@ -371,7 +371,8 @@
 | AC-003 | POST `/devices/{id}/unassign`: libera device → estado `Registrado` | Sí |
 | AC-004 | State machine automática: `Asignado` → `Activo` (primer heartbeat) ↔ `Offline` (sin heartbeat 5min) → `Suspendido` (admin) → `Retirado` | Sí |
 | AC-005 | GET `/devices` con filtros: estado, fecha asignación, paginación | Sí |
-| AC-006 | Heartbeat: PUT `/devices/{id}/heartbeat` actualiza `last_seen`, versión firmware | Sí |
+| AC-006 | Heartbeat: POST `/devices/{id}/heartbeat` (auth `X-Device-ID + X-API-Key`, body `{firmware_version, pending_count, free_disk_pct, uptime_s}`) actualiza `last_heartbeat_at, last_seen_ip, firmware_version`. Primer heartbeat válido `Asignado->Activo`; `>5min` sin heartbeat `->Offline` | Sí |
+| AC-007 | Rotación: PATCH `/devices/{id}/rotate-key` (solo admin JWT) invalida key anterior, devuelve nueva una sola vez, estado no cambia (RF-DEV-09, mitiga T-002) | Sí |
 
 ### Dependencias
 
@@ -379,7 +380,7 @@
 |----------------|------|-------------|
 | HU-API-001 | Bloqueante | Auth usuario |
 | HU-DB-001a | Bloqueante | Esquema `device_management` |
-| RF-DEV-01..05 | Requisito | Base funcional |
+| RF-DEV-01,02,04..09 | Requisito | Base funcional |
 
 ---
 
@@ -397,12 +398,12 @@
 
 | ID | Criterio | Testeable |
 |----|----------|-----------|
-| AC-001 | POST `/telemetry/events` (auth: API Key device) acepta array de eventos + evidencia | Sí |
-| AC-002 | Validación: `device_id` + `api_key` coinciden, `event_id` (UUID) único → 409 si duplicado | Sí |
+| AC-001 | POST `/telemetry/events` (auth `X-Device-ID + X-API-Key`) acepta **solo metadata JSON** `{"events":[]}` lote máx 100, sin archivos inline (descartado base64) | Sí |
+| AC-002 | Validación: `device_id` + `api_key` coinciden, `event_type/severity` por código (resuelve a id, `422` si desconocido). `REGISTERED` sin assign -> `403`. Duplicados por `event_id` se reportan en `duplicate_ids` del `201`, no son error | Sí |
 | AC-003 | Persiste `event` (event_type_id, occurred_at, severity, is_offline_sync, evidence_refs) | Sí |
-| AC-004 | Evidencia (imagen/video) → MinIO bucket `somnguard-evidence`; retorna `evidence_id` | Sí |
+| AC-004 | Evidencia 1/evento MVP: `POST /telemetry/events/{id}/evidence` multipart 1 JPG -> MinIO `somnguard-evidence` key `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` + `evidence_id` + `checksum_sha256` (64 hex, obligatorio). `409` si ya existe evidencia; `404` si no existe el evento. Mapeo por `evidence.event_id UNIQUE` | Sí |
 | AC-005 | Registra `alert_log` con código AS-XX, timestamp, event_id, severidad | Sí |
-| AC-006 | Respuesta 201 con array de `event_id` aceptados; ACK para limpieza buffer local | Sí |
+| AC-006 | Respuesta `201 {acked_ids[], duplicate_ids[]}`; ACK para limpieza buffer local (borra ambos) | Sí |
 | AC-007 | Lote máx 100 eventos; timeout 10s; payload máx 50MB | Sí |
 
 ### Dependencias
@@ -411,8 +412,8 @@
 |----------------|------|-------------|
 | HU-DB-001a | Bloqueante | Esquema `telemetry_service` |
 | HU-DEVICE-003 | Relacionada | Device envía lote |
-| HU-API-008 | Relacionada | Pull config tras ACK |
-| RF-TEL-01..03, RF-EDGE-08 | Requisito | Base funcional |
+| HU-API-005 | Relacionada | Pull config tras ACK |
+| RF-TEL-01..04, RF-EDGE-08 | Requisito | Base funcional |
 
 ---
 
@@ -468,7 +469,7 @@
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
 | HU-API-007 | Bloqueante | Eventos persistidos |
-| HU-APP-003 | Relacionada | App recibe push |
+| HU-APP-002 | Relacionada | App recibe push |
 | RF-MON-01..04 | Requisito | Base funcional |
 
 ---
@@ -527,126 +528,7 @@
 |----------------|------|-------------|
 | HU-API-010 | Bloqueante | Métricas base |
 | RF-ANA-03,04 | Requisito | Base funcional |
-| ADR-003 (Object Storage) | Decisión | MinIO para PDFs |
-
----
-
-## 📦 BACKLOG POST-MVP (Could — Fuera de alcance MVP)
-
-Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP. Se abordarán tras validar el MVP completo.
-
----
-
-### HU-API-012: Video streaming tiempo real (WebRTC) — POST-MVP
-
-> **Repo:** API, DEVICE | **Sprint:** Post-MVP | **SP:** 13 | **MoSCoW:** Could
-> **Épica:** Analítica y reportes | **Feature:** FEA-ANA-STREAM
-
-### Historia
-**Como** usuario en la app
-**quiero** ver video en vivo de la cámara del dispositivo a demanda
-**para** verificar situación en tiempo real.
-
-### Criterios de Aceptación
-
-| ID | Criterio | Testeable |
-|----|----------|-----------|
-| AC-001 | POST `/devices/{id}/stream/start` negocia WebRTC (offer/answer) via signaling server | Sí |
-| AC-002 | Device inicia streaming H.264/VP8 a SFU; app reproduce | Sí |
-| AC-003 | POST `/devices/{id}/stream/stop` cierra conexión, libera recursos | Sí |
-| AC-004 | Solo bajo demanda; auto-stop si app en background > 30s | Sí |
-
-### Dependencias
-
-| HU / Artefacto | Tipo | Descripción |
-|----------------|------|-------------|
-| HU-DEVICE-005 (Post-MVP) | Bloqueante | Device implementa WebRTC |
-| HU-API-006 | Bloqueante | Device activo |
-| RF-ANA-05, RF-EDGE-13 | Requisito | Base funcional |
-
----
-
-### HU-DEVICE-005: Video streaming WebRTC a demanda — POST-MVP
-
-> **Repo:** DEVICE | **Sprint:** Post-MVP | **SP:** 13 | **MoSCoW:** Could
-> **Épica:** Analítica y reportes | **Feature:** FEA-EDGE-STREAM
-
-### Historia
-**Como** dispositivo
-**quiero** transmitir video WebRTC a demanda desde app/portal
-**para** permitir verificación visual en tiempo real.
-
-### Criterios de Aceptación
-
-| ID | Criterio | Testeable |
-|----|----------|-----------|
-| AC-001 | Recibe oferta SDP via signaling (WebSocket/HTTP), responde answer, inicia streaming H.264 | Sí |
-| AC-002 | Bitrate adaptativo según red (min 500kbps, max 2Mbps) | Sí |
-| AC-003 | Auto-stop tras 30s sin viewer o comando stop | Sí |
-| AC-004 | Solo si dispositivo `Activo` y asociado a usuario autenticado | Sí |
-
-### Dependencias
-
-| HU / Artefacto | Tipo | Descripción |
-|----------------|------|-------------|
-| HU-API-012 (Post-MVP) | Bloqueante | Signaling server en API |
-| HU-DEVICE-002 | Bloqueante | Device activo |
-| RF-EDGE-13, RF-ANA-05 | Requisito | Base funcional |
-
----
-
-### HU-PORTAL-004: Video en vivo embebido — POST-MVP
-
-> **Repo:** PORTAL | **Sprint:** Post-MVP | **SP:** 5 | **MoSCoW:** Could
-> **Épica:** Analítica y reportes | **Feature:** FEA-PORTAL-STREAM
-
-### Historia
-**Como** usuario en portal
-**quiero** ver video en vivo del dispositivo en una ventana modal
-**para** verificar situación sin abrir la app.
-
-### Criterios de Aceptación
-
-| ID | Criterio | Testeable |
-|----|----------|-----------|
-| AC-001 | Botón "Ver en vivo" en detalle dispositivo → modal con player WebRTC | Sí |
-| AC-002 | Controles: play/pause, fullscreen, mute, cerrar | Sí |
-| AC-003 | Auto-cierre modal si usuario navega fuera | Sí |
-
-### Dependencias
-
-| HU / Artefacto | Tipo | Descripción |
-|----------------|------|-------------|
-| HU-API-012 (Post-MVP) | Bloqueante | Streaming endpoint |
-| RF-ANA-05 | Requisito | Base funcional |
-
----
-
-### HU-APP-004: Video en vivo en app — POST-MVP
-
-> **Repo:** APP | **Sprint:** Post-MVP | **SP:** 8 | **MoSCoW:** Could
-> **Épica:** Analítica y reportes | **Feature:** FEA-APP-STREAM
-
-### Historia
-**Como** usuario en app
-**quiero** ver video en vivo del dispositivo con un tap
-**para** verificar al conductor en tiempo real.
-
-### Criterios de Aceptación
-
-| ID | Criterio | Testeable |
-|----|----------|-----------|
-| AC-001 | Botón "Ver en vivo" en device card → pantalla fullscreen WebRTC | Sí |
-| AC-002 | Controles overlay: mute, flip camera (si dual), cerrar | Sí |
-| AC-003 | Indicador calidad red (verde/amarillo/rojo) | Sí |
-
-### Dependencias
-
-| HU / Artefacto | Tipo | Descripción |
-|----------------|------|-------------|
-| HU-API-012 (Post-MVP) | Bloqueante | Streaming endpoint |
-| HU-DEVICE-005 (Post-MVP) | Bloqueante | Device WebRTC |
-| RF-ANA-05 | Requisito | Base funcional |
+| ADR-006 (Object Storage) | Decisión | MinIO para PDFs |
 
 ---
 
@@ -734,7 +616,7 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
 | HU-API-006 | Relacionada | Device registrado |
-| RF-EDGE-01,02,03,09,11 | Requisito | Base funcional |
+| RF-EDGE-01,02,03,09,11, RF-TEL-05 | Requisito | Base funcional |
 
 ---
 
@@ -755,7 +637,7 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 | AC-001 | Buffer SQLite local: tabla `pending_events` (event_json, evidence_path, retries, created_at) | Sí |
 | AC-002 | Detección conectividad: ping/HEAD a API cada 30s; online → sync automático | Sí |
 | AC-003 | Envío lote (máx 100) a POST `/telemetry/events`; reintentos exponenciales (1m, 2m, 4m, max 1h) | Sí |
-| AC-004 | Deduplicación: `event_id` UUID único; server rechaza duplicados (409) | Sí |
+| AC-004 | Deduplicación: `event_id` UUID único; duplicados se reportan en `duplicate_ids` del `201` (no son error) | Sí |
 | AC-005 | Limpieza automática tras ACK 201 (borra confirmados); retención 7d para fallidos | Sí |
 | AC-006 | Almacenamiento local < 90% → AS-09; política retención evidencia 7d | Sí |
 
@@ -764,8 +646,8 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
 | HU-API-007 | Bloqueante | Endpoint ingesta |
-| HU-API-008 | Relacionada | Pull config tras sync |
-| RF-EDGE-08,10,12, RF-TEL-04,07 | Requisito | Base funcional |
+| HU-API-005 | Relacionada | Pull config tras sync |
+| RF-EDGE-08,10,12, RF-TEL-04,05,07 | Requisito | Base funcional |
 
 ---
 
@@ -823,7 +705,7 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 |----------------|------|-------------|
 | HU-PORTAL-001 | Bloqueante | Auth en portal |
 | HU-API-006, HU-API-008 | Bloqueante | APIs dispositivos y eventos |
-| RF-DEV-06, RF-TEL-06 | Requisito | Base funcional |
+| RF-DEV-08, RF-TEL-06 | Requisito | Base funcional |
 
 ---
 
@@ -937,6 +819,125 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 
 ---
 
+## 📦 BACKLOG POST-MVP (Could — Fuera de alcance MVP)
+
+Las siguientes HUs son **Could** (39 SP totales) y se mueven a backlog post-MVP. Se abordarán tras validar el MVP completo.
+
+---
+
+## HU-API-012: Video streaming tiempo real (WebRTC) — POST-MVP
+
+> **Repo:** API, DEVICE | **Sprint:** Post-MVP | **SP:** 13 | **MoSCoW:** Could
+> **Épica:** Analítica y reportes | **Feature:** FEA-ANA-STREAM
+
+### Historia
+**Como** usuario en la app
+**quiero** ver video en vivo de la cámara del dispositivo a demanda
+**para** verificar situación en tiempo real.
+
+### Criterios de Aceptación
+
+| ID | Criterio | Testeable |
+|----|----------|-----------|
+| AC-001 | POST `/devices/{id}/stream/start` negocia WebRTC (offer/answer) via signaling server | Sí |
+| AC-002 | Device inicia streaming H.264/VP8 a SFU; app reproduce | Sí |
+| AC-003 | POST `/devices/{id}/stream/stop` cierra conexión, libera recursos | Sí |
+| AC-004 | Solo bajo demanda; auto-stop si app en background > 30s | Sí |
+
+### Dependencias
+
+| HU / Artefacto | Tipo | Descripción |
+|----------------|------|-------------|
+| HU-DEVICE-005 (Post-MVP) | Bloqueante | Device implementa WebRTC |
+| HU-API-006 | Bloqueante | Device activo |
+| RF-ANA-05, RF-EDGE-13 | Requisito | Base funcional |
+
+---
+
+## HU-DEVICE-005: Video streaming WebRTC a demanda — POST-MVP
+
+> **Repo:** DEVICE | **Sprint:** Post-MVP | **SP:** 13 | **MoSCoW:** Could
+> **Épica:** Analítica y reportes | **Feature:** FEA-EDGE-STREAM
+
+### Historia
+**Como** dispositivo
+**quiero** transmitir video WebRTC a demanda desde app/portal
+**para** permitir verificación visual en tiempo real.
+
+### Criterios de Aceptación
+
+| ID | Criterio | Testeable |
+|----|----------|-----------|
+| AC-001 | Recibe oferta SDP via signaling (WebSocket/HTTP), responde answer, inicia streaming H.264 | Sí |
+| AC-002 | Bitrate adaptativo según red (min 500kbps, max 2Mbps) | Sí |
+| AC-003 | Auto-stop tras 30s sin viewer o comando stop | Sí |
+| AC-004 | Solo si dispositivo `Activo` y asociado a usuario autenticado | Sí |
+
+### Dependencias
+
+| HU / Artefacto | Tipo | Descripción |
+|----------------|------|-------------|
+| HU-API-012 (Post-MVP) | Bloqueante | Signaling server en API |
+| HU-DEVICE-002 | Bloqueante | Device activo |
+| RF-EDGE-13, RF-ANA-05 | Requisito | Base funcional |
+
+---
+
+## HU-PORTAL-005: Video en vivo embebido — POST-MVP
+
+> **Repo:** PORTAL | **Sprint:** Post-MVP | **SP:** 5 | **MoSCoW:** Could
+> **Épica:** Analítica y reportes | **Feature:** FEA-PORTAL-STREAM
+
+### Historia
+**Como** usuario en portal
+**quiero** ver video en vivo del dispositivo en una ventana modal
+**para** verificar situación sin abrir la app.
+
+### Criterios de Aceptación
+
+| ID | Criterio | Testeable |
+|----|----------|-----------|
+| AC-001 | Botón "Ver en vivo" en detalle dispositivo → modal con player WebRTC | Sí |
+| AC-002 | Controles: play/pause, fullscreen, mute, cerrar | Sí |
+| AC-003 | Auto-cierre modal si usuario navega fuera | Sí |
+
+### Dependencias
+
+| HU / Artefacto | Tipo | Descripción |
+|----------------|------|-------------|
+| HU-API-012 (Post-MVP) | Bloqueante | Streaming endpoint |
+| RF-ANA-05 | Requisito | Base funcional |
+
+---
+
+## HU-APP-004: Video en vivo en app — POST-MVP
+
+> **Repo:** APP | **Sprint:** Post-MVP | **SP:** 8 | **MoSCoW:** Could
+> **Épica:** Analítica y reportes | **Feature:** FEA-APP-STREAM
+
+### Historia
+**Como** usuario en app
+**quiero** ver video en vivo del dispositivo con un tap
+**para** verificar al conductor en tiempo real.
+
+### Criterios de Aceptación
+
+| ID | Criterio | Testeable |
+|----|----------|-----------|
+| AC-001 | Botón "Ver en vivo" en device card → pantalla fullscreen WebRTC | Sí |
+| AC-002 | Controles overlay: mute, flip camera (si dual), cerrar | Sí |
+| AC-003 | Indicador calidad red (verde/amarillo/rojo) | Sí |
+
+### Dependencias
+
+| HU / Artefacto | Tipo | Descripción |
+|----------------|------|-------------|
+| HU-API-012 (Post-MVP) | Bloqueante | Streaming endpoint |
+| HU-DEVICE-005 (Post-MVP) | Bloqueante | Device WebRTC |
+| RF-ANA-05 | Requisito | Base funcional |
+
+---
+
 ## Trazabilidad Consolidada HU → RF → Épica → Repo
 
 | HU ID | Título | Repo | RFs Cubiertos | Épica | Sprint | SP | Prioridad |
@@ -944,24 +945,24 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 | HU-API-SETUP | Setup proyecto API | API | — | Setup y Foundation | 0 | 8 | Must |
 | HU-DB-001a | Esquemas BD + changelog maestro | DB | Todos RF-* | Setup y Foundation | 0 | 8 | Must |
 | HU-DB-001b | Seed data, rollback, validación | DB | RF-SEC-*, RF-PAR-* | Setup y Foundation | 0 | 5 | Must |
-| HU-API-001 | Auth y sesión | API | RF-SEC-01..04,09 | Seguridad y cuentas | 1 | 8 | Must |
-| HU-API-002 | Recuperación/actualización cuenta | API | RF-SEC-05,08 | Seguridad y cuentas | 1 | 5 | Must |
+| HU-API-001 | Auth y sesión | API | RF-SEC-01..03,09 | Seguridad y cuentas | 1 | 8 | Must |
+| HU-API-002 | Recuperación/actualización cuenta | API | RF-SEC-04,05,08 | Seguridad y cuentas | 1 | 5 | Must |
 | HU-API-003 | RBAC | API | RF-SEC-10 | Seguridad y cuentas | 1 | 5 | Must |
-| HU-API-004 | CRUD catálogos | API, DB | RF-PAR-01..03 | Parametrización | 1 | 8 | Must |
-| HU-API-005 | Device config remota | API, DB | RF-DEV-03, RF-TEL-05, RF-EDGE-11 | Gestión disp. | 2 | 5 | Must |
-| HU-API-006 | Gestión dispositivos | API, DB | RF-DEV-01..05 | Gestión disp. | 1 | 8 | Must |
-| HU-API-007 | Ingesta eventos/evidencia | API, DB | RF-TEL-01..03, RF-EDGE-08 | Telemetría | 2 | 13 | Must |
+| HU-API-004 | CRUD catálogos | API, DB | RF-PAR-01..03,05 | Parametrización | 1 | 8 | Must |
+| HU-API-005 | Device config remota | API, DB | RF-DEV-03, RF-TEL-05, RF-PAR-04, RF-EDGE-11 | Gestión disp. | 2 | 5 | Must |
+| HU-API-006 | Gestión dispositivos | API, DB | RF-DEV-01,02,04..09 | Gestión disp. | 1 | 8 | Must |
+| HU-API-007 | Ingesta eventos/evidencia | API, DB | RF-TEL-01..04, RF-EDGE-08 | Telemetría | 2 | 13 | Must |
 | HU-API-008 | Consulta eventos | API, DB | RF-TEL-06 | Telemetría | 2 | 5 | Must |
 | HU-API-009 | Push eventos críticos | API | RF-MON-01..04 | Monitoreo | 3 | 8 | Must |
 | HU-API-010 | Timeline + métricas | API, DB | RF-ANA-01,02 | Analítica | 4 | 8 | Must |
 | HU-API-011 | Resumen IA + reporte | API | RF-ANA-03,04 | Analítica | 5 | 13 | Should |
 | HU-DB-002 | Vistas/índices analytics | DB | RF-ANA-01,02 | Analítica | 3 | 5 | Must |
 | HU-DEVICE-001 | Detección visión | DEVICE | RF-EDGE-04,05,06 | Telemetría | 2-3 | 21 | Must |
-| HU-DEVICE-002 | Init + estados + heartbeat | DEVICE | RF-EDGE-01,02,03,09,11 | Telemetría | 1 | 8 | Must |
-| HU-DEVICE-003 | Buffer offline + sync | DEVICE | RF-EDGE-08,10,12, RF-TEL-04,07 | Telemetría | 2 | 13 | Must |
+| HU-DEVICE-002 | Init + estados + heartbeat | DEVICE | RF-EDGE-01,02,03,09,11, RF-TEL-05 | Telemetría | 1 | 8 | Must |
+| HU-DEVICE-003 | Buffer offline + sync | DEVICE | RF-EDGE-08,10,12, RF-TEL-04,05,07 | Telemetría | 2 | 13 | Must |
 | HU-DEVICE-004 | Alertas sonoras + escalamiento | DEVICE | RF-EDGE-07,11 | Telemetría | 2 | 5 | Must |
 | HU-PORTAL-001 | Auth portal (login, register, reset) | PORTAL | RF-SEC-01..05,08,09 | Seguridad y cuentas | 1 | 8 | Must |
-| HU-PORTAL-002 | Dashboard dispositivos/eventos | PORTAL | RF-DEV-06, RF-TEL-06 | Gestión/Telemetría | 3 | 8 | Must |
+| HU-PORTAL-002 | Dashboard dispositivos/eventos | PORTAL | RF-DEV-08, RF-TEL-06 | Gestión/Telemetría | 3 | 8 | Must |
 | HU-PORTAL-003 | Métricas y tendencias | PORTAL | RF-ANA-01,02 | Analítica | 4 | 5 | Must |
 | HU-PORTAL-004 | Resumen IA + reporte | PORTAL | RF-ANA-03,04 | Analítica | 5 | 8 | Should |
 | HU-APP-001 | Auth app (login, register, reset) | APP | RF-SEC-01..05,08,09 | Seguridad y cuentas | 1 | 8 | Must |
@@ -976,10 +977,10 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 |-------|--------|------|---------------|-------|--------|----|-----------|
 | HU-API-012 | Video streaming WebRTC | API, DEVICE | RF-ANA-05, RF-EDGE-13 | Analítica | Post-MVP | 13 | Could |
 | HU-DEVICE-005 | Video streaming WebRTC | DEVICE | RF-EDGE-13, RF-ANA-05 | Analítica | Post-MVP | 13 | Could |
-| HU-PORTAL-004 | Video en vivo embebido | PORTAL | RF-ANA-05 | Analítica | Post-MVP | 5 | Could |
+| HU-PORTAL-005 | Video en vivo embebido | PORTAL | RF-ANA-05 | Analítica | Post-MVP | 5 | Could |
 | HU-APP-004 | Video en vivo en app | APP | RF-ANA-05 | Analítica | Post-MVP | 8 | Could |
 
-**Total Story Points MVP: 185** (Must: 148, Should: 37) | **Post-MVP: 39 SP** (Could)
+**Total Story Points MVP: 209** (Must: 183, Should: 26) | **Post-MVP: 39 SP** (Could)
 
 ---
 
@@ -988,5 +989,10 @@ Las siguientes HUs son **Could** (38 SP totales) y se mueven a backlog post-MVP.
 1. **Validar HUs** con PO + Tech Leads (reunión 1h).
 2. **Crear issues en GitHub Projects** desde esta tabla (copiar ID, título, ACs, SP, labels).
 3. **Actualizar `traceability-matrix.md`** con matriz completa RF ↔ HU ↔ Módulo ↔ Prueba ↔ ADR.
-4. **Definir `cross-cutting.md`** (reglas transversales: auth, audit, obs, idempotencia, tz, errores).
-5. **Escribir ADRs** (ADR-001..007) en `docs/05-architecture/decisions/records/`.
+4. **Aplicar `cross-cutting.md`** (reglas transversales: auth, audit, obs, idempotencia, tz, errores).
+5. **Mantener ADRs** (ADR-001..009) en `docs/05-architecture/decisions/records/` al cambiar HUs.
+
+
+
+
+

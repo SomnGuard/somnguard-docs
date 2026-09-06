@@ -38,10 +38,11 @@ El dispositivo genera:
 - **`event_id` (UUID v7)** generado en device — **clave de idempotencia** global
 - Evidencia guardada en `data/media/{event_id}.jpg` (ruta relativa en `evidence_path`)
 
-### 3. Detección de Conectividad
+### 3. Detección de Conectividad vs Heartbeat (no confundir)
 | Mecanismo | Detalle |
 |-----------|---------|
-| **Healthcheck** | `HEAD https://api.somnguard.com/actuator/health` cada 30s (configurable via `device_config.sync_interval_seconds`) |
+| **Healthcheck (device->API, sin auth)** | `HEAD https://api.somnguard.com/actuator/health` cada 30s (configurable via `device_config.sync_interval_seconds`). Solo responde ¿hay internet? No actualiza `last_heartbeat_at` |
+| **Heartbeat/saludo (device->API, con auth)** | `POST /api/v1/devices/{id}/heartbeat` con `X-Device-ID + X-API-Key` + `{firmware_version, pending_count, free_disk_pct, uptime_s}` cada 30-60s. Actualiza `last_heartbeat_at, last_seen_ip`. Primer heartbeat válido `ASSIGNED->ACTIVE`; `>5min` sin heartbeat `ACTIVE->OFFLINE` |
 | **Timeout** | 5s connect, 10s read |
 | **Estados** | `ONLINE` (2xx) / `OFFLINE` (timeout, 5xx, network error) |
 | **Cambio OFFLINE→ONLINE** | Dispara sync inmediato + backoff reset |
@@ -64,11 +65,10 @@ while True:
             )
             
             if response.status == 201:
-                acked_ids = response.json()['event_ids']
-                delete_where_id_in(acked_ids)  # Limpieza inmediata
+                acked_ids = response.json()['acked_ids']
+                duplicate_ids = response.json()['duplicate_ids']
+                delete_where_id_in(acked_ids + duplicate_ids)  # Limpieza inmediata (duplicados ya persistidos, no son error)
                 pull_config_if_needed()
-            elif response.status == 409:  # Duplicate
-                delete_where_id_in(batch.event_ids)  # Ya persistido en server
             else:
                 increment_retries(batch)
                 apply_backoff()
@@ -85,9 +85,9 @@ while True:
 | **Fórmula** | `min(base_delay * 2^attempt + jitter, max_delay)` |
 
 ### 6. Idempotencia en Server (API)
-- **Índice único** `telemetry.event(event_id)` → `409 Conflict` si duplicado
-- Device **borra local** en `201` (ACK) **y en `409`** (ya existe)
-- **Nunca reintenta** evento con `409` — ya persistido
+- **Índice único** `telemetry.event(id)` donde `id = event_id UUIDv7` generado en device → duplicados se reportan en `duplicate_ids` del `201`, nunca `409` en el lote
+- Device **borra local** `acked_ids + duplicate_ids` en `201`
+- `409` solo en `POST /telemetry/events/{id}/evidence` si el evento ya tiene evidencia (no reintentar ese archivo)
 
 ### 7. Pull de Configuración Remota
 - Tras **sync exitoso (201)**: `GET /devices/{id}/config` → merge con defaults → guarda en `device_config_cache` + aplica en runtime
@@ -146,10 +146,11 @@ while True:
 
 ## Referencias
 
-- [cross-cutting.md](../cross-cutting.md#4-idempotencia-y-consistencia-en-sincronización)
-- [functional.md](../../../04-requeriments/functional.md) → RF-EDGE-08,10,12, RF-TEL-04,07
-- [software-analysis.md](../../../04-requeriments/software-analysis.md) §6.1 (sd-offline-sync, ac-offline-sync)
+- [cross-cutting.md](../../cross-cutting.md#4-idempotencia-y-consistencia-en-sincronización)
+- [functional.md](../../../04-requirements/functional.md) → RF-EDGE-08,10,12, RF-TEL-04,07
+- [software-analysis.md](../../../04-requirements/software-analysis.md) §6.1 (sd-offline-sync, ac-offline-sync)
 - [entities-and-rules.md](../../../02-domain/entities-and-rules.md) → RN-TEL-04, RN-EDGE-08,10,12
-- [SRS RNF-2.1, 2.2, 3.1](../../../04-requeriments/01-srs/) (offline operation, persistence, availability)
+- [SRS RNF-2.1, 2.2, 3.1](../../../04-requirements/01-srs/) (offline operation, persistence, availability)
 - SQLite WAL mode: https://www.sqlite.org/wal.html
 - UUID v7: https://datatracker.ietf.org/doc/html/draft-peabody-dispatch-new-uuid-format
+

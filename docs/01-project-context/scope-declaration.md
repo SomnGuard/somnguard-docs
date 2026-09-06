@@ -34,7 +34,7 @@ Detectar patrones de fatiga, somnolencia y microsueños en el conductor mediante
 
 ## Fuera de alcance
 
-- Transmisión de video en tiempo real al backend (la detección es local en el edge)
+- Transmisión de video en tiempo real al backend (la detección es local en el edge; el streaming a demanda vive como Could post-MVP: RF-ANA-05/RF-EDGE-13, HU-API-012/DEVICE-005/PORTAL-005/APP-004)
 - Integración con sistemas externos de gestión de flotas (FMS) o terceros
 - Facturación, planes de suscripción o pagos
 - Desarrollo de hardware propio (se usa Raspberry Pi + cámara comercial)

@@ -21,19 +21,19 @@
 
 ## Eventos publicados (outbound)
 
-El módulo `security` publica los siguientes eventos de dominio para que otros módulos reaccionen:
+El módulo `security` publica los siguientes eventos de dominio para que otros módulos reaccionen. Nombres en forma CloudEvents `Type` (transporte futuro; hoy la comunicación es por puertos, sin broker — ver `domain-events.md`). Equivalentes de catálogo en `../../event-catalog.md` §2.5:
 
 | Evento | Cuándo se emite | Payload principal | Consumidores típicos |
 |--------|-----------------|-------------------|---------------------|
-| `UserCreated` | Tras crear usuario (admin) | `user_id`, `email`, `first_name`, `last_name`, `roles[]` | `device_management` (crear conductor), `monitoring` (prefs notificación) |
-| `UserUpdated` | Tras actualizar usuario | `user_id`, `changed_fields{}`, `roles[]` | `device_management` (sync conductor), `analytics` (dimensión usuario) |
-| `UserDeactivated` | Tras soft-delete usuario | `user_id`, `deactivated_by`, `deactivated_at` | `device_management` (liberar dispositivos), `monitoring` (cancelar notifs) |
-| `UserRoleAssigned` | Asignar rol a usuario | `user_id`, `role_code`, `assigned_by`, `expires_at` | `device_management` (permisos dispositivo), `telemetry_service` (scope ingestión) |
-| `UserRoleRevoked` | Revocar rol de usuario | `user_id`, `role_code`, `revoked_by` | `device_management`, `telemetry_service`, `analytics` |
-| `PasswordResetRequested` | Solicitud reset password | `user_id`, `email`, `expires_at` | `monitoring` (enviar email) |
-| `PasswordResetCompleted` | Reset confirmado | `user_id`, `completed_at` | `audit` (log seguridad) |
-| `LoginSucceeded` | Login exitoso | `user_id`, `ip_address`, `user_agent`, `roles[]`, `features[]` | `audit`, `analytics` (sesiones) |
-| `LoginFailed` | Login fallido | `email_attempted`, `ip_address`, `reason`, `failed_count` | `audit`, `security` (bloqueo) |
+| `UserCreated` (`user.created`) | Tras crear usuario (admin) | `user_id`, `email`, `first_name`, `last_name`, `roles[]` | `device_management` (validar asignaciones), `monitoring` (preferencias de notificación) |
+| `UserUpdated` (`user.updated`) | Tras actualizar usuario | `user_id`, `changed_fields{}`, `roles[]` | `device_management`, `analytics` (dimensión usuario) |
+| `UserDeactivated` (`user.deactivated`) | Tras soft-delete usuario | `user_id`, `deactivated_by`, `deactivated_at` | `device_management` (liberar dispositivos), `monitoring` (cancelar notifs) |
+| `UserRoleAssigned` (`user.role.assigned`) | Asignar rol a usuario | `user_id`, `role_code`, `assigned_by`, `expires_at` | `device_management` (permisos dispositivo), `telemetry_service` (scope ingestión) |
+| `UserRoleRevoked` (`user.role.revoked`) | Revocar rol de usuario | `user_id`, `role_code`, `revoked_by` | `device_management`, `telemetry_service`, `analytics` |
+| `PasswordResetRequested` (`auth.password.reset.requested`) | Solicitud reset password | `user_id`, `email`, `expires_at` | `monitoring` (enviar email) |
+| `PasswordResetCompleted` (`auth.password.reset.completed`) | Reset confirmado | `user_id`, `completed_at` | `security` (log en `audit_login`) |
+| `LoginSucceeded` (`auth.login.succeeded`) | Login exitoso | `user_id`, `ip_address`, `user_agent`, `roles[]`, `features[]` | `security` (`audit_login`), `analytics` (sesiones) |
+| `LoginFailed` (`auth.login.failed`) | Login fallido | `email_attempted`, `ip_address`, `reason`, `failed_count` | `security` (`audit_login`, bloqueo) |
 
 ## Eventos suscritos (inbound)
 
@@ -41,9 +41,8 @@ El módulo `security` reacciona a:
 
 | Evento | Origen | Acción |
 |--------|--------|--------|
-| `DeviceAssigned` | `device_management` | Validar que user existe y está activo; actualizar cache de permisos |
-| `DeviceUnassigned` | `device_management` | Invalidar cache de permisos del usuario |
-| `DriverCreated` | `device_management` | Verificar/crear user vinculado si no existe |
+| `device.assigned` | `device_management` | Validar que user existe y está activo; actualizar cache de permisos |
+| `device.unassigned` | `device_management` | Invalidar cache de permisos del usuario |
 
 ## Formato de evento (CloudEvents 1.0)
 
@@ -67,13 +66,13 @@ El módulo `security` reacciona a:
 
 ## Convenciones
 
-- Nomenclatura: `somnguard.security.<Entidad><Acción>.v<version>`
+- Nomenclatura: `somnguard.security.<Entidad><Acción>.v<version>` en transporte (futuro); nombre lógico de catálogo `<entidad>.<acción>` en minúscula entre paréntesis
 - Versionado: `v1` inicial; breaking changes → `v2` nuevo topic
 - Idempotencia: consumidores deben manejar duplicados (usar `id` del evento)
 - Orden: no garantizado; diseñar para eventual consistency
-- Trazabilidad: `correlation_id` y `causation_id` en headers Kafka
+- Trazabilidad: `correlation_id` y `causation_id` en headers (futuro broker; hoy sin mensajería entre módulos)
 
 ## Referencias
 
-- [Catálogo de eventos global](../../../event-catalog.md)
+- [Catálogo de eventos global](../../event-catalog.md)
 - [Modelo de datos](./data-model.md)

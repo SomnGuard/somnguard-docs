@@ -39,9 +39,9 @@ Representa a los usuarios del sistema.
 | `failed_login_attempts` | SMALLINT | No | Contador de fallos consecutivos |
 | `locked_until` | TIMESTAMPTZ | Sí | Bloqueo temporal por intentos fallidos |
 | `created_at` | TIMESTAMPTZ | No | Fecha de creación (UTC) |
-| `created_by` | UUID | No | Usuario creador (FK user.id o SYSTEM_ACTOR_ID) |
+| `created_by` | UUID | Sí | Usuario creador (FK user.id o SYSTEM_ACTOR_ID; NULL = auto-registro) |
 | `updated_at` | TIMESTAMPTZ | No | Última modificación (UTC) |
-| `updated_by` | UUID | No | Último modificador (FK user.id o SYSTEM_ACTOR_ID) |
+| `updated_by` | UUID | Sí | Último modificador (FK user.id o SYSTEM_ACTOR_ID; NULL si sin cambios) |
 | `deleted_at` | TIMESTAMPTZ | Sí | Soft delete timestamp |
 | `deleted_by` | UUID | Sí | Usuario que eliminó (FK user.id) |
 | `version` | INTEGER | No | Optimistic locking (inicia en 1) |
@@ -135,9 +135,9 @@ Asigna roles a los usuarios con vigencia temporal.
 | `assigned_at` | TIMESTAMPTZ | No | Momento de asignación |
 | `expires_at` | TIMESTAMPTZ | Sí | Expiración opcional (NULL = indefinido) |
 | `created_at` | TIMESTAMPTZ | No | Fecha de creación (UTC) |
-| `created_by` | UUID | No | Usuario que asignó |
+| `created_by` | UUID | Sí | Usuario que asignó (NULL = sistema) |
 | `updated_at` | TIMESTAMPTZ | No | Última modificación (UTC) |
-| `updated_by` | UUID | No | Último modificador |
+| `updated_by` | UUID | Sí | Último modificador (NULL si sin cambios) |
 | `deleted_at` | TIMESTAMPTZ | Sí | Soft delete |
 | `deleted_by` | UUID | Sí | Usuario que revocó |
 | `version` | INTEGER | No | Optimistic locking |
@@ -160,7 +160,7 @@ Solicitudes de recuperación de contraseña.
 | `created_at` | TIMESTAMPTZ | No | Fecha de creación (UTC) |
 | `created_by` | UUID | Sí | Usuario solicitante |
 
-**Reglas de negocio aplicables:** [RN-SEC-10] Token de un solo uso, [RN-SEC-11] Expiración máxima 24h
+**Reglas de negocio aplicables:** [RN-SEC-10] Token de un solo uso, [RN-SEC-11] Expiración 1h (`expires_at = NOW() + 1 hour`)
 
 ### audit_login
 
@@ -171,12 +171,13 @@ Registro de intentos de autenticación.
 | `id` | UUID | No | PK |
 | `user_id` | UUID | Sí | FK a user.id (NULL si email no existe) |
 | `email_attempted` | VARCHAR(255) | No | Email usado en el intento |
-| `outcome` | VARCHAR(50) | No | SUCCESS, FAILED_CREDENTIALS, FAILED_LOCKED, FAILED_INACTIVE |
-| `ip_address` | VARCHAR(45) | Sí | IPv4 o IPv6 |
+| `outcome` | VARCHAR(50) | No | `SUCCESS`, `INVALID_CREDENTIALS`, `ACCOUNT_LOCKED`, `ACCOUNT_SUSPENDED`, `EMAIL_NOT_VERIFIED` |
+| `ip_address` | VARCHAR(45) | No | IPv4 o IPv6 |
 | `user_agent` | TEXT | Sí | User-Agent del cliente |
 | `attempted_at` | TIMESTAMPTZ | No | Momento del intento (UTC) |
 | `created_at` | TIMESTAMPTZ | No | Fecha de creación (UTC) |
 | `created_by` | UUID | Sí | SYSTEM_ACTOR_ID |
+| `is_active` | BOOLEAN | No | Por defecto TRUE |
 
 **Reglas de negocio aplicables:** [RN-SEC-12] Append-only, no UPDATE ni DELETE
 
@@ -210,7 +211,7 @@ Registro de intentos de autenticación.
 
 ## Notas de integridad
 
-- **Catálogos inmutables**: `role`, `module`, `feature` no llevan soft delete; se desactivan con `is_active = false` solo si nunca se usaron (ver modeling-conventions.md)
+- **Catálogos**: `role` y `event_type` llevan `is_active` (desactivar con `false`); `module`/`feature`/`status_*` son inmutables (sin `is_active`, sin UPDATE)
 - **SYSTEM_ACTOR_ID**: `00000000-0000-0000-0000-000000000000` para seeds y procesos automáticos
 - **Roles actuales**: Solo `admin` y `user` (según seeds en somnguard-db)
 - **Features actuales**: 17 features en minúscula formato `recurso.accion` (ver seeds 011_insert_security_features.sql)

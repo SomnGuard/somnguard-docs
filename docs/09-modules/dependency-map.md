@@ -89,13 +89,13 @@
 
 | Módulo | Depende de | Para qué | Que depende de él | Por qué |
 |--------|------------|----------|-------------------|---------|
-| **security** | Ninguna (base) | Autenticación, autorización, auditoría | parameterization, device_management, telemetry_service, monitoring | Proporciona: users, roles, features, JWT, API Keys base |
+| **security** | Ninguna (base) | Autenticación, autorización, auditoría | parameterization, device_management, telemetry_service, monitoring | Proporciona: users, roles, features, JWT, auditoría (`audit_login`). Las API Keys viven en `device_management.device` (security las valida) |
 | **parameterization** | Independiente | Catálogos configurables | device_management, telemetry_service, monitoring | Catálogos autónomos; FKs internos a parameterization (severity, sound_pattern, event_type, status_category, status) |
 | **device_management** | `security` + `parameterization` | Alta/asignación de devices, config remota | telemetry_service | devices → user asignation; config con catálogos vigentes |
-| **telemetry_service** | `device_management` + `parameterization` | Ingesta events/evidence de devices | monitoring | events → device FK; event_type/severity FKs a catálogos; audit_login para logging |
-| **monitoring** | `telemetry_service` | Notificaciones, tracking delivery | analytics | notifications → alert_log FK; notification_delivery tracking; usuario FK a security.user |
+| **telemetry_service** | `device_management` + `parameterization` | Ingesta events/evidence de devices | monitoring | events → device FK; event_type/severity FKs a catálogos |
+| **monitoring** | `telemetry_service` | Notificaciones, tracking delivery | analytics | notifications → alert_log FK; tracking vía columnas `sent/delivered/read_at` (sin tabla `notification_delivery`); usuario FK a security.user |
 | **analytics** | `todos los anteriores` (solo lectura) | Líneas de tiempo, métricas, reportes IA | Ningún módulo (es de solo lectura) | Vistas materializadas sobre tables de security+parameterization+device_management+telemetry+monitoring |
-| **platform/transversal** | Ninguna (es independiente) | Errores, logging, observabilidad, secrets | Cualquier módulo | JWT RS256, logs JSON, métricas RED, trazas OTel, X-Request-ID, manejo de errores RFC 7807 |
+| **platform/transversal** | Ninguna (es independiente) | Errores, logging, observabilidad, secrets | Cualquier módulo | JWT RS256, logs JSON, métricas RED, trazas OTel, X-Request-ID, envelope `{"error":{}}` |
 
 ### 2.1 Regla de Oro (ADR-002)
 
@@ -122,8 +122,8 @@ Capa interna (más cercana a domain):
 application/port/in (use case interfaces por módulo):
   - security: login, logout, RBAC
   - parameterization: CRUD catálogos, obtener estado device
-  - device_management: alta device, asociar usuario, heartbeat
-  - telemetry_service: ingestar eventos, pull config
+  - device_management: alta device, asociar usuario, heartbeat, pull config
+  - telemetry_service: ingestar eventos
   - monitoring: enviar notificación, tracking delivery
 
   ↓ depende de
@@ -133,7 +133,7 @@ application/port/out (output ports/Repositories por módulo):
   - parameterization: event_category repository, severity lookup
   - device_management: device repository, config repository
   - telemetry_service: event repository, evidence repository, alert_log repository
-  - monitoring: notification repository, notification_delivery repository
+  - monitoring: notification repository (tracking vía `sent/delivered/read_at`)
 
   ↓ depende de
 
@@ -146,7 +146,7 @@ adapter/out (implementaciones concretas):
 
 Capa externa:
   platform/transversal (puede ser usado por TODAS las capas anteriores):
-  - error handling (RFC 7807 Problem Details)
+  - error handling (envelope `{"error":{}}`)
   - observabilidad (OpenTelemetry, logs JSON, métricas RED)
   - seguridad (JWT RS256 verification, API Key validation)
   - gestión de errores y excepciones
@@ -166,7 +166,7 @@ Capa externa:
 | `application/port/in` | Use cases: auth, device mgmt, telemetry ingestion, notifications |
 | `application/port/out` | Repositories: user repo, device repo, event repo, notification repo |
 | `adapter/in/web` | Controllers REST, DTOs, mappers (usando ports de arriba) |
-| `platform/transversal` | Spring Security (JWT RS256 validator, API Key validator), OpenTelemetry auto-instrumentation, Micrometer RED metrics, global exception handler (RFC 7807) |
+| `platform/transversal` | Spring Security (JWT RS256 validator, API Key validator), OpenTelemetry auto-instrumentation, Micrometer RED metrics, global exception handler (envelope `{"error":{}}`) |
 
 **No debe depender de:**
 - Módulos que no le correspondan (ej. no debería importar lógica de device_management si solo expone auth)
@@ -179,7 +179,7 @@ Capa externa:
 | Módulo | Changelog | Por qué |
 |--------|-----------|---------|
 | `security` | `01_ddl/03_tables` + `02_dml/00_inserts` | Tabla base: users, roles, features - debe aplicarse primero |
-| `parameterization` | `01_ddl/03_tables` + `02_dml/00_inserts` | Catálogos con FK a security.user/role - debe aplicarse después |
+| `parameterization` | `01_ddl/03_tables` + `02_dml/00_inserts` | Catálogos (FKs físicas solo intra-catálogo en `04_alter`; se aplican tras security) |
 | `device_management` | `01_ddl/03_tables` + `02_dml/00_inserts` | Devices → user FK, config con catálogos - después de security + parameterization |
 | `telemetry_service` | `01_ddl/03_tables` + `02_dml/00_inserts` | Events → device FK, event_type/severity FKs - después de los 3 anteriores |
 | `monitoring` | `01_ddl/03_tables` + `02_dml/00_inserts` | Notifications → alert_log FK, user FK - después de telemetry_service |
@@ -193,12 +193,12 @@ Capa externa:
 
 | Funcionalidad | Endpoint API | Módulo origen |
 |---------------|--------------|---------------|
-| Listar devices | `GET /devices` | device_management |
-| Timeline eventos | `GET /telemetry/events` | telemetry_service |
-| Métricas y filtros | `GET /analytics/timeline` | analytics |
-| Config device | `GET /devices/{id}/config` | telemetry_service + device_management |
-| Notificaciones | `GET /notifications` | monitoring |
-| Auth (JWT) | `POST /auth/login` | security |
+| Listar devices | `GET /api/v1/devices` | device_management |
+| Timeline eventos | `GET /api/v1/events` | telemetry_service |
+| Métricas y filtros | `GET /api/v1/analytics/timeline` | analytics |
+| Config device | `GET /api/v1/devices/{id}/config` | device_management |
+| Notificaciones | `GET /api/v1/notifications` | monitoring |
+| Auth (JWT) | `POST /api/v1/auth/login` | security |
 
 **No depende directamente de BD ni de módulos internos:** Todo por API. Si necesita datos nuevos, pide nuevo endpoint al equipo API.
 
@@ -208,11 +208,11 @@ Capa externa:
 
 | Funcionalidad | Endpoint API | Módulo origen |
 |---------------|--------------|---------------|
-| Login / JWT | `POST /auth/login` | security |
-| Recibir push notifications | `GET /notifications` | monitoring |
-| Ver timeline eventos | `GET /analytics/timeline` | analytics |
-| Streaming WebRTC | `GET /devices/{id}/stream` | API + device |
-| Config device | `GET /devices/{id}/config` | telemetry_service |
+| Login / JWT | `POST /api/v1/auth/login` | security |
+| Recibir push notifications | `GET /api/v1/notifications` | monitoring |
+| Ver timeline eventos | `GET /api/v1/analytics/timeline` | analytics |
+| Streaming WebRTC (post-MVP: RF-ANA-05/RF-EDGE-13, HU-API-012/DEVICE-005/PORTAL-005/APP-004; aún no en api-design) | `GET /api/v1/devices/{id}/stream` | API + device |
+| Config device | `GET /api/v1/devices/{id}/config` | device_management |
 
 **Modo offline-first:** Al no tener red, usa SQLite local (propio al app) y sincroniza cuando hay conexión. No depende de SQLite del device.
 
@@ -224,8 +224,8 @@ Capa externa:
 |------------|-------------|-------------|
 | `SQLite local` | Ninguna (autónoma) | Buffer de eventos pending_events, device_config, evidence local |
 | `API Key` | `security` (validación central) | API Key generada por security, validada HMAC-SHA256 en device |
-| `Heartbeat → API` | `telemetry_service` (endpoint POST) | Cada 30s envía status, último evento, buffer stats |
-| `Config pull → API` | `telemetry_service` (GET /devices/{id}/config) | Solicita device_config JSONB, thresholds, sound_pattern, volumen |
+| `Heartbeat → API` | `device_management` (POST /api/v1/devices/{id}/heartbeat) | Cada 30-60s envía saludo con `X-Device-ID + X-API-Key`: `firmware_version, pending_count, free_disk_pct`. Actualiza `last_heartbeat_at`. Primer heartbeat `ASSIGNED->ACTIVE`, `>5min` sin heartbeat `->OFFLINE`. Distinto de `HEAD /actuator/health` (solo chequeo internet sin auth) |
+| `Config pull → API` | `device_management` (GET /api/v1/devices/{id}/config) | Solicita device_config JSONB, thresholds, sound_pattern, volumen |
 | `Event sync → API` | `telemetry_service` (POST /telemetry/events) | Envía lote de eventos offline, deduplicación por event_id UUID v7 |
 | `Local DB esquema` | Mismo patrón que BD `security + parameterization + device_management` (tabla mínima) | Solo lo necesario: device, pending_events, device_config (recorta las 6 esquemas completos) |
 
@@ -287,23 +287,23 @@ security ──▶ parameterization ──▶ device_management ──▶ teleme
 
 | Documento | Sección | Qué aporta al mapa |
 |-----------|---------|-------------------|
-| `ADR-002` | `05-architecture/decisions/records/ADR-002-hexagonal-architecture.md` | Define regla de dependencias hacia adentro (domain es centro) |
-| `module-catalog.md` | `09-modules/module-catalog.md` | Lista los 6 módulos y su responsabilidad |
-| `cross-cutting.md` | `05-architecture/cross-cutting.md` | Estándares transversales que aplican a todos los módulos |
-| `data-dictionary.md` | `06-data-architecture/data-dictionary.md` | Convenciones de naming, PK, auditoría usadas en todas tablas |
-| `modeling-conventions.md` | `06-data-architecture/modeling-conventions.md` | Estructura DDL, orden Liquibase, FKs, índices por módulo |
-| `entities-and-rules.md` | `02-domain/entities-and-rules.md` | Reglas de negocio RN-* que definen qué entidades existen y sus relaciones |
-| `guidelines.md` | `07-api-design/guidelines.md` | Contratos API por módulo y estándares de petición/respuesta |
-| `ADR-001` | `05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md` | JWT RS256 + API Keys (usado por security y device) |
-| `ADR-009` | `05-architecture/decisions/records/ADR-009-status-parametrized-audit.md` | `status_category` + `status` en todas las entidades (regla transversal) |
-| `ci-cd-strategy.md` | `10-devops/ci-cd-strategy.md` | Validación de dependencias en PRs y pipelines |
+| `ADR-002` | `../05-architecture/decisions/records/ADR-002-hexagonal-architecture.md` | Define regla de dependencias hacia adentro (domain es centro) |
+| `module-catalog.md` | `./module-catalog.md` | Lista los 6 módulos y su responsabilidad |
+| `cross-cutting.md` | `../05-architecture/cross-cutting.md` | Estándares transversales que aplican a todos los módulos |
+| `data-dictionary.md` | `../06-data-architecture/data-dictionary.md` | Convenciones de naming, PK, auditoría usadas en todas tablas |
+| `modeling-conventions.md` | `../06-data-architecture/modeling-conventions.md` | Estructura DDL, orden Liquibase, FKs, índices por módulo |
+| `entities-and-rules.md` | `../02-domain/entities-and-rules.md` | Reglas de negocio RN-* que definen qué entidades existen y sus relaciones |
+| `guidelines.md` | `../07-api-design/guidelines.md` | Contratos API por módulo y estándares de petición/respuesta |
+| `ADR-001` | `../05-architecture/decisions/records/ADR-001-backend-java-spring-boot.md` | JWT RS256 + API Keys (usado por security y device) |
+| `ADR-009` | `../05-architecture/decisions/records/ADR-009-status-parametrized-audit.md` | `status_category` + `status` en todas las entidades (regla transversal) |
+| `ci-cd-strategy.md` | `../10-devops/ci-cd-strategy.md` | Validación de dependencias en PRs y pipelines |
 
 ---
 
 ## Próximos Pasos
 
 1. **Validar** este mapa con Architecture Team y DBA (revisión 45 min) - asegurar que no falten módulos o dependencias ocultas
-2. **Añadir** a `LISTA_DOCS_OTRO-PROJECT-PARA-SOMNGUARD.md` como entregable de PRIORIDAD 2 (junto con `migration-strategy.md`)
+2. **Añadir** a [`../15-project-control/technical-backlog.md`](../15-project-control/technical-backlog.md) como entregable de PRIORIDAD 2 (junto con `migration-strategy.md`)
 3. **Integrar** en la `ci-cd-strategy.md` validación automática de dependencias en cada PR merged
 4. **Revisar** con cada equipo de repos (API, DB, PORTAL, APP, DEVICE) que el mapa se ajusta a su realidad actual
 5. **Actualizar** cuando haya nuevos módulos, ADRs o cambios en la arquitectura hexagonal (verificar que no se introduzcan ciclos de dependencia)

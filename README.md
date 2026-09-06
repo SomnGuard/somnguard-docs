@@ -29,7 +29,7 @@ docs/
 ├── 01-project-context/            # Contexto y cronograma
 ├── 02-domain/                     # Dominio del negocio: mapa de procesos
 ├── 03-product-definition/         # Definición del producto e investigación
-├── 04-requeriments/               # SRS, análisis y requisitos
+├── 04-requirements/               # SRS, análisis y requisitos
 ├── 05-architecture/               # Arquitectura y decisiones (ADRs)
 ├── 06-data-architecture/          # Modelo de datos y diccionarios
 ├── 07-api-design/                 # Diseño de API
@@ -47,7 +47,7 @@ docs/
 ## Cómo usar este repositorio
 
 1. **Empieza por la gobernanza**: lee `docs/00-documentation-governance/README.md` para conocer las reglas de documentación, normativa y metodología.
-2. **Requisitos**: revisa el SRS y las funcionalidades en `docs/04-requeriments/`.
+2. **Requisitos**: revisa el SRS y las funcionalidades en `docs/04-requirements/`.
 3. **Arquitectura**: consulta `docs/05-architecture/architecture-document.md` para el detalle técnico.
 4. **Datos**: el modelo vigente está en `docs/06-data-architecture/` (MER y módulos/entidades).
 5. **Diagramas**: los casos de uso y sus exportaciones están en `docs/08-uml/`.
@@ -74,5 +74,7 @@ docs/
 
 ## Historial
 
+- **2026-09-05**: modelo 06 alineado a DDL real, contratos auth/UML a código y api-design, trazabilidad RF→HU real, Q-007/013/016 y TD-004/005/006 cerrados (ver `CHANGELOG.md`).
+- **2026-09-04**: contratos device-API (`heartbeat`, `rotate-key`, sync two-phase), rename `04-requirements/`, licencia MIT (ver `CHANGELOG.md`).
 - **2026-08-19**: estructura ampliada con plantillas reutilizables y documentos de proceso (gobernanza, dominio, producto, requisitos, operaciones, control de proyecto), alineados con la arquitectura hexagonal y las convenciones ágiles.
 - **2026-08-16**: unificación de las estructuras anteriores en una sola, organizada por secciones y sin orientación a microservicios.

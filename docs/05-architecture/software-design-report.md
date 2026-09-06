@@ -76,7 +76,7 @@ Quedan fuera del alcance de esta versión la toma de decisiones automáticas sob
 | Casos de uso (diagramas) | [../08-uml/diagram-index.md](../08-uml/diagram-index.md) |
 | Modelo entidad-relación | [../06-data-architecture/01-entity-relationship-model.mmd](../06-data-architecture/01-entity-relationship-model.mmd) |
 | Módulos y entidades | [../06-data-architecture/02-modules-entities.md](../06-data-architecture/02-modules-entities.md) |
-| Diccionario de datos | [../06-data-architecture/03-data-dictionary.md](../06-data-architecture/03-data-dictionary.md) |
+| Diccionario de datos | [../06-data-architecture/data-dictionary.md](../06-data-architecture/data-dictionary.md) |
 | Diseño de la API | [../07-api-design/api-design.md](../07-api-design/api-design.md) |
 
 ---
@@ -375,7 +375,7 @@ El modelo de datos vigente está compuesto por **20 entidades** agrupadas en 5 d
 
 - [Modelo entidad-relación (Mermaid)](../06-data-architecture/01-entity-relationship-model.mmd)
 - [Módulos y entidades](../06-data-architecture/02-modules-entities.md)
-- [Diccionario de datos](../06-data-architecture/03-data-dictionary.md)
+- [Diccionario de datos](../06-data-architecture/data-dictionary.md)
 
 | Módulo | Entidades | Descripción |
 |--------|-----------|-------------|
@@ -504,7 +504,7 @@ El dispositivo a bordo no posee interfaz gráfica en esta versión; su interfaz 
 | Aspecto | Diseño |
 |---------|--------|
 | Autenticación | JWT (tokens de acceso y refresco) para el portal web y la app móvil; emisión y validación en el módulo Security. |
-| Autenticación de dispositivos | API keys por dispositivo, almacenadas como hash en `device_config`/credenciales de dispositivo; nunca en texto plano. |
+| Autenticación de dispositivos | API keys por dispositivo, almacenadas como hash en `device_management.device` (`api_key_hash`); nunca en texto plano. |
 | Contraseñas | Hash seguro (bcrypt o equivalente) con salt; política de complejidad y expiración; reseteo mediante token con expiración (`password_reset_request`). |
 | Autorización | Control de acceso por rol y permiso a nivel de API (RB-02); validación en la capa de aplicación. |
 | Auditoría | Registro de intentos de autenticación en `audit_login` (éxito/fracaso, fecha, IP, dispositivo). |
@@ -568,4 +568,5 @@ El dispositivo a bordo no posee interfaz gráfica en esta versión; su interfaz 
 
 ---
 
-*Documento alineado con el documento de arquitectura, los ADRs vigentes (ADR-001/002/003) y el modelo de datos vigente (20 entidades).*
+*Documento alineado con el documento de arquitectura, los ADRs vigentes (ADR-001..009) y el modelo de datos vigente (31 tablas).*
+

@@ -68,6 +68,7 @@ erDiagram
         VARCHAR ip_address
         TEXT user_agent
         TIMESTAMPTZ attempted_at
+        BOOLEAN is_active
     }
 
     %% =========================
@@ -152,7 +153,10 @@ erDiagram
         UUID id PK
         UUID event_id FK
         UUID media_type_id FK
-        TEXT file_url
+        VARCHAR minio_key
+        BIGINT size_bytes
+        UUID created_by FK
+        BOOLEAN is_active
     }
 
     ALERT_LOG {
@@ -161,6 +165,9 @@ erDiagram
         UUID sound_pattern_id FK
         UUID severity_id FK
         TIMESTAMPTZ triggered_at
+        UUID device_id FK
+        UUID created_by FK
+        BOOLEAN is_active
     }
 
     %% =========================
@@ -194,13 +201,14 @@ erDiagram
     SOUND_PATTERN ||--o{ EVENT_TYPE : default_sound
     DEVICE ||--o{ DEVICE_ASSIGNMENT : assigned
     USER ||--o{ DEVICE_ASSIGNMENT : receives
-    DEVICE ||--o{ DEVICE_CONFIG : configured
+    DEVICE ||--o| DEVICE_CONFIG : configured
     DEVICE ||--o{ EVENT : generates
     EVENT_TYPE ||--o{ EVENT : type
-    EVENT ||--o{ EVIDENCE : has
+    EVENT ||--o| EVIDENCE : has
     MEDIA_TYPE ||--o{ EVIDENCE : format
     EVENT ||--o{ ALERT_LOG : triggers
     SOUND_PATTERN ||--o{ ALERT_LOG : plays
     SEVERITY ||--o{ ALERT_LOG : severity
     USER ||--o{ NOTIFICATION : receives
     ALERT_LOG ||--o{ NOTIFICATION : causes
+

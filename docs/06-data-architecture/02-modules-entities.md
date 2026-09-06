@@ -56,11 +56,11 @@ Todas las entidades utilizan:
 | deleted_at | TIMESTAMPTZ NULL |
 | deleted_by | UUID NULL |
 
-> **Nota:** `is_active` BOOLEAN **es el campo de soft delete en todas las tablas** (por defecto TRUE; FALSE = inactivo). El control de eliminación lógica es `is_active = FALSE` (o equivalently `deleted_at IS NULL` para compatibilidad con vistas).
+> **Nota:** `is_active` BOOLEAN es el campo de soft delete por defecto TRUE (ausente en `module`, `feature`, `status_*` y `device_config_history`). El control de eliminación lógica es `is_active = FALSE` (o `deleted_at IS NULL` para compatibilidad con vistas).
 
 ---
 
-## Estados de negocio (ADR-009 — solo 5 tablas core)
+## Estados de negocio (ADR-009 — 5 core + `event_type`)
 
 Las siguientes tablas usan `status` + `status_category` (FK a `parameterization.status` / `status_category`):
 - `security.user`
@@ -68,8 +68,9 @@ Las siguientes tablas usan `status` + `status_category` (FK a `parameterization.
 - `telemetry_service.event`
 - `device_management.device_config`
 - `monitoring.notification`
+- `parameterization.event_type` (workflow de catálogo: `DRAFT/PUBLISHED/DEPRECATED`)
 
-Catálogos inmutables y tablas append-only **no** llevan estados parametrizados.
+`device_assignment` no tiene estado. Catálogos inmutables y tablas append-only **no** llevan estados parametrizados.
 
 ---
 
@@ -95,7 +96,7 @@ Representa a los usuarios del sistema.
 | first_name | VARCHAR(100) |
 | last_name | VARCHAR(100) |
 | phone | VARCHAR(30) |
-| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| is_active | BOOLEAN |
 | email_verified_at | TIMESTAMPTZ |
 | last_login_at | TIMESTAMPTZ |
 | failed_login_attempts | SMALLINT |
@@ -122,7 +123,7 @@ Define los roles del sistema.
 | code | VARCHAR(50) |
 | name | VARCHAR(100) |
 | description | TEXT |
-| is_active | BOOLEAN | **Por defecto TRUE** |
+| is_active | BOOLEAN |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
@@ -181,7 +182,7 @@ Relaciona roles con funcionalidades.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
-| is_active | BOOLEAN | **Por defecto TRUE** |
+| is_active | BOOLEAN |
 
 ---
 
@@ -203,7 +204,7 @@ Asigna roles a los usuarios.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
-| is_active | BOOLEAN | **Por defecto TRUE** |
+| is_active | BOOLEAN |
 
 ---
 
@@ -221,6 +222,7 @@ Solicitudes de recuperación de contraseña.
 | used_at | TIMESTAMPTZ |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -239,6 +241,7 @@ Registro de intentos de autenticación.
 | attempted_at | TIMESTAMPTZ |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -265,6 +268,7 @@ Clasificación de eventos.
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
 | updated_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -282,6 +286,7 @@ Define los niveles de severidad.
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
 | updated_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -300,6 +305,7 @@ Tipos de evidencia multimedia.
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
 | updated_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -321,6 +327,7 @@ Patrones de sonido utilizados por el dispositivo.
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
 | updated_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -368,7 +375,7 @@ Representa un dispositivo físico.
 | serial_number | VARCHAR(100) |
 | api_key_hash | TEXT |
 | firmware_version | VARCHAR(50) |
-| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| is_active | BOOLEAN |
 | last_heartbeat_at | TIMESTAMPTZ |
 | last_sync_at | TIMESTAMPTZ |
 | last_config_pull_at | TIMESTAMPTZ |
@@ -404,6 +411,7 @@ Historial de asignación de dispositivos.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
+| is_active | BOOLEAN |
 
 ---
 
@@ -416,7 +424,7 @@ Configuración remota del dispositivo (JSONB).
 | id | UUID |
 | device_id | UUID |
 | configuration | JSONB |
-| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| is_active | BOOLEAN |
 | version | INTEGER |
 | published_at | TIMESTAMPTZ |
 | created_at | TIMESTAMPTZ |
@@ -468,7 +476,7 @@ Representa una ocurrencia detectada por el dispositivo.
 | sound_pattern_id | UUID |
 | is_offline_sync | BOOLEAN |
 | metadata | JSONB |
-| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| is_active | BOOLEAN |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
@@ -495,6 +503,7 @@ Archivos asociados a un evento.
 | checksum_sha256 | VARCHAR(64) |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -514,6 +523,7 @@ Un evento puede no generar alarmas, generar una única alarma o múltiples alarm
 | device_id | UUID |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -537,7 +547,7 @@ Notificaciones enviadas a los usuarios como consecuencia de una alarma.
 | title | VARCHAR(200) |
 | message | TEXT |
 | channel | VARCHAR(30) |
-| is_active | BOOLEAN | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
+| is_active | BOOLEAN |
 | sent_at | TIMESTAMPTZ |
 | delivered_at | TIMESTAMPTZ |
 | read_at | TIMESTAMPTZ |
@@ -586,7 +596,7 @@ Notificaciones enviadas a los usuarios como consecuencia de una alarma.
 
 - Un **DEVICE** genera múltiples **EVENT**.
 - Un **EVENT** pertenece a un **EVENT_TYPE**.
-- Un **EVENT** puede tener múltiples **EVIDENCE**.
+- Un **EVENT** tiene como máximo una **EVIDENCE** en MVP (`UNIQUE(event_id)`).
 - Una **EVIDENCE** pertenece a un **MEDIA_TYPE**.
 - Un **EVENT** puede generar cero, una o múltiples **ALERT_LOG**.
 - Un **ALERT_LOG** utiliza un **SOUND_PATTERN**.
