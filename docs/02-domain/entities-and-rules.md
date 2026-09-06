@@ -49,6 +49,62 @@ Reglas de negocio del sistema. Fuente de verdad de las reglas `RN-*`; consolidan
 > | RN-08 | RN-TEL-01, RN-TEL-04 | Idempotencia event_id |
 > | RN-09 | RN-PAR-02 | sound_pattern solo admin |
 > | RN-10 | RN-DEV-04, RN-TEL-05 | Descarga config antes de monitorear |
+>
+> ## Definición de reglas canónicas por módulo
+>
+> | ID | Regla |
+> |----|-------|
+> | RN-SEC-01 | Una cuenta es única por correo electrónico |
+> | RN-SEC-02 | Las contraseñas se almacenan solo como hash (bcrypt, nunca plano) |
+> | RN-SEC-03 | La autenticación usa JWT RS256 de corta duración + refresh token |
+> | RN-SEC-04 | El login exige correo/contraseña válidos y registra el intento |
+> | RN-SEC-05 | El logout invalida el refresh token (blocklist) |
+> | RN-SEC-06 | La recuperación de contraseña usa token temporal de 1h, un solo uso |
+> | RN-SEC-07 | La unicidad de correo/teléfono se valida al actualizar datos |
+> | RN-SEC-08 | La eliminación de cuenta es soft-delete con ventana de recuperación |
+> | RN-SEC-09 | Todo intento de login se audita (`audit_login`: IP, user-agent, éxito/fallo) |
+> | RN-SEC-10 | El acceso se controla por roles y features (`role_feature`) |
+> | RN-DEV-01 | Un dispositivo solo pertenece a la cuenta asignada (`device_assignment` 1:1 vigente) |
+> | RN-DEV-02 | Desasociar libera el dispositivo (`unassign` → `REGISTERED`) |
+> | RN-DEV-03 | El alta genera `api_key_hash`; la key en claro se muestra una sola vez |
+> | RN-DEV-04 | La configuración remota (`device_config` JSONB) es descargable por el device |
+> | RN-DEV-05 | El heartbeat periódico define `ACTIVE`/`OFFLINE` (timeout 5 min) |
+> | RN-DEV-06 | Los cambios de estado siguen `status_transition` según rol |
+> | RN-DEV-07 | La consulta de dispositivos filtra por estado y fecha de asignación |
+> | RN-PAR-01 | Los catálogos base se administran por CRUD restringido |
+> | RN-PAR-02 | `sound_pattern` solo lo gestiona el administrador |
+> | RN-PAR-03 | `event_type` define umbrales configurables por tipo de evento |
+> | RN-PAR-04 | Los defaults de catálogo admiten override por `device_config` |
+> | RN-PAR-05 | Los cambios de catálogo quedan versionados con auditoría |
+> | RN-TEL-01 | La ingesta es idempotente por `event_id` (duplicados se reportan, no son error) |
+> | RN-TEL-02 | Cada evento lleva como máximo una evidencia en MinIO (`evidence.event_id` UNIQUE) |
+> | RN-TEL-03 | Toda alerta del device se registra en `alert_log` con su evento y sonido |
+> | RN-TEL-04 | El buffer offline reintenta con backoff y retención de 7 días |
+> | RN-TEL-05 | El device descarga `device_config` tras cada sync exitosa |
+> | RN-TEL-06 | La consulta de eventos filtra por device, tipo, severidad y fechas |
+> | RN-TEL-07 | El buffer local se limpia tras el ACK del servidor |
+> | RN-MON-01 | Los eventos críticos notifican automáticamente al propietario del device |
+> | RN-MON-02 | Las plantillas de notificación dependen de tipo + severidad |
+> | RN-MON-03 | El delivery se traza (`sent → delivered → read`) con reintentos |
+> | RN-MON-04 | El usuario configura canales y severidad mínima |
+> | RN-ANA-01 | La línea de tiempo ordena eventos por fecha con filtros |
+> | RN-ANA-02 | Las métricas agregan por tipo, severidad y período |
+> | RN-ANA-03 | El resumen IA es descriptivo y de menor prioridad (final del MVP) |
+> | RN-ANA-04 | El reporte consolida timeline + métricas + resumen + evidencia |
+> | RN-ANA-05 | El video en tiempo real es post-MVP (a demanda, WebRTC) |
+> | RN-EDGE-01 | El device verifica cámara y modelo al iniciar (AS-08 ok / AS-09 error) |
+> | RN-EDGE-02 | Con cámara obstruida se pausa la detección (AS-09) |
+> | RN-EDGE-03 | La captura continua verifica rostro (landmarks) para habilitar el análisis |
+> | RN-EDGE-04 | La somnolencia se clasifica por nivel con alertas AS-01..AS-04 |
+> | RN-EDGE-05 | Las distracciones generan alertas AS-05/AS-06 |
+> | RN-EDGE-06 | Sin cinturón se alerta AS-07 intermitente |
+> | RN-EDGE-07 | Cada tipo de evento tiene alerta sonora diferenciada con escalamiento |
+> | RN-EDGE-08 | Todo evento se registra localmente con su evidencia en SQLite |
+> | RN-EDGE-09 | El monitoreo se pausa sin rostro y reanuda al detectarlo |
+> | RN-EDGE-10 | El device detecta conectividad y sincroniza solo con red |
+> | RN-EDGE-11 | La config recibida se aplica en runtime sin reinicio |
+> | RN-EDGE-12 | El almacenamiento local se auto-limpia por retención tras ACK |
+> | RN-EDGE-13 | El streaming de video es post-MVP y solo a demanda |
 
 ## Modelo de dominio por módulo
 

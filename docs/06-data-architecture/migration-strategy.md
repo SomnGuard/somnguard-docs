@@ -374,9 +374,11 @@ ON CONFLICT (code) DO UPDATE SET
 ### 5.4 Roles y estados iniciales
 
 Archivos en `02_dml/00_inserts/`:
-- `006_insert_roles.sql` - roles admin, user
-- `007_insert_user_role.sql` - asignaciones base
-- `010_insert_status_init.sql` - estados device: REGISTERED, ASSIGNED, ACTIVE
+- `009_insert_security_roles.sql` - roles admin, user
+- `011_insert_security_features.sql` - 17 features (`recurso.accion`)
+- `012_insert_security_role_feature.sql` - asignaciones base rol-feature
+- `007_insert_status.sql` - estados prefijados (`DEVICE_*`, `EVENT_*`, `USER_*`, `NOTIFICATION_*`, `DEVICE_CONFIG_*`)
+- `008_insert_status_transition.sql` - transiciones permitidas
 
 ### 5.5 Estrategia de aplicación
 

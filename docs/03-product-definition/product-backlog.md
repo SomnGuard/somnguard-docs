@@ -30,6 +30,8 @@ Backlog de producto inicial, derivado de las funcionalidades del sistema (`F-01.
 | Parametrización | parameterization | F-10 (administración de catálogos) |
 | Analítica y reportes | analytics | F-06 (análisis de datos y reportes) |
 
+> `Setup y Foundation` y `Device Edge` no son épicas de producto: son fases de trabajo en `user-stories.md`/`traceability-matrix.md`.
+
 ## Priorización MoSCoW (MVP)
 
 | Prioridad | Épicas |

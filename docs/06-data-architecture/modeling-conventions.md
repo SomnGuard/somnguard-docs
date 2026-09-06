@@ -32,8 +32,8 @@ Convenciones transversales del modelo de datos de SomnGuard. Aplica a las 20 ent
 | `deleted_by` | UUID | Sí | Usuario que eliminó (FK `user.id` o `SYSTEM_ACTOR_ID`) |
 | `version` | INTEGER | No | Optimistic locking (empezar en 1) |
 | `is_active` | BOOLEAN | No | **Campo de soft delete** — por defecto TRUE. FALSE = inactivo. |
-| `status` | VARCHAR(50) | Sí (default NULL) | **Estado de negocio** — en `user, device, device_config, notification, event, event_type` (FK a `parameterization.status`). `device_assignment` NO tiene estado. |
-| `status_category` | VARCHAR(30) | Sí (default NULL) | **Categoría de estado** — en las mismas 6 tablas (FK a `parameterization.status_category`). |
+| `status` | VARCHAR(50) | Sí (default NULL; NOT NULL DEFAULT solo en `event_type`) | **Estado de negocio** — en `user, device, device_config, notification, event, event_type` (FK a `parameterization.status`). `device_assignment` NO tiene estado. |
+| `status_category` | VARCHAR(30) | Sí (default NULL; NOT NULL DEFAULT solo en `event_type`) | **Categoría de estado** — en las mismas 6 tablas (FK a `parameterization.status_category`). |
 
 ### Tablas transaccionales solo INSERT / append-only (evidence, alert_log, audit_login, password_reset_request, device_config_history)
 | Columna | Tipo | Nullable | Descripción |
@@ -52,7 +52,7 @@ Convenciones transversales del modelo de datos de SomnGuard. Aplica a las 20 ent
 
 > `role_feature` y `user_role` son transaccionales (llevan `version`/`deleted_at`/`is_active`), no catálogos.
 
-> **Nota:** Catálogos con `is_active` (`role`, `event_type`) se desactivan con `is_active = false`; `module`/`feature`/`status_*` son inmutables (sin `is_active`, sin UPDATE).
+> **Nota:** Catálogos con `is_active` (`role`, `event_type`, `event_category`, `severity`, `media_type`, `sound_pattern`) se desactivan con `is_active = false`; `module`/`feature`/`status_*` son inmutables (sin `is_active`, sin UPDATE).
 
 ### Actor de sistema
 

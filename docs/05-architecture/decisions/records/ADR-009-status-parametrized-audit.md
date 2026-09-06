@@ -23,7 +23,7 @@ Problemas del enfoque "un campo `status` VARCHAR por tabla":
 - **Difícil consulta:** "Todos los dispositivos activos" = `WHERE status IN ('Activo', 'ACTIVE', 'active', ...)`
 - **Auditoría inexistente:** No hay histórico de cambios de estado
 
-Requisitos (SRS, cross-cutting.md, guía ADR-004):
+Requisitos (SRS, cross-cutting.md, guía de modelado):
 - **Estados parametrizados** (configurables sin deploy)
 - **Transiciones validadas** (reglas de negocio)
 - **Auditoría append-only** (histórico inmutable de cambios)
@@ -288,10 +288,11 @@ SELECT * FROM device_management.device WHERE deleted_at IS NULL;
 
 ## Referencias
 
-- [cross-cutting.md](../../cross-cutting.md#5-estados-parametrizados-adr-004-guía-adaptado)
+- [cross-cutting.md](../../cross-cutting.md#5-estados-parametrizados-adr-009)
 - [modeling-conventions.md](../../../06-data-architecture/modeling-conventions.md) — campos auditoría obligatorios
 - [functional.md](../../../04-requirements/functional.md) → RF-DEV-05, RF-TEL-*, RF-MON-*, RF-SEC-08
 - [entities-and-rules.md](../../../02-domain/entities-and-rules.md) — RN-DEV-06, RN-TEL-*, RN-SEC-*
-- Guía ADR-004 (SENA): `status_category` + `status` + append-only audit
+- Guía de modelado ([modeling-conventions.md](../../../06-data-architecture/modeling-conventions.md)): `status_category` + `status` + auditoría append-only
 - PostgreSQL Triggers: https://www.postgresql.org/docs/current/triggers.html
+
 

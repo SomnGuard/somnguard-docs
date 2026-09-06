@@ -228,6 +228,7 @@
 | `used_at` | TIMESTAMPTZ | SÍ | — | — | — | Cuándo se usó |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: creación |
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | User ID creador (system) |
+| `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE |
 
 ---
 
@@ -266,6 +267,7 @@
 | `updated_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: última modificación |
 | `updated_by` | UUID | SÍ | — | `security.user(id)` | — | User ID modificador |
 
+| `is_active` | BOOLEAN | NO | TRUE | - | - | **Soft delete** - por defecto TRUE |
 ---
 
 ### `parameterization.severity` — Niveles de severidad
@@ -280,6 +282,7 @@
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | User ID creador (seed = SYSTEM_ACTOR_ID) |
 | `updated_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: última modificación |
 | `updated_by` | UUID | SÍ | — | `security.user(id)` | — | User ID modificador |
+| `is_active` | BOOLEAN | NO | TRUE | - | - | **Soft delete** - por defecto TRUE |
 
 ---
 
@@ -296,6 +299,7 @@
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | User ID creador (seed = SYSTEM_ACTOR_ID) |
 | `updated_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: última modificación |
 | `updated_by` | UUID | SÍ | — | `security.user(id)` | — | User ID modificador |
+| `is_active` | BOOLEAN | NO | TRUE | - | - | **Soft delete** - por defecto TRUE |
 
 ---
 
@@ -315,6 +319,7 @@
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | User ID creador (seed = SYSTEM_ACTOR_ID) |
 | `updated_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: última modificación |
 | `updated_by` | UUID | SÍ | — | `security.user(id)` | — | User ID modificador |
+| `is_active` | BOOLEAN | NO | TRUE | - | - | **Soft delete** - por defecto TRUE |
 
 **Seed (Apéndice 1 SRS):**
 | code | description | frequency_hz | duration_ms | repetitions | pattern_type | interval_ms |
@@ -327,7 +332,7 @@
 | AS-06 | Mirada fuera vía | 950 | 500 | 2 | beep | 200 |
 | AS-07 | Cinturón no detectado | 700 | 1000 | 0 | intermittent | 1000 |
 | AS-08 | Confirmación inicio | 600 | 300 | 1 | beep | — |
-| AS-09 | Error sistema | 1000→700 | 500 | 2 | beep | 200 |
+| AS-09 | Error sistema | 1000 | 500 | 2 | escalating | 200 |
 
 ---
 
@@ -363,7 +368,7 @@
 | EV-SOM-05 | Microsueño detectado | SOMNOLENCE | critical | AS-04 | `{"eye_closed_min_sec": 3, "head_tilt_deg_min": 20, "simultaneous": true}` |
 | EV-DIS-01 | Uso teléfono móvil | DISTRACTION | info | AS-05 | `{"detection_confidence_min": 0.7, "duration_sec_min": 2}` |
 | EV-DIS-02 | Uso prolongado teléfono | DISTRACTION | high | AS-05 | `{"duration_sec_min": 5}` |
-| EV-DIS-03 | Mirada fuera vía | DISTRACTION | info | AS-06 | `{"duration_sec_min": 3}` |
+| EV-DIS-03 | Mirada fuera de la vía | DISTRACTION | info | AS-06 | `{"duration_sec_min": 3}` |
 | EV-DIS-04 | Mirada prolongada fuera | DISTRACTION | high | AS-06 | `{"duration_sec_min": 5}` |
 | EV-DIS-05 | Movimiento anómalo | DISTRACTION | info | AS-05 | `{"duration_sec_min": 3}` |
 | EV-CIN-01 | Cinturón no detectado | SEATBELT | info | AS-07 | `{"no_detection_sec_min": 10}` |
@@ -371,8 +376,8 @@
 | EV-SYS-01 | Inicialización exitosa | SYSTEM | info | AS-08 | `{}` |
 | EV-SYS-02 | Error cámara/obstrucción | SYSTEM | warning | AS-09 | `{"invalid_image_sec_min": 10}` |
 | EV-SYS-03 | Rostro no detectado | SYSTEM | info | AS-09 | `{"no_face_sec_min": 30}` |
-| EV-SYS-04 | Conectividad perdida | SYSTEM | info | — | `{}` |
-| EV-SYS-05 | Conectividad restaurada | SYSTEM | info | — | `{}` |
+| EV-SYS-04 | Conectividad perdida | SYSTEM | info | AS-09 | `{}` |
+| EV-SYS-05 | Conectividad restaurada | SYSTEM | info | AS-08 | `{}` |
 | EV-SYS-06 | Almacenamiento casi lleno | SYSTEM | warning | AS-09 | `{"usage_pct_min": 90}` |
 
 ---
@@ -410,7 +415,7 @@
 | `updated_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: última modificación |
 | `updated_by` | UUID | SÍ | — | `security.user(id)` | — | User ID modificador |
 
-**Seed clave (códigos reales prefijados por entidad):**
+**Seed clave (códigos prefijados por entidad; `event_type` usa bare en sus propias filas por legado de seeds — unificar pendiente):**
 | entity_type | code | status_category | is_initial | is_terminal |
 |-------------|------|-----------------|------------|-------------|
 | device | DEVICE_REGISTERED | PENDING | TRUE | FALSE |
@@ -489,8 +494,8 @@
 | `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete | |
 | `deleted_by` | UUID | SÍ | — | `security.user(id)` | — | User ID que eliminó | |
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking | |
-| `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio |
-| `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado |
+| `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio | |
+| `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado | |
 
 **Índices:** `idx_device_status_active (status) WHERE deleted_at IS NULL`, `idx_device_heartbeat (last_heartbeat_at)`
 
@@ -515,6 +520,7 @@
 | `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete = desasignación |
 | `deleted_by` | UUID | SÍ | — | `security.user(id)` | — | User ID que desasignó |
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking |
+| `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE |
 
 > **Regla:** Un device solo tiene UNA asignación activa (`unassigned_at IS NULL` AND `deleted_at IS NULL`)
 
@@ -597,8 +603,8 @@
 | `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete | |
 | `deleted_by` | UUID | SÍ | — | — | — | User/Device ID que eliminó | |
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking | |
-| `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio |
-| `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado |
+| `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio | |
+| `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado | |
 
 **Índices compuestos críticos:**
 - `idx_event_device_time (device_id, occurred_at DESC)` — timeline por device
@@ -613,15 +619,14 @@
 | Columna | Tipo | Null | Default | FK | Índice | Descripción |
 |---------|------|------|---------|----|--------|-------------|
 | `id` | UUID | NO | — | PK | PK | Identificador evidencia |
-| `event_id` | UUID | NO | — | `telemetry_service.event(id)` | **UNIQUE** | Evento asociado (1 evidencia por evento en MVP). Mapeo lote: `POST /telemetry/events JSON` fase 1 -> `POST /telemetry/events/{id}/evidence multipart` fase 2. Key `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg}` |
+| `event_id` | UUID | NO | — | `telemetry_service.event(id)` | **UNIQUE** | Evento asociado (1 evidencia por evento en MVP). Mapeo lote: `POST /telemetry/events JSON` fase 1 -> `POST /telemetry/events/{id}/evidence multipart` fase 2. Key `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` |
 | `media_type_id` | UUID | NO | — | `parameterization.media_type(id)` | — | Tipo: image_jpeg, video_mp4 |
-| `minio_key` | VARCHAR(500) | NO | — | — | — | Key en MinIO: `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` | ADR-006 |
+| `minio_key` | VARCHAR(500) | NO | — | — | — | Key en MinIO: `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` (ver ADR-006) |
 | `size_bytes` | BIGINT | NO | — | — | — | Tamaño archivo |
+| `checksum_sha256` | VARCHAR(64) | NO | — | — | — | SHA-256 del archivo (integridad) |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Timestamp subida |
 | `created_by` | UUID | NO | — | `device_management.device(id)` | — | Device que subió |
 | `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE |
-
-> **Nota:** verificación de integridad futura vía `checksum_sha256` (sin columna en v1; usar `size_bytes` + ETag de MinIO).
 
 > **Retención:** 90 días (eventos normales) / 5 años (severity=critical) — ADR-006 ILM
 
@@ -637,8 +642,9 @@
 | `severity_id` | UUID | NO | — | `parameterization.severity(id)` | IDX | Severidad registrada | |
 | `triggered_at` | TIMESTAMPTZ | NO | — | — | **IDX (triggered_at DESC)** | Timestamp alarma | |
 | `device_id` | UUID | NO | — | `device_management.device(id)` | IDX | Device (denormalizado para queries) | |
-| `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | = triggered_at |
-| `created_by` | UUID | NO | — | `device_management.device(id)` | — | = device_id |
+| `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | = triggered_at | |
+| `created_by` | UUID | NO | — | `device_management.device(id)` | — | = device_id | |
+| `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE | |
 
 > **Retención:** 5 años — RN-05, ADR-006
 
@@ -669,8 +675,8 @@
 | `deleted_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Soft delete | |
 | `deleted_by` | UUID | SÍ | — | `security.user(id)` | — | User ID que eliminó | |
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking | |
-| `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio |
-| `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado |
+| `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio | |
+| `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado | |
 
 **Reglas:** RN-07 (notificaciones críticas auto, propietario device), plantillas por event_type+severity
 
@@ -777,10 +783,10 @@ CREATE INDEX ON {schema}.{entity}_status_audit ({entity}_id, changed_at DESC);
 
 | Tipo de Tabla | Ejemplos | Auditoria | Soft Delete | Version | Estados |
 |---------------|----------|-----------|-------------|---------|---------|
-| **Catálogo inmutable** | `role`, `module`, `feature`, `event_category`, `severity`, `media_type`, `sound_pattern`, `status_category`, `status`, `status_transition` | `created_at`, `created_by` | NO | NO | NO |
+| **Catálogo inmutable** | `role`, `module`, `feature`, `event_category`, `severity`, `media_type`, `sound_pattern`, `status_category`, `status`, `status_transition` | `created_at`, `created_by` (+`updated_at`/`is_active` donde existen: `role`, `event_category`, `severity`, `media_type`, `sound_pattern`, `event_type`) | NO | NO | NO |
 | **Configuración versionada** | `device_config`, `event_type` | Completa | SÍ | SÍ | `status_category` + `status` |
 | **Transaccional principal** | `user`, `device`, `device_assignment`, `event`, `notification` | Completa | SÍ | SÍ | `status_category` + `status` donde aplica (sin estado: `device_assignment`) |
-| **Append-only (eventos)** | `audit_login`, `alert_log`, `password_reset_request`, `evidence`, `device_config_history` | `created_at`/`created_by` | NO | NO | NO |
+| **Append-only (eventos)** | `audit_login`, `alert_log`, `password_reset_request`, `evidence`, `device_config_history` | `created_at`/`created_by` (+`is_active` excepto `device_config_history`) | NO (físico) | NO | NO |
 | **Histórico de estado** | `*_status_audit` | Append-only | NO | NO | N/A |
 
 ---
@@ -808,3 +814,9 @@ CREATE INDEX ON {schema}.{entity}_status_audit ({entity}_id, changed_at DESC);
 3. **Crear `modeling-conventions.md`** con reglas formales (naming, FKs, índices, JSONB, triggers)
 4. **Crear `migration-strategy.md`** (orden ejecución, rollback, seed data, CI integration)
 5. **Actualizar `../09-modules/modules/_template/module/data-model.md`** para cada módulo use este diccionario como fuente
+
+
+
+
+
+

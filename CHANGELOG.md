@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Fixed (2026-09-05, cont.)
+- **Trazabilidad RF↔HU bidireccional:** HU deps a HUs que declaran el RF (`HU-API-005`, `HU-DEVICE-002`), `RF-SEC-04→HU-API-002`, `RF-EDGE-11/RF-TEL-04/RF-TEL-05` con cobertura device+API, `RF-DEV-06/07` movidos a su sección, `RF-SEC-06/07` reservados, resumen HU con SP 65/44 no aditivos, backlog con IDs reales y fases aclaradas.
+- **Seeds y estados:** tabla de seeds con 23 códigos prefijados (+nota `event_type` bare en seeds), categorías reales en §5.2 con alias lógicos, transiciones `unassign` pendientes en seeds, `migration-strategy:379` con archivos reales, `checksum_sha256` requerido (DDL lo exige), catálogos con `is_active` matizado, `AS-09`/`EV-SYS-04/05` a seeds.
+- **Gobierno:** `Aceptada` en estados permitidos, `RN-<MOD>` canónico, `QR-019` ordenado con nota de numeración, TD-004→TD-008 runbook, `05-README` En progreso, `incident-management` con Alertmanager, `99-archive/README` y README historial al día.
+- **Tablas:** filas `status`/`is_active`/`created_*` con celdas completas en `data-dictionary.md`, `02-modules-entities.md` y `.mmd` 1:1 (`DEVICE→CONFIG`, `EVENT→EVIDENCE`, `AUDIT_LOGIN.is_active`, `cd-domain` +4 relaciones).
+
 ### Fixed (2026-09-05)
 - **Modelo 06 a DDL real:** `device_config` un solo `version`, `status` en `user`, `is_active` en `role`/`evidence`/`audit_login`, `event` transaccional (no append-only), `evidence` 1:1 sin `checksum` (integridad v1 `size_bytes` + ETag), Resumen 31 tablas, orden real de migración, `.mmd` sin `file_url` y con `device_id`, `v_metrics_daily` vía `device_assignment`, `is_active`/FK matizados.
 - **Auth/UML a código y api-design:** `token_hash` SHA-256, `outcome` de catálogo, expiración reset 1h, `created_by` NULL, features en minúscula, `POST` notificaciones-read y `POST /analytics/reports` propuesta, `PUT→PATCH` catálogos, `es-event` vía `ANALYZED`, `audit-login`/`users`/`role-features`/`/api/v1`/dueño config en `dependency-map`, envelope de errores y rate-limits con cifras, `Idempotency-Key` en api-design.
@@ -11,7 +17,6 @@
 - **Endpoints security alineados a HU:** `forgot-password`/`reset-password`, `register`, `verify-email`, CRUD roles/features, `POST /role-features`, `PATCH /users/{id}` + `PATCH /users/me`; `GET /audit-login`; prefijo `/api/v1` en `dependency-map.md`.
 - **IDs y trazabilidad:** duplicados `RF-DEV-06/07/08/09` y `HU-PORTAL-004` resueltos (video → `HU-PORTAL-005`); conteo real 26 MVP + 4 post-MVP (209 SP); tabla RF→HU de `functional.md` remapeada a HUs existentes; equivalencia `RN-01..10 ↔ RN-XXX` en `entities-and-rules.md`; estados a `En progreso`/`Pendiente` según gobernanza.
 - **Links rotos:** `../cross-cutting.md` → `../../` en 7 ADRs; `event-catalog.md`, `module-catalog.md`, `data-dictionary.md`, logos UML, deprecado `03-data-dictionary.md` → `data-dictionary.md`; `decisions/README.md` con ADR-001..009.
-- **Q/TD:** cerradas Q-007 (QR-019 payload), Q-013 (QR-013 estados), Q-016 (QR-016 observabilidad); TD-004 y TD-006 resueltos (TD-005 con semillas verificadas).
 
 ### Changed (2026-09-04)
 - **Rename:** `docs/04-requeriments/` → `docs/04-requirements/` (typo) con 25 referencias actualizadas.

@@ -222,6 +222,7 @@ Solicitudes de recuperación de contraseña.
 | used_at | TIMESTAMPTZ |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -267,6 +268,7 @@ Clasificación de eventos.
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
 | updated_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -284,6 +286,7 @@ Define los niveles de severidad.
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
 | updated_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -302,6 +305,7 @@ Tipos de evidencia multimedia.
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
 | updated_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -323,6 +327,7 @@ Patrones de sonido utilizados por el dispositivo.
 | created_by | UUID |
 | updated_at | TIMESTAMPTZ |
 | updated_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 
@@ -406,6 +411,7 @@ Historial de asignación de dispositivos.
 | deleted_at | TIMESTAMPTZ |
 | deleted_by | UUID |
 | version | INTEGER |
+| is_active | BOOLEAN |
 
 ---
 
@@ -494,11 +500,10 @@ Archivos asociados a un evento.
 | media_type_id | UUID |
 | minio_key | VARCHAR(500) |
 | size_bytes | BIGINT |
+| checksum_sha256 | VARCHAR(64) |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
 | is_active | BOOLEAN |
-
-> Integridad en v1 vía `size_bytes` + ETag de MinIO (`checksum_sha256` futuro, sin columna).
 
 ---
 
@@ -518,6 +523,7 @@ Un evento puede no generar alarmas, generar una única alarma o múltiples alarm
 | device_id | UUID |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
+| is_active | BOOLEAN |
 
 ---
 

@@ -56,6 +56,8 @@
 | RF-SEC-09 | Auditoría de login (audit_login): IP, user-agent, éxito/fallo, timestamp | RN-SEC-09 | RNF-4.3 | Must | Seguridad y cuentas |
 | RF-SEC-10 | Control de acceso por roles (RBAC): admin, user; features por role_feature | RN-SEC-10 | RNF-4.4 | Must | Seguridad y cuentas |
 
+> `RF-SEC-06/07` reservados sin asignar (el assign/unassign es `RF-DEV-06/07`).
+
 ### Parameterization (RF-PAR-*)
 
 | ID | Descripción | RN Origen | Funcionalidad SRS | Prioridad MoSCoW | Épica |
@@ -160,8 +162,8 @@
 | RF-TEL-01 | RN-TEL-01 | RF-7.1,7.2,8.3 | Telemetría y sincronización | Telemetry Service | HU-API-007 |
 | RF-TEL-02 | RN-TEL-02 | RF-7.4,8.3 | Telemetría y sincronización | Telemetry Service | HU-API-007 |
 | RF-TEL-03 | RN-TEL-03 | RF-6.1,6.2,7.3 | Telemetría y sincronización | Telemetry Service | HU-API-007 |
-| RF-TEL-04 | RN-TEL-04 | RF-8.1,8.2,8.3 | Telemetría y sincronización | Telemetry Service | HU-DEVICE-003 |
-| RF-TEL-05 | RN-TEL-05 | RF-1.2,8.3 | Telemetría y sincronización | Telemetry Service | HU-API-005 |
+| RF-TEL-04 | RN-TEL-04 | RF-8.1,8.2,8.3 | Telemetría y sincronización | Telemetry Service | HU-DEVICE-003, HU-API-007 |
+| RF-TEL-05 | RN-TEL-05 | RF-1.2,8.3 | Telemetría y sincronización | Telemetry Service | HU-API-005, HU-DEVICE-002, HU-DEVICE-003 |
 | RF-TEL-06 | RN-TEL-06 | RF-10.1 | Telemetría y sincronización | Telemetry Service | HU-API-008, HU-PORTAL-002 |
 | RF-TEL-07 | RN-TEL-07 | RNF-2.4 | Telemetría y sincronización | Telemetry Service | HU-DEVICE-003 |
 | RF-MON-01 | RN-MON-01 | RF-10.5 | Monitoreo y notificaciones | Monitoring | HU-API-009, HU-APP-002 |
@@ -183,7 +185,7 @@
 | RF-EDGE-08 | RN-EDGE-08 | RF-7.1..7.4,8.1 | Telemetría y sincronización | Device Edge | HU-DEVICE-003 |
 | RF-EDGE-09 | RN-EDGE-09 | RF-1.5 | Telemetría y sincronización | Device Edge | HU-DEVICE-002 |
 | RF-EDGE-10 | RN-EDGE-10 | RF-8.2,8.3 | Telemetría y sincronización | Device Edge | HU-DEVICE-003 |
-| RF-EDGE-11 | RN-EDGE-11 | RF-1.2,8.3 | Gestión de dispositivos | Device Edge | HU-DEVICE-002, HU-DEVICE-004 |
+| RF-EDGE-11 | RN-EDGE-11 | RF-1.2,8.3 | Gestión de dispositivos | Device Edge | HU-DEVICE-002, HU-DEVICE-004, HU-API-005 |
 | RF-EDGE-12 | RN-EDGE-12 | RNF-2.4,8.1 | Telemetría y sincronización | Device Edge | HU-DEVICE-003 |
 | RF-EDGE-13 | RN-EDGE-13 | RF-10.6 | Analítica y reportes | Device Edge | HU-API-012, HU-DEVICE-005 |
 
@@ -196,7 +198,7 @@
 - **Épicas y priorización:** [product-backlog.md](../03-product-definition/product-backlog.md)
 - **Catálogo de módulos:** [module-catalog.md](../09-modules/module-catalog.md)
 - **Plantilla HU:** [_template-hu.md](./_template-hu.md)
-- **Matriz de trazabilidad:** [traceability-matrix.md](./traceability-matrix.md) (actualizar tras crear HUs)
+- **Matriz de trazabilidad:** [traceability-matrix.md](./traceability-matrix.md) (matriz RF ↔ HU completa)
 - **Requisitos no funcionales:** [non-functional.md](./non-functional.md) (RNF-* del SRS §3.3)
 
 ---

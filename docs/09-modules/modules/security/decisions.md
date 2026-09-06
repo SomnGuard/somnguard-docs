@@ -180,14 +180,14 @@
 
 ---
 
-### SEC-008: Audit_login append-only sin soft delete
+### SEC-008: Audit_login append-only sin UPDATE ni DELETE
 
 **Fecha:** 2026-09-01
 **Estado:** Aceptada
 
 **Contexto:** Logs de auditoría deben ser inmutables.
 
-**Decisión:** Tabla `audit_login` sin `deleted_at`, `is_active`, `updated_at`. Solo `created_at`, `created_by`.
+**Decisión:** Tabla `audit_login` sin `deleted_at` ni `updated_at` (sí `is_active`). Solo INSERT.
 
 **Consecuencias:**
 - + Inmutabilidad garantizada por diseño
