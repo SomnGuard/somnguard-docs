@@ -1,4 +1,4 @@
-<div style="display:flex; align-items:center; justify-content:space-between;">
+ <div style="display:flex; align-items:center; justify-content:space-between;">
 
 <div>
 <img src="../../assets/icons/logo-somnguard.png" width="140"/>
@@ -43,8 +43,8 @@
 | **Credencial** | API Key (opaque, 32 bytes base64url) + `device_id` (UUID) |
 | **Header** | `X-Device-ID: <uuid>` + `X-API-Key: <key>` |
 | **Validación** | HMAC-SHA256 de `api_key` comparado con `device.api_key_hash` |
-| **Rate Limit Device** | 1000 req/min por API Key en gateway (Traefik `device-ratelimit`, burst 2000) — ver ADR-008. En API: `POST /telemetry/events 60/min`, `POST /heartbeat 2/min`, `GET /config 10/min` por `X-Device-ID` |
-| **Scope** | Solo endpoints `/telemetry/*`, `POST /devices/{id}/heartbeat` y `GET /devices/{id}/config`. `REGISTERED` sin `assign` -> `403` en telemetría |
+| **Rate Limit Device** | 1000 req/min por API Key en gateway (Traefik `device-ratelimit`, burst 2000) — ver ADR-008. En API: `POST /telemetry/events 60/min`, `POST /heartbeat 2/min`, `GET /config 10/min` por `X-Device-ID`; `POST /devices/self-register` y `POST /devices/claim` 5/min por IP (anti-enumeración) |
+| **Scope** | Solo endpoints `/telemetry/*`, `POST /devices/{id}/heartbeat` y `GET /devices/{id}/config`. `REGISTERED` sin `assign` -> `403` en telemetría. `X-Provision-Token` solo abre `POST /devices/self-register` (ver ADR-010) |
 
 ### 1.3 RBAC (Role-Based Access Control)
 | Aspecto | Especificación |

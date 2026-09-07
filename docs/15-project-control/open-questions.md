@@ -48,6 +48,7 @@ Preguntas y decisiones pendientes del proyecto, recopiladas de actas, arquitectu
 | QR-013 | ¿Los estados de negocio usan catálogo parametrizable genérico o `VARCHAR + CHECK`? | Catálogo parametrizable (`status_category` + `status`, FK a `parameterization`) | [ADR-009](../05-architecture/decisions/records/ADR-009-status-parametrized-audit.md) | 2026-08-22 |
 | QR-016 | ¿Qué stack de observabilidad se adopta? | OpenTelemetry + LGTM | [ADR-007](../05-architecture/decisions/records/ADR-007-observability-otel-lgtm.md) | 2026-08-22 |
 | QR-019 | ¿Qué formato tiene el payload de sincronización offline (JSON + multimedia)? | Lote `POST /telemetry/events` solo metadata JSON `{"events":[]}` + `POST /telemetry/events/{id}/evidence` multipart (base64 descartado) | [api-design.md](../07-api-design/api-design.md), [ADR-005](../05-architecture/decisions/records/ADR-005-offline-first-device.md) | 2026-09-04 |
+| QR-020 | ¿Cómo se registra un device sin alta manual (auto-registro)? | Provisioning Token (un uso) + `POST /devices/self-register` + claim por usuario | [ADR-010](../05-architecture/decisions/records/ADR-010-provisioning-self-register.md) | 2026-09-05 |
 
 > `QR-*` conserva el número de su pregunta cuando existe (`QR-011←Q-011`); si el número está ocupado por otra pregunta se asigna el siguiente libre (`Q-007→QR-019` porque `QR-007` es el canal Discord).
 

@@ -39,3 +39,4 @@ Las decisiones de arquitectura (Architecture Decision Records) se registran aqu√
 | [ADR-007](./records/ADR-007-observability-otel-lgtm.md) | Observabilidad OpenTelemetry + LGTM | Aceptada | 2026-08-22 |
 | [ADR-008](./records/ADR-008-traefik-edge-gateway.md) | Traefik Edge Gateway | Aceptada | 2026-08-22 |
 | [ADR-009](./records/ADR-009-status-parametrized-audit.md) | Estados Parametrizados + Auditor√≠a Append-Only | Aceptada | 2026-08-22 |
+| [ADR-010](./records/ADR-010-provisioning-self-register.md) | Aprovisionamiento y auto-registro (Provisioning Token + API Key + Claim) | Aceptada | 2026-09-05 |

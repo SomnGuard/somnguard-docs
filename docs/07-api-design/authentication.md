@@ -55,11 +55,21 @@ Mecanismos de autenticación y autorización de la API de SomnGuard. Alineado co
 
 ## 4. API keys de dispositivo
 
-- Emitidas al registrar el dispositivo (`POST /devices` admin, estado `REGISTERED`); rotables y revocables por el administrador (mitiga la amenaza T-002 del modelo de amenazas).
+- Emitidas al registrar el dispositivo (manual `POST /devices` admin o `POST /devices/self-register`, estado `REGISTERED`); rotables y revocables por el administrador (mitiga la amenaza T-002 del modelo de amenazas).
 - Envío de telemetría: `POST /api/v1/telemetry/events` con headers `X-Device-ID: <uuid>` + `X-API-Key: <key>`. Ambos obligatorios.
 - Saludo/heartbeat: `POST /api/v1/devices/{id}/heartbeat` con los mismos headers. Primer heartbeat válido provoca `ASSIGNED->ACTIVE`; sin heartbeat 5min el device se considera `OFFLINE` (`last_heartbeat_at`).
 - La clave identifica el dispositivo y habilita las reglas RN-03 y RN-08 (validación de dispositivo asignado/activo + idempotencia).
 - Nunca se expone la clave en respuestas ni logs. En `REGISTERED` sin `assign` la API responde `403` en `/telemetry/events` aunque la key sea válida.
+
+## 4b. Tres credenciales distintas (ver ADR-010)
+
+| Credencial | Para qué | Scope | Vida |
+|------------|----------|-------|------|
+| Provisioning Token (`X-Provision-Token`) | Nacimiento: solo `POST /devices/self-register` | Un endpoint, `max_uses` (1), expira (7d), revocable, solo hash en BD | Muere al usarse |
+| Device API Key (`X-Device-ID + X-API-Key`) | Operación continua: heartbeat, telemetría, evidencia, config | Endpoints operativos, sin `max_uses`, rotable/revocable | Hasta revocación/rotación |
+| Claim Code (body `POST /devices/claim`) | Reclamo por el usuario (crea `device_assignment`) | Un uso, hash en BD, se invalida al reclamar | Hasta el claim |
+
+Un token comprometido **no** opera ni telemetra; una key comprometida **no** registra devices; el claim solo asigna.
 
 ## 5. Flujos críticos
 

@@ -48,6 +48,8 @@
 | `device.synced` | Lote de eventos recibido y confirmado por API | `telemetry_service` (persiste events), `monitoring` (actualiza estado device) | RF-EDGE-10, HU-DEVICE-003 |
 | `device.config.pulled` | Configuración remota descargada por device | `device_management` (actualiza device_config_cache) | RF-EDGE-11, HU-DEVICE-004 |
 | `device.state.changed` | Estado device cambió (ACTIVE↔OFFLINE, etc.) | `monitoring`, `telemetry_service` | ADR-005, cross-cutting.md §5.2 |
+| `device.self_registered` | Device creado vía `POST /devices/self-register` (token consumido) | `monitoring`, `security` (auditoría) | RF-DEV-11, HU-API-006, ADR-010 |
+| `device.claimed` | Device reclamado por usuario vía `POST /devices/claim` | `monitoring`, `security` (auditoría) | RF-DEV-12, HU-API-006, ADR-010 |
 
 ### 2.2 `telemetry_service` (Device → API → BD)
 

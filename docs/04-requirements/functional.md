@@ -81,6 +81,9 @@
 | RF-DEV-07 | Desasociación dispositivo (libera para otro usuario) | RN-DEV-02 | RF-9.7 | Should | Gestión de dispositivos |
 | RF-DEV-08 | Consulta de dispositivos por usuario (filtros: estado, fecha asignación) | RN-DEV-07 | RF-10.1 | Should | Gestión de dispositivos |
 | RF-DEV-09 | Rotación/revocación API Key: `PATCH /devices/{id}/rotate-key` (solo admin), invalida anterior de inmediato, devuelve nueva key una sola vez. Estado no cambia; device con key vieja recibe `401` hasta reprovisionar (mitiga T-002) | RN-DEV-03 | RF-9.6 | Should | Gestión de dispositivos |
+| RF-DEV-10 | Tokens de aprovisionamiento: `POST /devices/provisioning-tokens` (solo admin + `device.provision`), un uso, expiración 7d, revocables, solo hash en BD, auditados (ADR-010) | RN-DEV-08 | RF-1.1 | Should | Gestión de dispositivos |
+| RF-DEV-11 | Auto-registro: `POST /devices/self-register` con `X-Provision-Token` crea device + API Key + claim_code (idempotente por serial, key expuesta una vez) | RN-DEV-08 | RF-1.1 | Should | Gestión de dispositivos |
+| RF-DEV-12 | Reclamo: `POST /devices/claim` con `claim_code` (JWT user + `device.claim`) crea `device_assignment` e invalida el claim | RN-DEV-09 | RF-9.6 | Should | Gestión de dispositivos |
 
 ### Telemetry Service (RF-TEL-*)
 
@@ -146,6 +149,9 @@
 | RF-DEV-07 | RN-DEV-02 | RF-9.7 | Gestión de dispositivos | Device Management | HU-API-006 |
 | RF-DEV-08 | RN-DEV-07 | RF-10.1 | Gestión de dispositivos | Device Management | HU-API-006, HU-PORTAL-002 |
 | RF-DEV-09 | RN-DEV-03 | RF-9.6 | Gestión de dispositivos | Device Management | HU-API-006 |
+| RF-DEV-10 | RN-DEV-08 | RF-1.1 | Gestión de dispositivos | Device Management | HU-API-006, HU-DB-003 |
+| RF-DEV-11 | RN-DEV-08 | RF-1.1 | Gestión de dispositivos | Device Management | HU-API-006, HU-DB-003 |
+| RF-DEV-12 | RN-DEV-09 | RF-9.6 | Gestión de dispositivos | Device Management | HU-API-006, HU-PORTAL-006, HU-DB-003 |
 | RF-SEC-08 | RN-SEC-08 | RF-9.8 | Seguridad y cuentas | Security | HU-API-002, HU-PORTAL-001, HU-APP-001 |
 | RF-SEC-09 | RN-SEC-09 | RNF-4.3 | Seguridad y cuentas | Security | HU-API-001, HU-PORTAL-001, HU-APP-001 |
 | RF-SEC-10 | RN-SEC-10 | RNF-4.4 | Seguridad y cuentas | Security | HU-API-003 |
@@ -208,7 +214,4 @@
 1. **Revisar y validar** esta lista con el equipo (PO + Arquitecto + Tech Leads).
 2. **Mantener sincronizados** `user-stories.md`, `traceability-matrix.md` y ADRs (`docs/05-architecture/decisions/records/ADR-001..009`) al cambiar RFs.
 3. **Aplicar** [cross-cutting.md](../05-architecture/cross-cutting.md) (auth, idempotencia, estados, errores) en cada RF nuevo.
-
-
-
 
