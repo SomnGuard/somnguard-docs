@@ -78,10 +78,13 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | GET | `/api/v1/devices` | Listar dispositivos |
-| POST | `/api/v1/devices` | Registrar dispositivo |
+| POST | `/api/v1/devices` | Registrar dispositivo (manual admin; convive con self-register) |
+| POST | `/api/v1/devices/provisioning-tokens` | Crear provisioning token (solo admin JWT + `device.provision`). Responde `201` con token en claro **una sola vez** + `token_id`, `expires_at` (7d), `max_uses` (1) |
+| POST | `/api/v1/devices/self-register` | Auto-registro del device. Auth `X-Provision-Token` + `Idempotency-Key`. Body `{serialNumber, firmwareVersion}` (del hardware, no manual). Responde `201 {device_id, api_key, claim_code}` una sola vez; reintento mismo token+serial → `200 {device_id, status}` sin reexponer key |
 | GET | `/api/v1/devices/{id}` | Consultar dispositivo |
 | PUT | `/api/v1/devices/{id}` | Actualizar dispositivo |
-| POST | `/api/v1/devices/{id}/assign` | Asociar dispositivo a usuario (REGISTERED->ASSIGNED) |
+| POST | `/api/v1/devices/{id}/assign` | Asociar dispositivo a usuario (REGISTERED->ASSIGNED; admin o directo) |
+| POST | `/api/v1/devices/claim` | Reclamar dispositivo con `claim_code` (JWT user + `device.claim`). Crea `device_assignment`, invalida el claim (REGISTERED->ASSIGNED) |
 | POST | `/api/v1/devices/{id}/unassign` | Desasociar dispositivo (->REGISTERED) |
 | POST | `/api/v1/devices/{id}/heartbeat` | Saludo periódico del device (ASSIGNED->ACTIVE, ACTIVE<->OFFLINE). Auth: `X-Device-ID + X-API-Key`. Actualiza `last_heartbeat_at, last_seen_ip, firmware_version` |
 | GET | `/api/v1/devices/{id}/config` | Consultar configuración (device con API Key o user con JWT) |

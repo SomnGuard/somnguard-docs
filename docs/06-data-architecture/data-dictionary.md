@@ -43,12 +43,12 @@
 |------------------|-------------------|------|
 | `security` | `user`, `role`, `module`, `feature`, `role_feature`, `user_role`, `password_reset_request`, `audit_login`, `refresh_token`, `email_verification`, `user_status_audit` | Transaccional |
 | `parameterization` | `event_category`, `severity`, `media_type`, `sound_pattern`, `event_type`, `status_category`, `status`, `status_transition` | Catálogo / Config |
-| `device_management` | `device`, `device_assignment`, `device_config`, `device_config_history`, `device_status_audit`, `device_config_status_audit` | Transaccional |
+| `device_management` | `device`, `device_assignment`, `device_config`, `device_config_history`, `device_status_audit`, `device_config_status_audit`, `device_provisioning_token`, `device_provisioning_audit` | Transaccional |
 | `telemetry_service` | `event`, `evidence`, `alert_log`, `event_status_audit` | Transaccional (alta escritura) |
 | `monitoring` | `notification`, `notification_status_audit` | Transaccional |
 | `analytics` | *Sin tablas propias* — vistas materializadas (`v_event_timeline`, `v_metrics_daily`) | Analítico |
 
-**Total: 31 tablas** (los `.mmd` de `01-entity-relationship-model` y `02-relational-model` cubren las 20 entidades de dominio: sin tablas `*_status_audit`, `refresh_token` ni `email_verification`)
+**Total: 33 tablas** (los `.mmd` de `01-entity-relationship-model` y `02-relational-model` cubren las 20 entidades de dominio: sin tablas `*_status_audit`, `refresh_token`, `email_verification` ni `device_provisioning_*`)
 
 ---
 
@@ -166,7 +166,7 @@
 |---------|------|------|---------|----|--------|-------------|
 | `id` | UUID | NO | — | PK | PK | Identificador |
 | `module_id` | UUID | NO | — | `security.module(id)` | IDX | Módulo al que pertenece |
-| `code` | VARCHAR(50) | NO | — | — | **UNIQUE (module_id, code)** | Código: `device.read`, `event.write`, `analytics.report`, etc. |
+| `code` | VARCHAR(50) | NO | — | — | **UNIQUE (module_id, code)** | Código: `device.read`, `event.write`, `analytics.report`, etc. Nuevas (ADR-010, seeds pendientes): `device.provision` (crear tokens), `device.claim` (reclamar con claim) |
 | `name` | VARCHAR(100) | NO | — | — | — | Nombre legible |
 | `description` | TEXT | SÍ | — | — | — | Descripción |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: creación |
@@ -479,9 +479,9 @@
 | Columna | Tipo | Null | Default | FK | Índice | Descripción | RN |
 |---------|------|------|---------|----|--------|-------------|-----|
 | `id` | UUID | NO | — | PK | PK | Identificador | |
-| `serial_number` | VARCHAR(100) | NO | — | — | **UNIQUE** | Número de serie único | RN-03 |
+| `serial_number` | VARCHAR(100) | NO | — | — | **UNIQUE** | Número de serie único (lo informa el hardware en self-register, no manual) | RN-03 |
 | `api_key_hash` | TEXT | NO | — | — | — | HMAC-SHA256 de API Key | RN-03 |
-| `firmware_version` | VARCHAR(50) | NO | — | — | — | Versión firmware instalada | |
+| `firmware_version` | VARCHAR(50) | NO | — | — | — | Versión firmware instalada (la informa el software en self-register) | |
 | `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE. FALSE = inactivo. | |
 | `last_heartbeat_at` | TIMESTAMPTZ | SÍ | — | — | IDX | Último heartbeat recibido | |
 | `last_sync_at` | TIMESTAMPTZ | SÍ | — | — | — | Última sincronización exitosa | |
@@ -496,6 +496,9 @@
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking | |
 | `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio | |
 | `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado | |
+| `claim_code_hash` | TEXT | SÍ | NULL | — | — | Hash del claim_code (un uso; NULL tras reclamar) | |
+| `claimed_at` | TIMESTAMPTZ | SÍ | — | — | — | Cuándo se reclamó (NULL = pendiente) | |
+| `provisioning_token_id` | UUID | SÍ | — | `device_management.device_provisioning_token(id)` | IDX | Token que originó el registro (NULL = alta manual) | |
 
 **Índices:** `idx_device_status_active (status) WHERE deleted_at IS NULL`, `idx_device_heartbeat (last_heartbeat_at)`
 
@@ -577,6 +580,36 @@
 | `change_reason` | VARCHAR(200) | SÍ | — | — | — | Motivo del cambio |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | **IDX (created_at DESC)** | Timestamp |
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | = changed_by |
+| *append-only* | — | — | — | — | — | Solo INSERT |
+
+---
+
+### `device_management.device_provisioning_token` — Tokens de aprovisionamiento (un uso)
+
+| Columna | Tipo | Null | Default | FK | Índice | Descripción | RN |
+|---------|------|------|---------|----|--------|-------------|-----|
+| `id` | UUID | NO | — | PK | PK | Identificador del token | |
+| `token_hash` | TEXT | NO | — | — | **UNIQUE** | SHA-256 del token (nunca plano) | |
+| `serial_number` | VARCHAR(100) | SÍ | NULL | — | IDX | Serial pre-asociado (NULL = abierto al primer registro válido) | |
+| `max_uses` | SMALLINT | NO | 1 | — | — | Usos permitidos (normalmente 1) | |
+| `uses_count` | SMALLINT | NO | 0 | — | — | Usos consumidos | |
+| `expires_at` | TIMESTAMPTZ | NO | `now() + 7 days` | — | — | Expiración | |
+| `revoked_at` | TIMESTAMPTZ | SÍ | NULL | — | — | Revocación (NULL = vigente) | |
+| `device_id` | UUID | SÍ | NULL | `device_management.device(id)` | — | Device creado con este token | |
+| `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: creación | |
+| `created_by` | UUID | NO | — | `security.user(id)` | — | Admin que lo generó | |
+
+### `device_management.device_provisioning_audit` — Auditoría de aprovisionamiento (Append-only)
+
+| Columna | Tipo | Null | Default | FK | Índice | Descripción |
+|---------|------|------|---------|----|--------|-------------|
+| `id` | UUID | NO | — | PK | PK | Identificador |
+| `token_id` | UUID | NO | — | `device_management.device_provisioning_token(id)` | IDX | Token involucrado |
+| `action` | VARCHAR(30) | NO | — | — | — | `CREATED`, `USED`, `REVOKED`, `CLAIMED` |
+| `device_id` | UUID | SÍ | NULL | `device_management.device(id)` | — | Device asociado (si aplica) |
+| `actor_id` | UUID | SÍ | NULL | `security.user(id)` | — | Admin actor (NULL = el propio device) |
+| `ip_address` | VARCHAR(45) | SÍ | NULL | — | — | IP origen |
+| `created_at` | TIMESTAMPTZ | NO | `now()` | — | **IDX (created_at DESC)** | Timestamp |
 | *append-only* | — | — | — | — | — | Solo INSERT |
 
 ---

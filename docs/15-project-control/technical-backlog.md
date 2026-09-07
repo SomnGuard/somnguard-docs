@@ -37,6 +37,7 @@ Deuda técnica conocida y pendientes de construcción del proyecto SomnGuard. El
 | TD-006 | **Estados de negocio sin decisión**: si usar catálogo parametrizable genérico o `VARCHAR + CHECK` para estados de dispositivo/evento (ver [modeling-conventions](../06-data-architecture/modeling-conventions.md) y QR-013 en [open-questions](./open-questions.md)). | Medio | P2 | telemetry-service, device-management | Resuelto (ADR-009 aceptada 2026-08-22: `status_category` + `status`) |
 | TD-007 | **Driver JDBC / dependencias de build sin fijar**: el `pom.xml` del backend aún no está definido. | Medio | P1 | backend-java | Abierto |
 | TD-008 | **Runbook de security pendiente**: `modules/security/` documentado salvo `runbook.md` exigido por la plantilla. | Bajo | P3 | 09-modules | Abierto |
+| TD-009 | **Implementar provisioning/self-register/claim**: endpoints (`provisioning-tokens`, `self-register`, `claim`), tablas (`device_provisioning_token`, `device_provisioning_audit`, claim en `device`), features (`device.provision`, `device.claim`). Diseño en ADR-010. | Alto | P1 | device_management, security | Abierto |
 
 ## Trabajo estructural pendiente (capa de aplicación)
 

@@ -47,6 +47,9 @@ Matriz completa que relaciona **Requisitos Funcionales (RF)** ↔ **Historias de
 | RF-DEV-05 | State machine device (Registrado→Asignado→Activo↔Offline→Suspendido→Retirado) | HU-API-006, HU-DEVICE-002 | Device Management | RN-DEV-06 | NFR-03 | — | Integración: transiciones automáticas + admin manual |
 | RF-DEV-08 | Consulta devices por user (filtros estado, fecha) | HU-API-006, HU-PORTAL-002 | Device Management | RN-DEV-07 | — | — | Integración: GET /devices con filtros + paginación |
 | RF-DEV-09 | Rotacion API Key PATCH /rotate-key (solo admin, mitiga T-002) | HU-API-006 | Device Management | RN-DEV-03 | NFR-01 | ADR-001 | Integración: invalida anterior, devuelve nueva una vez, 401 con vieja |
+| RF-DEV-10 | Tokens aprovisionamiento (un uso, 7d, hash, auditados) | HU-API-006, HU-DB-003 | Device Management | RN-DEV-08 | NFR-01 | ADR-010 | Integración: POST provisioning-tokens admin, 201 expone una vez |
+| RF-DEV-11 | Auto-registro idempotente (token+serial, key una vez) | HU-API-006, HU-DB-003 | Device Management | RN-DEV-08 | NFR-01 | ADR-010 | Integración: reintento → 200 sin reexponer key |
+| RF-DEV-12 | Reclamo con claim_code (un uso, hash, invalida) | HU-API-006, HU-PORTAL-006, HU-DB-003 | Device Management | RN-DEV-09 | NFR-01 | ADR-010 | Integración: POST /devices/claim → assignment |
 | RF-TEL-01 | Ingesta eventos idempotente (device+API key, event_id único) | HU-API-007 | Telemetry Service | RN-TEL-01 | NFR-03, NFR-07 | — | Unitarias: validador idempotencia. Integración: duplicados en `duplicate_ids` del 201, ACK limpia buffer |
 | RF-TEL-02 | Ingesta evidencia multimedia → MinIO bucket somnguard-evidence | HU-API-007 | Telemetry Service | RN-TEL-02 | NFR-02, NFR-06 | ADR-006 | Integración: upload MinIO, retorna evidence_id, verifica checksum SHA256 (64 hex) |
 | RF-TEL-03 | Registro alert_log (código AS-XX, ts, event_id, severidad) | HU-API-007 | Telemetry Service | RN-TEL-03 | NFR-04 | — | Integración: alert_log creado tras ingesta evento crítico |
@@ -83,11 +86,11 @@ Matriz completa que relaciona **Requisitos Funcionales (RF)** ↔ **Historias de
 
 | Épica | HUs (MVP) | Sprints | SP Total | Prioridad |
 |-------|-----------|---------|----------|-----------|
-| Setup y Foundation | HU-API-SETUP, HU-DB-001a, HU-DB-001b | 0 | 21 | Must |
+| Setup y Foundation | HU-API-SETUP, HU-DB-001a, HU-DB-001b, HU-DB-003 | 0-1 | 26 | Must |
 | Seguridad y cuentas | HU-API-001, 002, 003, HU-PORTAL-001, HU-APP-001 | 1 | 34 | Must |
-| Gestión de dispositivos | HU-API-005, 006 | 1-2 | 13 | Must |
+| Gestión de dispositivos | HU-API-005, 006, HU-PORTAL-006 | 1-2, 6 | 21 | Must/Should |
 | Parametrización | HU-API-004 | 1 | 8 | Must |
-| Telemetría y sincronización | HU-API-007, 008, HU-DEVICE-001, 002, 003, 004 | 1-3 | 65 | Must |
+| Telemetría y sincronización | HU-API-007, 008, HU-DEVICE-001, 002, 003, 004 | 1-3 | 67 | Must |
 | Monitoreo y notificaciones | HU-API-009, HU-APP-002 | 3 | 16 | Must |
 | Analítica y reportes | HU-API-010, 011, HU-DB-002, HU-PORTAL-003, 004, HU-APP-003 | 3-5 | 44 | Must/Should |
 | Device Edge | HU-DEVICE-001, 002, 003, 004 | 1-3 | 47 | Must |

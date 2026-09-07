@@ -256,8 +256,8 @@ flowchart TD
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Registrado: Alta en la plataforma
-    Registrado --> Asignado: Asignación a una cuenta
+    [*] --> Registrado: Alta manual o self-register (UNREGISTERED = previo, sin fila en BD)
+    Registrado --> Asignado: Asignación a una cuenta (assign admin o claim usuario)
     Asignado --> Activo: Primer heartbeat válido (saludo con API key)
     Activo --> Offline: Sin heartbeat 5min
     Offline --> Activo: Heartbeat válido (se restablece la conectividad)

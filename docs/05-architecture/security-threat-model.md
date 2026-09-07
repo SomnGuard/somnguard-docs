@@ -43,6 +43,9 @@ Análisis STRIDE del sistema SomnGuard, alineado con el documento de arquitectur
 | T-007 | Information Disclosure | Acceso no autorizado a evidencia multimedia | MinIO/S3 | Media | Alto | URLs firmadas, RBAC por rol |
 | T-008 | Denial of Service | Saturación de endpoints públicos | API REST | Media | Medio | Rate limiting, 429, límites por API key |
 | T-009 | Elevation of Privilege | Escalada por asignación incorrecta de roles | security | Baja | Alto | Matriz rol × recurso, pruebas de autorización |
+| T-010 | Spoofing | Registro masivo con provisioning token filtrado | API / device-management | Media | Alto | Token un uso + expiración 7d + revocación + rate limit 5/min + auditoría (ADR-010) |
+| T-011 | Spoofing | Reclamo de device ajeno por claim adivinado | API / device-management | Baja | Alto | Claim hash + un uso + rate limit + sin oráculo (misma respuesta/tiempo) |
+| T-012 | Information Disclosure | Reexposición de API Key en reintentos de registro | API / device-management | Baja | Alto | Repetido devuelve `device_id` + estado sin la key; recovery solo vía `rotate-key` admin |
 
 ## Controles de seguridad por capa
 

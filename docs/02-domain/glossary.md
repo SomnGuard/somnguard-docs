@@ -35,6 +35,8 @@ Glosario de términos del dominio y técnicos utilizados en la documentación de
 | Severidad | Nivel de criticidad de un evento o alerta. |
 | Patrón de sonido | Secuencia de sonido configurable emitida por el dispositivo en la alerta local. |
 | Dispositivo | Hardware Raspberry Pi con cámara instalado en el vehículo. |
+| Provisioning Token | Secreto de un solo uso para el registro inicial (`POST /devices/self-register`); no opera ni telemetra; distinto de la API Key. |
+| Claim Code | Código de un solo uso para que un usuario reclame el dispositivo (`POST /devices/claim`); distinto del token y de la key. |
 | Edge | Procesamiento local en el dispositivo (captura y preprocesamiento). |
 | Sincronización offline | Reenvío de eventos y evidencia almacenados localmente cuando vuelve la conectividad. |
 | Cuenta con retención | Baja de cuenta conservando sus datos según la política de retención definida. |

@@ -129,7 +129,7 @@ Cuerpo de error uniforme en toda la plataforma (alineado con `platform/error-han
 
 ## 10. Convenciones transversales
 
-- **Idempotencia (dos mecanismos, no mezclados):** telemetría usa `event_id UUIDv7` único: el lote `POST /telemetry/events` **siempre responde `201 {acked_ids[], duplicate_ids[]}`** y el device borra local ambos (RN-08). `409` solo en `POST /telemetry/events/{id}/evidence` si ya existe evidencia. Header `Idempotency-Key` **solo** en `POST` no-telemetría (`/devices`, `/{id}/assign`, `/auth/*`) y en `PATCH /devices/{id}/config` y `PATCH /rotate-key` (reintentos del portal). No usar header en `/telemetry/events`.
+- **Idempotencia (dos mecanismos, no mezclados):** telemetría usa `event_id UUIDv7` único: el lote `POST /telemetry/events` **siempre responde `201 {acked_ids[], duplicate_ids[]}`** y el device borra local ambos (RN-08). `409` solo en `POST /telemetry/events/{id}/evidence` si ya existe evidencia. Header `Idempotency-Key` **solo** en `POST` no-telemetría (`/devices`, `/{id}/assign`, `/auth/*`, `/devices/self-register` con serial como clave natural) y en `PATCH /devices/{id}/config` y `PATCH /rotate-key` (reintentos del portal). No usar header en `/telemetry/events`. En `self-register` repetido con mismo token+serial: `200 {device_id, status}` sin reexponer la key.
 - **Correlación**: propagar `trace_id` entre módulos y hacia logs/eventos.
 - **Rate limiting**: respuesta `429` con `Retry-After`; límites en `cross-cutting.md` (auth 5/min API, device 1000/min gateway + 60/2/10 por endpoint).
 - **Compatibilidad**: nunca romper un contrato publicado sin subir versión mayor.

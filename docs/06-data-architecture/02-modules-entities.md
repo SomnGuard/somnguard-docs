@@ -389,6 +389,9 @@ Representa un dispositivo físico.
 | version | INTEGER |
 | status | VARCHAR(50) |
 | status_category | VARCHAR(30) |
+| claim_code_hash | TEXT |
+| claimed_at | TIMESTAMPTZ |
+| provisioning_token_id | UUID |
 
 ---
 

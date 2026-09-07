@@ -71,6 +71,8 @@ Reglas de negocio del sistema. Fuente de verdad de las reglas `RN-*`; consolidan
 > | RN-DEV-05 | El heartbeat periódico define `ACTIVE`/`OFFLINE` (timeout 5 min) |
 > | RN-DEV-06 | Los cambios de estado siguen `status_transition` según rol |
 > | RN-DEV-07 | La consulta de dispositivos filtra por estado y fecha de asignación |
+> | RN-DEV-08 | Provisioning de un uso + self-register idempotente (key expuesta una vez) |
+> | RN-DEV-09 | Claim de un uso con hash (se invalida al reclamar) |
 > | RN-PAR-01 | Los catálogos base se administran por CRUD restringido |
 > | RN-PAR-02 | `sound_pattern` solo lo gestiona el administrador |
 > | RN-PAR-03 | `event_type` define umbrales configurables por tipo de evento |
