@@ -496,8 +496,8 @@
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking | |
 | `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio | |
 | `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado | |
-| `claim_code_hash` | TEXT | SÍ | NULL | — | — | Hash del claim_code (un uso; NULL tras reclamar) | |
-| `claimed_at` | TIMESTAMPTZ | SÍ | — | — | — | Cuándo se reclamó (NULL = pendiente) | |
+| `claim_code` | VARCHAR(20) | NO | — | — | **UNIQUE** | Código de reclamo público, permanente por device; solo sirve en REGISTERED (unassign lo libera y re-sirve) | |
+| `claimed_at` | TIMESTAMPTZ | SÍ | — | — | — | Cuándo se reclamó (NULL = disponible para reclamar) | |
 | `provisioning_token_id` | UUID | SÍ | — | `device_management.device_provisioning_token(id)` | IDX | Token que originó el registro (NULL = alta manual) | |
 
 **Índices:** `idx_device_status_active (status) WHERE deleted_at IS NULL`, `idx_device_heartbeat (last_heartbeat_at)`
@@ -512,7 +512,7 @@
 |---------|------|------|---------|----|--------|-------------|
 | `id` | UUID | NO | — | PK | PK | Identificador |
 | `device_id` | UUID | NO | — | `device_management.device(id)` | **UNIQUE (device_id) WHERE unassigned_at IS NULL** | Device |
-| `user_id` | UUID | NO | — | `security.user(id)` | IDX | Usuario |
+| `user_id` | UUID | NO | — | `security.user(id)` | **UNIQUE (user_id) WHERE unassigned_at IS NULL** | Usuario (1 usuario ↔ 1 device vigente, RN-DEV-01) |
 | `assigned_at` | TIMESTAMPTZ | NO | `now()` | — | — | Cuándo se asignó |
 | `unassigned_at` | TIMESTAMPTZ | SÍ | — | — | — | Cuándo se desasignó (NULL = actual) |
 | `assigned_by` | UUID | NO | — | `security.user(id)` | — | Quién asignó (admin o user) |

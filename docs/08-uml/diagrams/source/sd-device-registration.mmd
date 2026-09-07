@@ -24,9 +24,10 @@ sequenceDiagram
     API->>DB: Valida token, crea device REGISTERED + API Key + claim_code, consume token, audita
     API-->>DEV: 201 (device_id + api_key + claim_code, una sola vez)
     Note over DEV: Reintento mismo token+serial → 200 sin reexponer key
-    USR->>API: POST /api/v1/devices/claim (JWT + claim_code)
-    API->>DB: Crea device_assignment, invalida claim (REGISTERED->ASSIGNED)
+    USR->>API: POST /api/v1/devices/claim (JWT + claim_code público)
+    API->>DB: Crea device_assignment, marca claimed (REGISTERED->ASSIGNED)
     API-->>USR: 200 (dispositivo reclamado)
+    Note over API,DB: Claim 409 si asignado; unassign libera y el mismo código re-sirve
 
     DEV->>API: POST /api/v1/devices/{id}/heartbeat (X-Device-ID + X-API-Key, primera conexión/saludo)
     API->>DB: Actualiza last_heartbeat_at, last_seen_ip (ASSIGNED->ACTIVE/Activo)

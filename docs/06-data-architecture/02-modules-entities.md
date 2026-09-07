@@ -389,7 +389,7 @@ Representa un dispositivo físico.
 | version | INTEGER |
 | status | VARCHAR(50) |
 | status_category | VARCHAR(30) |
-| claim_code_hash | TEXT |
+| claim_code | VARCHAR(20) UNIQUE |
 | claimed_at | TIMESTAMPTZ |
 | provisioning_token_id | UUID |
 

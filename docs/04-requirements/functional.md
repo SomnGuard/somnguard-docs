@@ -83,7 +83,7 @@
 | RF-DEV-09 | Rotación/revocación API Key: `PATCH /devices/{id}/rotate-key` (solo admin), invalida anterior de inmediato, devuelve nueva key una sola vez. Estado no cambia; device con key vieja recibe `401` hasta reprovisionar (mitiga T-002) | RN-DEV-03 | RF-9.6 | Should | Gestión de dispositivos |
 | RF-DEV-10 | Tokens de aprovisionamiento: `POST /devices/provisioning-tokens` (solo admin + `device.provision`), un uso, expiración 7d, revocables, solo hash en BD, auditados (ADR-010) | RN-DEV-08 | RF-1.1 | Should | Gestión de dispositivos |
 | RF-DEV-11 | Auto-registro: `POST /devices/self-register` con `X-Provision-Token` crea device + API Key + claim_code (idempotente por serial, key expuesta una vez) | RN-DEV-08 | RF-1.1 | Should | Gestión de dispositivos |
-| RF-DEV-12 | Reclamo: `POST /devices/claim` con `claim_code` (JWT user + `device.claim`) crea `device_assignment` e invalida el claim | RN-DEV-09 | RF-9.6 | Should | Gestión de dispositivos |
+| RF-DEV-12 | Reclamo: `POST /devices/claim` con `claim_code` público reutilizable (JWT user + `device.claim`) crea `device_assignment` solo en REGISTERED (`409` si asignado; `unassign` libera y el mismo código re-sirve) | RN-DEV-09 | RF-9.6 | Should | Gestión de dispositivos |
 
 ### Telemetry Service (RF-TEL-*)
 

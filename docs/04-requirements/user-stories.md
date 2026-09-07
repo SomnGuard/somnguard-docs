@@ -148,7 +148,7 @@
 | ID | Criterio | Testeable |
 |----|----------|-----------|
 | AC-001 | `032_create_device_provisioning_token.sql` + `033_create_device_provisioning_audit.sql` (PK, UNIQUE, checks, índices) + rollbacks espejo en `05_rollbacks/` | Sí |
-| AC-002 | ALTER `device_management.device`: `claim_code_hash`, `claimed_at`, `provisioning_token_id` (+FK) + rollback | Sí |
+| AC-002 | ALTER `device_management.device`: `claim_code_hash`, `claimed_at`, `provisioning_token_id` (+FK) + rollback; `021`: `claim_code` público reutilizable (UNIQUE, backfill) reemplaza `claim_code_hash` + rollback | Sí |
 | AC-003 | Seeds: features `device.provision` (admin) y `device.claim` (admin+user) + `role_feature`, y transiciones `unassign` (`ACTIVE/ASSIGNED→REGISTERED`) en `008` | Sí |
 | AC-004 | `liquibase update` + `rollback-count` verdes + `verify-rollback` (patrón HU-DB-001b) | Sí |
 
@@ -404,7 +404,7 @@
 | AC-007 | Rotación: PATCH `/devices/{id}/rotate-key` (solo admin JWT) invalida key anterior, devuelve nueva una sola vez, estado no cambia (RF-DEV-09, mitiga T-002) | Sí |
 | AC-008 | Provisioning: POST `/devices/provisioning-tokens` (admin + `device.provision`) crea token un uso, expira 7d, guarda solo hash; `201` expone el token una sola vez (RF-DEV-10) | Sí |
 | AC-009 | Self-register: POST `/devices/self-register` (`X-Provision-Token` + `Idempotency-Key`, `{serialNumber, firmwareVersion}`) crea device `REGISTERED` + API Key + claim_code; `201` una sola vez, reintento → `200` sin reexponer key (RF-DEV-11) | Sí |
-| AC-010 | Claim: POST `/devices/claim` (user + `device.claim`, claim_code) crea `device_assignment`, invalida el claim (`REGISTERED->ASSIGNED`) (RF-DEV-12) | Sí |
+| AC-010 | Claim: POST `/devices/claim` (user + `device.claim`, claim_code público reutilizable) crea `device_assignment` solo en REGISTERED (`409` si asignado; `unassign` libera y el mismo código re-sirve) (`REGISTERED->ASSIGNED`) (RF-DEV-12) | Sí |
 
 ### Dependencias
 

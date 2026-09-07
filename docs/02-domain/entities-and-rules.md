@@ -64,7 +64,7 @@ Reglas de negocio del sistema. Fuente de verdad de las reglas `RN-*`; consolidan
 > | RN-SEC-08 | La eliminación de cuenta es soft-delete con ventana de recuperación |
 > | RN-SEC-09 | Todo intento de login se audita (`audit_login`: IP, user-agent, éxito/fallo) |
 > | RN-SEC-10 | El acceso se controla por roles y features (`role_feature`) |
-> | RN-DEV-01 | Un dispositivo solo pertenece a la cuenta asignada (`device_assignment` 1:1 vigente) |
+> | RN-DEV-01 | 1 usuario ↔ 1 device vigente: ni el device puede estar asignado a otro usuario, ni el usuario tener otro device asignado (`device_assignment` con UNIQUE parcial por `device_id` y por `user_id`) |
 > | RN-DEV-02 | Desasociar libera el dispositivo (`unassign` → `REGISTERED`) |
 > | RN-DEV-03 | El alta genera `api_key_hash`; la key en claro se muestra una sola vez |
 > | RN-DEV-04 | La configuración remota (`device_config` JSONB) es descargable por el device |
@@ -72,7 +72,7 @@ Reglas de negocio del sistema. Fuente de verdad de las reglas `RN-*`; consolidan
 > | RN-DEV-06 | Los cambios de estado siguen `status_transition` según rol |
 > | RN-DEV-07 | La consulta de dispositivos filtra por estado y fecha de asignación |
 > | RN-DEV-08 | Provisioning de un uso + self-register idempotente (key expuesta una vez) |
-> | RN-DEV-09 | Claim de un uso con hash (se invalida al reclamar) |
+> | RN-DEV-09 | Claim público reutilizable por device: solo sirve en REGISTERED, unassign lo libera |
 > | RN-PAR-01 | Los catálogos base se administran por CRUD restringido |
 > | RN-PAR-02 | `sound_pattern` solo lo gestiona el administrador |
 > | RN-PAR-03 | `event_type` define umbrales configurables por tipo de evento |
