@@ -1,6 +1,6 @@
 # ADR-010: Aprovisionamiento y auto-registro de dispositivos (Provisioning Token + API Key + Claim)
 
-**Estado:** Aceptada
+**Estado:** Aceptada con enmienda 2026-09-07 (claim reutilizable público, ver § Enmienda)
 **Fecha:** 2026-09-05
 **Autores:** Equipo SomnGuard
 **Equipos involucrados:** Arquitectura, Backend, Device, Seguridad
@@ -43,9 +43,20 @@ Se decide un flujo en tres credenciales con dos endpoints nuevos y uno de reclam
 
 ### 4. Claim Code (reclamo por el usuario)
 
-- Código por device generado en el registro (manual o self), guardado como hash, de un solo uso. El admin puede imprimirlo/entregarlo con el equipo.
-- El usuario lo introduce y llama `POST /devices/claim` (JWT + feature `device.claim`) → crea `device_assignment`, `REGISTERED → ASSIGNED`, invalida el claim. El `assign` directo de admin sigue disponible.
+- Código permanente por device generado en el registro (manual o self), guardado **en claro** (`device.claim_code`, UNIQUE) y visible en `GET /devices` (enmienda 2026-09-07; antes hash de un solo uso, derogado por migración `021`). El admin puede imprimirlo/entregarlo con el equipo.
+- Solo reclamable en `REGISTERED` (sin asignación activa): el usuario lo introduce y llama `POST /devices/claim` (JWT + feature `device.claim`) → crea `device_assignment`, `REGISTERED → ASSIGNED`, marca `claimed_at`. Si el device está asignado, el claim responde `409` hasta que se libere.
+- `unassign` → `REGISTERED` limpia `claimed_at` y **el mismo código vuelve a servir** (ciclo reclamar ↔ liberar). El `assign` directo de admin sigue disponible.
 - Primer heartbeat válido posterior: `ASSIGNED → ACTIVE`. `ACTIVE ↔ OFFLINE` por heartbeat como hoy; `UNREGISTERED` es solo el estado conceptual previo a existir en BD.
+
+---
+
+## Enmienda 2026-09-07 — claim_code público reutilizable (RF-DEV-12, RN-DEV-09)
+
+**Motivo:** con claim de un solo uso, un `unassign` + re-asignación dejaba el device sin código válido y sin forma de reclamarlo de nuevo.
+
+**Cambio:** el claim pasa de secreto hash de un uso a identificador público permanente por device (`VARCHAR(20)` UNIQUE, formato `XXXX-XXXX-XXXX`; filas legacy `CLM-XXXXXXXXXXXX` vía backfill en migración `021`, que elimina `claim_code_hash`). Reglas: solo sirve en `REGISTERED`; `409` si asignado; `unassign` lo libera; visible en `GET /devices` y `GET /devices/{id}`.
+
+**Riesgo aceptado:** quien vea el código impreso puede reclamar el equipo whenever esté liberado. Se mitiga con: solo-`REGISTERED`, rate limit en `claim`, auditoría `CLAIMED`, y asignación 1:1 vigente (RN-DEV-01). Alternativa descartada "Claim sin hash" de § Alternativas queda invertida por esta enmienda.
 
 ---
 

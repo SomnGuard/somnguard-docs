@@ -49,20 +49,20 @@ Matriz completa que relaciona **Requisitos Funcionales (RF)** ↔ **Historias de
 | RF-DEV-09 | Rotacion API Key PATCH /rotate-key (solo admin, mitiga T-002) | HU-API-006 | Device Management | RN-DEV-03 | NFR-01 | ADR-001 | Integración: invalida anterior, devuelve nueva una vez, 401 con vieja |
 | RF-DEV-10 | Tokens aprovisionamiento (un uso, 7d, hash, auditados) | HU-API-006, HU-DB-003 | Device Management | RN-DEV-08 | NFR-01 | ADR-010 | Integración: POST provisioning-tokens admin, 201 expone una vez |
 | RF-DEV-11 | Auto-registro idempotente (token+serial, key una vez) | HU-API-006, HU-DB-003 | Device Management | RN-DEV-08 | NFR-01 | ADR-010 | Integración: reintento → 200 sin reexponer key |
-| RF-DEV-12 | Reclamo con claim_code (un uso, hash, invalida) | HU-API-006, HU-PORTAL-006, HU-DB-003 | Device Management | RN-DEV-09 | NFR-01 | ADR-010 | Integración: POST /devices/claim → assignment |
+| RF-DEV-12 | Reclamo con claim_code público reutilizable (solo REGISTERED, unassign libera) | HU-API-006, HU-PORTAL-006, HU-DB-003 | Device Management | RN-DEV-09 | NFR-01 | ADR-010 | Integración: POST /devices/claim → assignment |
 | RF-TEL-01 | Ingesta eventos idempotente (device+API key, event_id único) | HU-API-007 | Telemetry Service | RN-TEL-01 | NFR-03, NFR-07 | — | Unitarias: validador idempotencia. Integración: duplicados en `duplicate_ids` del 201, ACK limpia buffer |
 | RF-TEL-02 | Ingesta evidencia multimedia → MinIO bucket somnguard-evidence | HU-API-007 | Telemetry Service | RN-TEL-02 | NFR-02, NFR-06 | ADR-006 | Integración: upload MinIO, retorna evidence_id, verifica checksum SHA256 (64 hex) |
 | RF-TEL-03 | Registro alert_log (código AS-XX, ts, event_id, severidad) | HU-API-007 | Telemetry Service | RN-TEL-03 | NFR-04 | — | Integración: alert_log creado tras ingesta evento crítico |
 | RF-TEL-04 | Sync offline-first: buffer SQLite local, reintentos backoff, deduplicación | HU-DEVICE-003, HU-API-007 | Telemetry Service + Edge | RN-TEL-04 | NFR-03, NFR-07 | — | Integración: offline 1h → online sync → ACK → limpieza buffer |
 | RF-TEL-05 | Pull device_config desde device (GET /devices/{id}/config) | HU-API-005, HU-DEVICE-002, HU-DEVICE-003 | Telemetry Service | RN-TEL-05 | NFR-03 | — | Integración: device pulla config tras sync, aplica umbrales |
-| RF-TEL-06 | Consulta eventos con filtros (device, tipo, severidad, fechas, paginación) | HU-API-008, HU-PORTAL-002 | Telemetry Service | RN-TEL-06 | NFR-03 | — | Integración: GET /telemetry/events con joins, índices device_id+occurred_at |
+| RF-TEL-06 | Consulta eventos con filtros (device, tipo, severidad, fechas, paginación) | HU-API-008, HU-PORTAL-002 | Telemetry Service | RN-TEL-06 | NFR-03 | — | Integración: GET /api/v1/events con joins, índices device_id+occurred_at |
 | RF-TEL-07 | Limpieza buffer local tras ACK sync (retención 7d fallidos) | HU-DEVICE-003 | Telemetry Service | RN-TEL-07 | NFR-02, NFR-06 | — | Integración: ACK 201 → borra confirmados, retención 7d fallidos |
 | RF-MON-01 | Notificación push/email/webhook evento crítico (EV-SOM-05, EV-DIS-02, EV-DIS-04, EV-CIN-01/02) | HU-API-009, HU-APP-002 | Monitoring | RN-MON-01 | NFR-04 | — | Integración: trigger auto severity=crítica, canales push/email/in-app |
 | RF-MON-02 | Plantillas notificación por event_type + severity | HU-API-009 | Monitoring | RN-MON-02 | — | — | Unitarias: template renderer. Integración: plantillas por tipo/severidad |
 | RF-MON-03 | Tracking delivery: sent→delivered→read, reintentos backoff | HU-API-009, HU-APP-002 | Monitoring | RN-MON-03 | NFR-04 | — | Integración: estados notificación, reintentos max 3 exponenciales |
 | RF-MON-04 | Preferencias notificación por user (canales, horarios, severidad mín) | HU-API-009, HU-APP-002 | Monitoring | RN-MON-04 | — | — | Unitarias: filtro preferencias. Integración: respeta silencio/severidad |
-| RF-ANA-01 | Timeline cronológico eventos (filtros fecha, tipo, severidad, device) | HU-API-010, HU-PORTAL-003 | Analytics | RN-ANA-01 | NFR-03 | — | Integración: GET /analytics/timeline <500ms p95 10k eventos |
-| RF-ANA-02 | Métricas agregadas: freq por tipo, severidad media, tendencia temporal | HU-API-010, HU-PORTAL-003 | Analytics | RN-ANA-02 | NFR-03 | — | Integración: GET /analytics/metrics, vistas materializadas |
+| RF-ANA-01 | Timeline cronológico eventos (filtros fecha, tipo, severidad, device) | HU-API-010, HU-PORTAL-003 | Analytics | RN-ANA-01 | NFR-03 | — | Integración: GET /api/v1/analytics/timeline <500ms p95 10k eventos |
+| RF-ANA-02 | Métricas agregadas: freq por tipo, severidad media, tendencia temporal | HU-API-010, HU-PORTAL-003 | Analytics | RN-ANA-02 | NFR-03 | — | Integración: GET /api/v1/analytics/metrics, vistas materializadas |
 | RF-ANA-03 | Resumen descriptivo IA (patrones, tendencia, conclusiones) | HU-API-011, HU-PORTAL-004, HU-APP-003 | Analytics | RN-ANA-03 | NFR-05 | ADR-003 | Integración: POST /api/v1/analytics/reports → LLM prompt → texto |
 | RF-ANA-04 | Reporte consolidado PDF/HTML (timeline + métricas + IA + evidencia) | HU-API-011, HU-PORTAL-004, HU-APP-003 | Analytics | RN-ANA-04 | NFR-02, NFR-05 | ADR-003 | Integración: POST /api/v1/analytics/reports → PDF/HTML, cache 1h, MinIO |
 | RF-ANA-05 | Video tiempo real WebRTC a demanda (Post-MVP) | HU-API-012, HU-DEVICE-005, HU-PORTAL-005, HU-APP-004 | Analytics + Edge | RN-ANA-05 | NFR-03, NFR-04 | — | **Post-MVP**: Integración WebRTC signaling, SFU, bitrate adaptativo |
@@ -95,7 +95,7 @@ Matriz completa que relaciona **Requisitos Funcionales (RF)** ↔ **Historias de
 | Analítica y reportes | HU-API-010, 011, HU-DB-002, HU-PORTAL-003, 004, HU-APP-003 | 3-5 | 44 | Must/Should |
 | Device Edge | HU-DEVICE-001, 002, 003, 004 | 1-3 | 47 | Must |
 
-> SP por épica no suma al total: Device Edge comparte HUs con Telemetría. Total único MVP: 209 SP (26 HUs).
+> SP por épica no suma al total: Device Edge comparte HUs con Telemetría. Total único MVP: 224 SP (28 HUs: Must 195 + Should 29).
 
 ---
 

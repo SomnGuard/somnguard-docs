@@ -316,9 +316,9 @@
 | `pattern_type` | VARCHAR(20) | NO | `beep` | — | — | `beep`, `continuous`, `intermittent`, `escalating` |
 | `interval_ms` | INTEGER | SÍ | — | — | — | Intervalo entre repeticiones (ms) |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: creación |
-| `created_by` | UUID | SÍ | — | `security.user(id)` | — | User ID creador (seed = SYSTEM_ACTOR_ID) |
+| `created_by` | UUID | NO | — | `security.user(id)` | — | User ID creador (seed = SYSTEM_ACTOR_ID) |
 | `updated_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: última modificación |
-| `updated_by` | UUID | SÍ | — | `security.user(id)` | — | User ID modificador |
+| `updated_by` | UUID | NO | — | `security.user(id)` | — | User ID modificador |
 | `is_active` | BOOLEAN | NO | TRUE | - | - | **Soft delete** - por defecto TRUE |
 
 **Seed (Apéndice 1 SRS):**
@@ -346,7 +346,7 @@
 | `event_category_id` | UUID | NO | — | `parameterization.event_category(id)` | IDX | Categoría |
 | `default_severity_id` | UUID | NO | — | `parameterization.severity(id)` | — | Severidad por defecto |
 | `default_sound_pattern_id` | UUID | NO | — | `parameterization.sound_pattern(id)` | — | Sonido por defecto |
-| `threshold_config` | JSONB | SÍ | `{}` | — | — | Umbrales configurables (ej: `{"blink_rate_max": 25, "eye_closed_min_sec": 2}`) |
+| `threshold_config` | JSONB | NO | `{}` | — | — | Umbrales configurables (ej: `{"blink_rate_max": 25, "eye_closed_min_sec": 2}`) |
 | `is_active` | BOOLEAN | NO | TRUE | — | — | Si está vigente |
 | `status` | VARCHAR(50) | NO | `DRAFT` | `parameterization.status(code)` | IDX | Estado: DRAFT, PUBLISHED, DEPRECATED |
 | `status_category` | VARCHAR(30) | NO | `PENDING` | `parameterization.status_category(code)` | — | Categoría |
@@ -481,7 +481,7 @@
 | `id` | UUID | NO | — | PK | PK | Identificador | |
 | `serial_number` | VARCHAR(100) | NO | — | — | **UNIQUE** | Número de serie único (lo informa el hardware en self-register, no manual) | RN-03 |
 | `api_key_hash` | TEXT | NO | — | — | — | HMAC-SHA256 de API Key | RN-03 |
-| `firmware_version` | VARCHAR(50) | NO | — | — | — | Versión firmware instalada (la informa el software en self-register) | |
+| `firmware_version` | VARCHAR(50) | SÍ | — | — | — | Versión firmware instalada (la informa el software en self-register, nullable hasta primer heartbeat) | |
 | `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE. FALSE = inactivo. | |
 | `last_heartbeat_at` | TIMESTAMPTZ | SÍ | — | — | IDX | Último heartbeat recibido | |
 | `last_sync_at` | TIMESTAMPTZ | SÍ | — | — | — | Última sincronización exitosa | |
@@ -496,8 +496,8 @@
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking | |
 | `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio | |
 | `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado | |
-| `claim_code_hash` | TEXT | SÍ | NULL | — | — | Hash del claim_code (un uso; NULL tras reclamar) | |
-| `claimed_at` | TIMESTAMPTZ | SÍ | — | — | — | Cuándo se reclamó (NULL = pendiente) | |
+| `claim_code` | VARCHAR(20) | NO | — | — | **UNIQUE** | Código de reclamo público, permanente por device; solo sirve en REGISTERED (unassign lo libera y re-sirve) | |
+| `claimed_at` | TIMESTAMPTZ | SÍ | — | — | — | Cuándo se reclamó (NULL = disponible para reclamar) | |
 | `provisioning_token_id` | UUID | SÍ | — | `device_management.device_provisioning_token(id)` | IDX | Token que originó el registro (NULL = alta manual) | |
 
 **Índices:** `idx_device_status_active (status) WHERE deleted_at IS NULL`, `idx_device_heartbeat (last_heartbeat_at)`
@@ -512,7 +512,7 @@
 |---------|------|------|---------|----|--------|-------------|
 | `id` | UUID | NO | — | PK | PK | Identificador |
 | `device_id` | UUID | NO | — | `device_management.device(id)` | **UNIQUE (device_id) WHERE unassigned_at IS NULL** | Device |
-| `user_id` | UUID | NO | — | `security.user(id)` | IDX | Usuario |
+| `user_id` | UUID | NO | — | `security.user(id)` | **UNIQUE (user_id) WHERE unassigned_at IS NULL** | Usuario (1 usuario ↔ 1 device vigente, RN-DEV-01) |
 | `assigned_at` | TIMESTAMPTZ | NO | `now()` | — | — | Cuándo se asignó |
 | `unassigned_at` | TIMESTAMPTZ | SÍ | — | — | — | Cuándo se desasignó (NULL = actual) |
 | `assigned_by` | UUID | NO | — | `security.user(id)` | — | Quién asignó (admin o user) |
@@ -535,7 +535,7 @@
 |---------|------|------|---------|----|--------|-------------|
 | `id` | UUID | NO | — | PK | PK | Identificador |
 | `device_id` | UUID | NO | — | `device_management.device(id)` | **UNIQUE** | Device (1 config por device) |
-| `configuration` | JSONB | NO | `'{}'` | — | — | Config completa (umbrales, sound_pattern, volumen, sync_interval) |
+| `configuration` | JSONB | NO | `'{}'` | — | — | Solo overrides por device (deltas). El GET mergea con el catálogo vigente; precedencia override > catálogo. |
 | `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
 | `version` | INTEGER | NO | 1 | — | — | Optimistic locking (incrementa en cada UPDATE; la publicación se versiona vía `published_at` + `device_config_history`) |
 | `published_at` | TIMESTAMPTZ | SÍ | — | — | — | Cuándo se publicó |
@@ -575,7 +575,7 @@
 |---------|------|------|---------|----|--------|-------------|
 | `id` | UUID | NO | — | PK | PK | Identificador |
 | `device_config_id` | UUID | NO | — | `device_management.device_config(id)` | IDX | Config padre |
-| `configuration` | JSONB | NO | — | — | — | Snapshot completo en ese momento |
+| `configuration` | JSONB | NO | — | — | — | Snapshot de los overrides de ese PATCH (no mergeado) |
 | `changed_by` | UUID | NO | — | `security.user(id)` | — | Admin que cambió |
 | `change_reason` | VARCHAR(200) | SÍ | — | — | — | Motivo del cambio |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | **IDX (created_at DESC)** | Timestamp |
@@ -627,7 +627,7 @@
 | `severity_id` | UUID | NO | — | `parameterization.severity(id)` | IDX | Severidad (puede diferir de default) | |
 | `sound_pattern_id` | UUID | SÍ | — | `parameterization.sound_pattern(id)` | — | Sonido reproducido | |
 | `is_offline_sync` | BOOLEAN | NO | FALSE | — | — | TRUE si generado offline | RN-08 |
-| `metadata` | JSONB | SÍ | `'{}'` | — | — | Datos extra (confianza, coordenadas, etc.) | |
+| `metadata` | JSONB | NO | `'{}'` | — | — | Datos extra (confianza, coordenadas, etc.) | |
 | `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE. FALSE = inactivo. | RN-08 |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: creación | |
 | `created_by` | UUID | NO | — | `device_management.device(id)` | — | Device ID que generó | |

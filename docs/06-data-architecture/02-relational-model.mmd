@@ -146,7 +146,11 @@ erDiagram
         UUID device_id FK
         UUID event_type_id FK
         TIMESTAMPTZ occurred_at
+        UUID severity_id FK
+        UUID sound_pattern_id FK
+        JSONB metadata
         BOOLEAN is_offline_sync
+        VARCHAR status
     }
 
     EVIDENCE {
@@ -155,6 +159,7 @@ erDiagram
         UUID media_type_id FK
         VARCHAR minio_key
         BIGINT size_bytes
+        VARCHAR checksum_sha256
         UUID created_by FK
         BOOLEAN is_active
     }

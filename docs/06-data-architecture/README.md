@@ -26,7 +26,7 @@ Modelo de datos vigente del sistema. Este modelo es la **fuente de verdad** para
 | [01-entity-relationship-model.mmd](./01-entity-relationship-model.mmd) | Diagrama entidad-relación vigente (20 entidades) | Estable |
 | [02-modules-entities.md](./02-modules-entities.md) | Módulos, entidades y atributos con convenciones | Estable |
 | [02-relational-model.mmd](./02-relational-model.mmd) | Esquema relacional implementable del modelo vigente | En progreso |
-| [03-data-dictionary.md](./03-data-dictionary.md) | Solo referencia histórica (reemplazado 2026-08-22 por `data-dictionary.md`) | Deprecado |
+| [03-data-dictionary-deprecated.md](../99-archive/deprecated/03-data-dictionary-deprecated.md) | Solo referencia histórica (reemplazado 2026-08-22 por `data-dictionary.md`; no usar: `file_url`, `1:N` evidence y campos recortados) | Deprecado |
 | [data-dictionary.md](./data-dictionary.md) | Diccionario de datos unificado (v2026-08-22, 20 entidades + 3 catálogos de estado + ADR-009) | Borrador |
 | [modeling-conventions.md](./modeling-conventions.md) | Convenciones de modelado Liquibase (naming, FKs, índices, JSONB, triggers) | Estable |
 | [migration-strategy.md](./migration-strategy.md) | Estrategia de migraciones (orden, rollback, seeds, CI) | En progreso |

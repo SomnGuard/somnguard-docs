@@ -67,7 +67,7 @@ Convenciones REST que rigen las APIs de SomnGuard. Complementa el diseño de API
 
 ## 6. Paginación, filtrado y ordenamiento
 
-- Paginación por offset: `?page=1&page_size=20` (`page_size` máximo 100). Para timeline de eventos (`GET /api/v1/events`, `GET /api/v1/analytics/timeline`), paginación por cursor: `?cursor=<opaco>&limit=50`.
+- Paginación por offset por defecto: `?page=1&page_size=20` (`page_size` máximo 100). Solo los endpoints de alto volumen (`GET /api/v1/events`, `GET /api/v1/analytics/timeline`) podrán usar cursor (`?cursor=<opaco>&limit=50`) cuando se implementen; mientras tanto usan offset.
 - Respuesta de colección envuelta con metadatos:
 
 ```json

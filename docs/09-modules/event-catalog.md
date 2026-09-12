@@ -46,7 +46,7 @@
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
 | `device.synced` | Lote de eventos recibido y confirmado por API | `telemetry_service` (persiste events), `monitoring` (actualiza estado device) | RF-EDGE-10, HU-DEVICE-003 |
-| `device.config.pulled` | Configuración remota descargada por device | `device_management` (actualiza device_config_cache) | RF-EDGE-11, HU-DEVICE-004 |
+| `device.config.pulled` | Configuración remota descargada por device (merge catálogo vigente + overrides; sin fan-out) | `device_management` (actualiza device_config_cache) | RF-EDGE-11, HU-DEVICE-004 |
 | `device.state.changed` | Estado device cambió (ACTIVE↔OFFLINE, etc.) | `monitoring`, `telemetry_service` | ADR-005, cross-cutting.md §5.2 |
 | `device.self_registered` | Device creado vía `POST /devices/self-register` (token consumido) | `monitoring`, `security` (auditoría) | RF-DEV-11, HU-API-006, ADR-010 |
 | `device.claimed` | Device reclamado por usuario vía `POST /devices/claim` | `monitoring`, `security` (auditoría) | RF-DEV-12, HU-API-006, ADR-010 |
@@ -93,7 +93,8 @@ Todos los eventos siguen un **envelope estándar** con campos de cabecera obliga
 | Campo | Tipo | Descripción | Ejemplo |
 |-------|------|-------------|---------|
 | `event_id` | UUID v7 | Identificador único, generado en device, **único e idempotente** | `a1b2c3d4-e5f6-7890-abcd-ef1234567890` |
-| `event_type` | VARCHAR | Código del evento (EV-SOM-01, EV-DIS-02, etc.) | `EV-SOM-05` |
+| `event_type` | VARCHAR | Nombre del evento `<entidad>.<accion>` (los códigos `EV-SOM-01`, `AS-01` van en el `payload`, no en el header) | `event.recorded` |
+| `version` | VARCHAR | Versión del envelope | `1.0` |
 | `timestamp` | TIMESTAMPTZ | Momento del evento en UTC | `2026-08-22T14:30:00.123Z` |
 | `source_module` | VARCHAR | Módulo que publicó el evento | `device_management` o `telemetry_service` |
 | `correlation_id` | UUID (opcional) | Agrupa eventos de una misma operación (lote sync) | `d4c3b2a1-0000-1111-2222-333344445555` |
@@ -102,15 +103,15 @@ Todos los eventos siguen un **envelope estándar** con campos de cabecera obliga
 
 ```json
 {
-  "envelope": {
-    "event_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "event_type": "EV-SOM-05",
-    "timestamp": "2026-08-22T14:30:00.123Z",
-    "source_module": "device_management",
-    "correlation_id": "d4c3b2a1-0000-1111-2222-333344445555"
-  },
+  "event_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "event_type": "event.recorded",
+  "version": "1.0",
+  "timestamp": "2026-08-22T14:30:00.123Z",
+  "source_module": "device_management",
+  "correlation_id": "d4c3b2a1-0000-1111-2222-333344445555",
   "payload": {
     "device_id": "dev-001",
+    "event_code": "EV-SOM-05",
     "occurred_at": "2026-08-22T14:29:00.000Z",
     "severity": "critical",
     "event_data": {
@@ -157,7 +158,7 @@ Los nombres de evento en SomnGuard siguen la convención `<entidad>.<accion>` en
 1. **Actualizar consumidores**: Cuando se renombra un evento, todos los módulos que lo suscriban deben actualizarse en paralelo
 2. **Compatibilidad hacia atrás**: El `event_id` UUID v7 permite correlación incluso si el nombre cambia
 3. **Wildcard en `security`**: suscribe por wildcard (`audit_login`), por lo que cambios de naming no afectan su lógica
-4. **Contratos API**: Cualquier endpoint que acepte/retorne nombres de eventos (ej. `GET /telemetry/events?event_type=XX`) debe actualizarse en la misma PR
+4. **Contratos API**: Cualquier endpoint que acepte/retorne nombres de eventos (ej. `GET /api/v1/events?event_type=XX`) debe actualizarse en la misma PR
 
 ---
 
