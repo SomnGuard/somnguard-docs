@@ -87,15 +87,15 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 | POST | `/api/v1/devices/claim` | Reclamar dispositivo con `claim_code` público reutilizable (JWT user + `device.claim`). Crea `device_assignment` solo en REGISTERED (`409` si asignado; `unassign` libera y el mismo código re-sirve). El código es visible en `GET /devices` |
 | POST | `/api/v1/devices/{id}/unassign` | Desasociar dispositivo (->REGISTERED) |
 | POST | `/api/v1/devices/{id}/heartbeat` | Saludo periódico del device (ASSIGNED->ACTIVE, ACTIVE<->OFFLINE). Auth: `X-Device-ID + X-API-Key`. Actualiza `last_heartbeat_at, last_seen_ip, firmware_version` |
-| GET | `/api/v1/devices/{id}/config` | Consultar configuración (device con API Key o user con JWT) |
-| PATCH | `/api/v1/devices/{id}/config` | Actualizar configuración (solo admin JWT) |
+| GET | `/api/v1/devices/{id}/config` | Consultar configuración vigente = merge en lectura (defaults vivos de `sound_pattern`/`event_type` + overrides de `device_config.configuration`; precedencia override > catálogo). Device con API Key o user con JWT. Cambios de catálogo se reflejan al próximo pull sin PATCH por device |
+| PATCH | `/api/v1/devices/{id}/config` | Actualizar solo overrides en `device_config.configuration` (solo admin JWT). Valida JSON contra schema, `version++`, registra `device_config_history`. No se usa para propagar cambios de catálogo |
 | PATCH | `/api/v1/devices/{id}/rotate-key` | Rotar API Key (solo admin JWT). Invalida anterior de inmediato, devuelve nueva key una sola vez. Estado no cambia; device con key vieja recibe `401` hasta reprovisionar |
 
 ## Módulo telemetry-service
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| POST | `/api/v1/telemetry/events` | Ingresar lote de eventos **solo metadata JSON** `{"events":[{event_id UUIDv7, device_id, occurred_at UTC, event_type, severity, metadata, has_evidence}]}`. Auth `X-Device-ID + X-API-Key`. Lote máx 100, timeout 10s. `event_type` y `severity` van por **código de catálogo** (ej. `EV-SOM-01`); la API resuelve a `event_type_id/severity_id`, `422` si desconocido. Idempotencia por `event_id`: el lote **siempre responde `201 {acked_ids[], duplicate_ids[]}`** (los duplicados se reportan, no son error). Device borra local ambos. `REGISTERED` sin assign -> `403` |
+| POST | `/api/v1/telemetry/events` | Ingresar lote de eventos **solo metadata JSON** `{"events":[{event_id UUIDv7, device_id, occurred_at UTC, event_type, severity, sound_pattern?, metadata, has_evidence}]}`. Auth `X-Device-ID + X-API-Key`. Lote máx 100, timeout 10s. `event_type`, `severity` y `sound_pattern` van por **código de catálogo** (ej. `EV-SOM-01`, `AS-02`); la API resuelve a `event_type_id/severity_id/sound_pattern_id`, `422` si desconocido. `sound_pattern` es opcional: si viene y está activo se usa (es el que sonó en edge); si no viene, fallback a `event_type.default_sound_pattern_id`. Idempotencia por `event_id`: el lote **siempre responde `201 {acked_ids[], duplicate_ids[]}`** (los duplicados se reportan, no son error). Device borra local ambos. `REGISTERED` sin assign -> `403` |
 | POST | `/api/v1/telemetry/events/{eventId}/evidence` | Subir evidencia de un evento (1 archivo por evento MVP). `multipart/form-data` single file `file` JPG ~50-200KB + `checksum_sha256` (64 hex, obligatorio). `201 {evidence_id}`; `409` si el evento ya tiene evidencia; `404` si el evento no existe. Alternativa prod: presigned PUT directo a MinIO (ver ADR-006). Mapeo `event_id -> minio_key {device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` |
 | GET | `/api/v1/events` | Consultar eventos (filtros por dispositivo, tipo, rango de fechas) |
 | GET | `/api/v1/events/{id}` | Consultar detalle de evento |
@@ -127,8 +127,9 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 |--------|----------|-------------|
 | GET | `/api/v1/analytics/timeline` | Línea de tiempo de eventos por dispositivo/rango |
 | GET | `/api/v1/analytics/metrics` | Métricas de comportamiento (sesiones de riesgo, duración) |
-| GET | `/api/v1/analytics/reports` | Reportes generados (resumen IA, descargables) |
-| POST | `/api/v1/analytics/reports` | Solicitar generación de reporte (propuesta async, `202 Accepted`) |
+| GET | `/api/v1/analytics/reports` | Listar trabajos de reporte (solo jobs vigentes en memoria/Redis, TTL 1h) |
+| POST | `/api/v1/analytics/reports` | Solicitar generación de reporte (propuesta async, `202 Accepted {job_id}`, sin persistencia; PDF temporal en MinIO con auto-borrado 1h) |
+| GET | `/api/v1/analytics/reports/jobs/{job_id}` | Poll de estado (`queued\|rendering\|ready\|failed`); en `ready` retorna URL prefirmada de un solo uso (expira 15min) |
 
 ## Modelo de respuesta de ejemplo
 

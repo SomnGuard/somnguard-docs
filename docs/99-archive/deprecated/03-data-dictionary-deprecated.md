@@ -1,7 +1,7 @@
 <div style="display:flex; align-items:center; justify-content:space-between;">
 
 <div>
-<img src="../../assets/icons/logo-somnguard.png" width="140"/>
+<img src="../../../assets/icons/logo-somnguard.png" width="140"/>
 </div>
 
 <div align="right">
@@ -21,7 +21,7 @@
 >
 > ---
 >
-> Diccionario de datos del modelo vigente (v2), alineado con [02-modules-entities.md](./02-modules-entities.md) y [01-entity-relationship-model.mmd](./01-entity-relationship-model.mmd). La versión anterior del modelo quedó archivada en `../99-archive/deprecated/data-model-v1/`.
+> Diccionario de datos del modelo vigente (v2), alineado con [02-modules-entities.md](../../06-data-architecture/02-modules-entities.md) y [01-entity-relationship-model.mmd](../../06-data-architecture/01-entity-relationship-model.mmd). La versión anterior del modelo quedó archivada en `./data-model-v1/`.
 
 ## Convenciones generales
 
@@ -248,7 +248,7 @@ Configuración del dispositivo.
 | ----- | ---- | ----------- |
 | id | UUID PK | Identificador único. |
 | device_id | UUID FK | Dispositivo (→ device.id). |
-| configuration | JSONB | Configuración parametrizable del dispositivo. |
+| configuration | JSONB | Solo overrides por device (deltas). El GET mergea con el catálogo vigente; precedencia override > catálogo. |
 
 ---
 

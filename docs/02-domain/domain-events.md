@@ -27,7 +27,7 @@ Vista de negocio de los eventos de dominio del sistema: disparador, cambio de es
 | `account.password_reset_requested` | Solicitud de reseteo | Se emite token temporal | security |
 | `device.registered` | Alta de dispositivo | Dispositivo registrado | device-management |
 | `device.assigned` | Asignación a cuenta | Dispositivo asignado | device-management, telemetry-service |
-| `device.config_updated` | Cambio de configuración | Nueva configuración vigente | device-management (sincronización) |
+| `device.config_updated` | Cambio de configuración vía PATCH (solo overrides) | Nueva configuración vigente | device-management (sincronización) |
 | `device.synced` | Lote de eventos recibido | Sincronización confirmada | telemetry-service |
 | `event.recorded` | Evento detectado recibido | Evento persistido (idempotente) | telemetry-service, analytics |
 | `evidence.uploaded` | Evidencia multimedia subida | Referencia disponible | telemetry-service, analytics |
@@ -39,17 +39,17 @@ Vista de negocio de los eventos de dominio del sistema: disparador, cambio de es
 
 ```json
 {
-  "event_id": "uuid-v4",
+  "event_id": "uuid-v7",
   "event_type": "<entidad>.<accion>",
   "version": "1.0",
   "timestamp": "2026-01-01T00:00:00Z",
   "source_module": "<nombre-modulo>",
-  "correlation_id": "uuid-v4",
+  "correlation_id": "uuid-v7",
   "payload": {}
 }
 ```
 
-El envelope es el **sobre** y el `payload` el **contenido**: los campos de cabecera (`event_id`, `event_type`, `timestamp`, `source_module`, `correlation_id`) son iguales en todos los eventos; el `payload` cambia por evento y lleva los datos propios del hecho ocurrido.
+El envelope es el **sobre** y el `payload` el **contenido**: los campos de cabecera (`event_id`, `event_type`, `version`, `timestamp`, `source_module`, `correlation_id`) son iguales en todos los eventos; el `payload` cambia por evento y lleva los datos propios del hecho ocurrido. Los códigos de catálogo (`EV-SOM-01`, `AS-01`) van en el `payload`, nunca en el `event_type` del header.
 
 ## Ejemplo: `event.recorded` enviado por el dispositivo
 
@@ -63,11 +63,11 @@ El envelope es el **sobre** y el `payload` el **contenido**: los campos de cabec
   "correlation_id": "9f8e7d6c-1111-2222-3333-444455556666",
   "payload": {
     "device_id": "raspberry-0001",
-    "event_category": "fatiga",
-    "event_type": "microsueño",
-    "severity": "alta",
+    "event_code": "EV-SOM-05",
+    "severity": "critical",
+    "sound_pattern": "AS-02",
     "captured_at": "2026-01-01T00:00:01Z",
-    "evidence_ref": "minio://somnguard/evidencia/2026-01-01/a1b2.mp4"
+    "evidence_key": "raspberry-0001/2026/01/01/a1b2c3d4-1111-2222-3333-444455556666.jpg"
   }
 }
 ```
@@ -78,7 +78,8 @@ El `correlation_id` une los eventos de una misma operación (p. ej. el lote sinc
 
 - Los eventos se nombran `<entidad>.<accion>` en inglés; el módulo emisor se identifica con `source_module` del envelope.
 - La idempotencia se garantiza con `event_id` (RN-08).
-- **Hoy el payload viaja por HTTP** (dispositivo → API, POST /events). **Entre módulos no hay mensajería**: el monolito hexagonal se comunica por puertos (interfaces de entrada/salida en Java), no por eventos. El envelope solo se materializa como mensaje si se adopta una cola (p. ej. `adapter/in/amqp`) para desacoplar procesos como analytics.
+- **Hoy el payload viaja por HTTP** (dispositivo → API, `POST /api/v1/telemetry/events`). **Entre módulos no hay mensajería**: el monolito hexagonal se comunica por puertos (interfaces de entrada/salida en Java), no por eventos. El envelope solo se materializa como mensaje si se adopta una cola (p. ej. `adapter/in/amqp`) para desacoplar procesos como analytics.
+- Cambios en `sound_pattern`/`event_type` no emiten `device.config_updated` por device ni escriben `device_config`: se propagan por pull en el próximo `GET /devices/{id}/config` (merge en lectura).
 
 ## Ver también
 

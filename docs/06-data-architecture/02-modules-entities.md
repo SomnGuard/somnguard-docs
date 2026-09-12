@@ -420,7 +420,7 @@ Historial de asignación de dispositivos.
 
 ## device_config
 
-Configuración remota del dispositivo (JSONB).
+Configuración remota del dispositivo (JSONB; `configuration` guarda solo overrides, el GET mergea con el catálogo vigente).
 
 | Campo | Tipo |
 | ----- | ---- |

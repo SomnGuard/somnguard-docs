@@ -65,7 +65,7 @@
 | RF-PAR-01 | CRUD catálogos base: event_category, severity, media_type, sound_pattern, event_type | RN-PAR-01 | Apéndice 1, 2 | Must | Parametrización |
 | RF-PAR-02 | Gestión de sound_pattern: frecuencia Hz, duración, repeticiones, patrón (continuo/intermitente) | RN-PAR-02 | Apéndice 1 (AS-01..AS-09) | Must | Parametrización |
 | RF-PAR-03 | Gestión de event_type con umbrales configurables (parpadeo, cierre ojos, bostezo, cabeceo, teléfono, mirada, cinturón) | RN-PAR-03 | Apéndice 2 (EV-SOM-*, EV-DIS-*, EV-CIN-*) | Must | Parametrización |
-| RF-PAR-04 | Configuración de umbrales por defecto y overridables por device_config (JSONB) | RN-PAR-04 | RF-1.2, Apéndice 2 nota | Should | Parametrización |
+| RF-PAR-04 | Configuración de umbrales por defecto y overridables por device_config (JSONB; merge en lectura, `device_config` guarda solo overrides) | RN-PAR-04 | RF-1.2, Apéndice 2 nota | Should | Parametrización |
 | RF-PAR-05 | Versionado de catálogos (histórico de cambios, auditoría) | RN-PAR-05 | — | Could | Parametrización |
 
 ### Device Management (RF-DEV-*)
@@ -74,7 +74,7 @@
 |----|-------------|-----------|-------------------|------------------|-------|
 | RF-DEV-01 | Alta de dispositivo: serial_number, firmware_version, api_key_hash, estado (Registrado/Asignado/Activo/Offline/Suspendido/Retirado) | RN-DEV-03 | RF-1.1, ES-device | Must | Gestión de dispositivos |
 | RF-DEV-02 | Asociación/desasociación device ↔ user (ver RF-DEV-06, RF-DEV-07) | RN-DEV-01, RN-DEV-02 | RF-9.6, RF-9.7 | Must | Gestión de dispositivos |
-| RF-DEV-03 | Configuración remota device_config (JSONB): umbrales, sound_pattern, volumen, intervalo sync | RN-DEV-04 | RF-1.2, RF-8.3 | Must | Gestión de dispositivos |
+| RF-DEV-03 | Configuración remota device_config (JSONB): umbrales, sound_pattern, volumen, intervalo sync (GET mergea catálogo vigente + overrides; PATCH guarda solo overrides) | RN-DEV-04 | RF-1.2, RF-8.3 | Must | Gestión de dispositivos |
 | RF-DEV-04 | Heartbeat dispositivo: last_seen, versión firmware, estado conectividad | RN-DEV-05 | RF-8.2 | Must | Gestión de dispositivos |
 | RF-DEV-05 | Gestión de estados del dispositivo (state machine: Registrado → Asignado → Activo ↔ Offline → Suspendido → Retirado) | RN-DEV-06 | Apéndice 2 (EV-SYS-*), ES-device | Must | Gestión de dispositivos |
 | RF-DEV-06 | Asociación dispositivo-usuario (1 device ↔ 1 user) | RN-DEV-01 | RF-9.6 | Must | Gestión de dispositivos |
@@ -177,7 +177,7 @@
 | RF-MON-03 | RN-MON-03 | — | Monitoreo y notificaciones | Monitoring | HU-API-009, HU-APP-002 |
 | RF-MON-04 | RN-MON-04 | — | Monitoreo y notificaciones | Monitoring | HU-API-009, HU-APP-002 |
 | RF-ANA-01 | RN-ANA-01 | RF-10.1 | Analítica y reportes | Analytics | HU-API-010, HU-PORTAL-003, HU-DB-002 |
-| RF-ANA-02 | RN-ANA-02 | RF-10.2 | Analítica y reportes | Analytics | HU-API-010, HU-PORTAL-003 |
+| RF-ANA-02 | RN-ANA-02 | RF-10.2 | Analítica y reportes | Analytics | HU-API-010, HU-PORTAL-003, HU-DB-002 |
 | RF-ANA-03 | RN-ANA-03 | RF-10.3 | Analítica y reportes | Analytics | HU-API-011, HU-PORTAL-004, HU-APP-003 |
 | RF-ANA-04 | RN-ANA-04 | RF-10.4 | Analítica y reportes | Analytics | HU-API-011, HU-PORTAL-004, HU-APP-003 |
 | RF-ANA-05 | RN-ANA-05 | RF-10.6 | Analítica y reportes | Analytics | HU-API-012, HU-DEVICE-005, HU-PORTAL-005, HU-APP-004 |
@@ -188,7 +188,7 @@
 | RF-EDGE-05 | RN-EDGE-05 | RF-4.1,4.2,4.3 | Telemetría y sincronización | Device Edge | HU-DEVICE-001 |
 | RF-EDGE-06 | RN-EDGE-06 | RF-5.1,5.2 | Telemetría y sincronización | Device Edge | HU-DEVICE-001 |
 | RF-EDGE-07 | RN-EDGE-07 | RF-6.1,6.2,6.3 | Telemetría y sincronización | Device Edge | HU-DEVICE-004 |
-| RF-EDGE-08 | RN-EDGE-08 | RF-7.1..7.4,8.1 | Telemetría y sincronización | Device Edge | HU-DEVICE-003 |
+| RF-EDGE-08 | RN-EDGE-08 | RF-7.1..7.4,8.1 | Telemetría y sincronización | Device Edge | HU-DEVICE-003, HU-API-007 |
 | RF-EDGE-09 | RN-EDGE-09 | RF-1.5 | Telemetría y sincronización | Device Edge | HU-DEVICE-002 |
 | RF-EDGE-10 | RN-EDGE-10 | RF-8.2,8.3 | Telemetría y sincronización | Device Edge | HU-DEVICE-003 |
 | RF-EDGE-11 | RN-EDGE-11 | RF-1.2,8.3 | Gestión de dispositivos | Device Edge | HU-DEVICE-002, HU-DEVICE-004, HU-API-005 |

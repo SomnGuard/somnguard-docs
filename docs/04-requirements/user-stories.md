@@ -366,10 +366,11 @@
 
 | ID | Criterio | Testeable |
 |----|----------|-----------|
-| AC-001 | PATCH `/devices/{id}/config` valida JSON contra schema, persiste en `device_config` | Sí |
-| AC-002 | GET `/devices/{id}/config` retorna config vigente (merge defaults + overrides) | Sí |
+| AC-001 | PATCH `/devices/{id}/config` valida JSON contra schema, persiste **solo overrides** en `device_config.configuration` | Sí |
+| AC-002 | GET `/devices/{id}/config` retorna config vigente = **merge en lectura**: defaults vivos de catálogo (`sound_pattern` activos + `event_type.threshold_config`) + overrides de `device_config.configuration`; precedencia override > catálogo | Sí |
 | AC-003 | Device pulla config tras sync exitosa (ver HU-DEVICE-002) | Sí |
-| AC-004 | Historial de cambios de config con auditoría | Sí |
+| AC-004 | Historial de cambios de config con auditoría (**solo** en PATCH manual; cambios de catálogo no generan filas aquí, se versionan en su catálogo HU-API-004) | Sí |
+| AC-005 | Cambio en `sound_pattern`/`event_type` se propaga solo al próximo pull del device, **sin PATCH manual por device** | Sí |
 
 ### Dependencias
 
@@ -431,10 +432,10 @@
 
 | ID | Criterio | Testeable |
 |----|----------|-----------|
-| AC-001 | POST `/telemetry/events` (auth `X-Device-ID + X-API-Key`) acepta **solo metadata JSON** `{"events":[]}` lote máx 100, sin archivos inline (descartado base64) | Sí |
-| AC-002 | Validación: `device_id` + `api_key` coinciden, `event_type/severity` por código (resuelve a id, `422` si desconocido). `REGISTERED` sin assign -> `403`. Duplicados por `event_id` se reportan en `duplicate_ids` del `201`, no son error | Sí |
-| AC-003 | Persiste `event` (event_type_id, occurred_at, severity, is_offline_sync, evidence_refs) | Sí |
-| AC-004 | Evidencia 1/evento MVP: `POST /telemetry/events/{id}/evidence` multipart 1 JPG -> MinIO `somnguard-evidence` key `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` + `evidence_id` + `checksum_sha256` (64 hex, obligatorio). `409` si ya existe evidencia; `404` si no existe el evento. Mapeo por `evidence.event_id UNIQUE` | Sí |
+| AC-001 | POST `/api/v1/telemetry/events` (auth `X-Device-ID + X-API-Key`) acepta **solo metadata JSON** `{"events":[]}` lote máx 100, sin archivos inline (descartado base64) | Sí |
+| AC-002 | Validación: `device_id` + `api_key` coinciden, `event_type/severity/sound_pattern` por código (resuelve a id, `422` si desconocido; `sound_pattern` opcional con fallback a `event_type.default_sound_pattern_id`). `REGISTERED` sin assign -> `403`. Duplicados por `event_id` se reportan en `duplicate_ids` del `201`, no son error | Sí |
+| AC-003 | Persiste `event` (`event_type_id`, `occurred_at`, `severity_id`, `sound_pattern_id`, `metadata`, `is_offline_sync`; evidencia en tabla `evidence`, no `evidence_refs`) | Sí |
+| AC-004 | Evidencia 1/evento MVP: `POST /api/v1/telemetry/events/{id}/evidence` multipart 1 JPG -> MinIO `somnguard-evidence` key `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` + `evidence_id` + `checksum_sha256` (64 hex, obligatorio). `409` si ya existe evidencia; `404` si no existe el evento. Mapeo por `evidence.event_id UNIQUE` | Sí |
 | AC-005 | Registra `alert_log` con código AS-XX, timestamp, event_id, severidad | Sí |
 | AC-006 | Respuesta `201 {acked_ids[], duplicate_ids[]}`; ACK para limpieza buffer local (borra ambos) | Sí |
 | AC-007 | Lote máx 100 eventos; timeout 10s; payload máx 50MB | Sí |
@@ -464,8 +465,8 @@
 
 | ID | Criterio | Testeable |
 |----|----------|-----------|
-| AC-001 | GET `/telemetry/events` con query params: `device_id`, `event_type_id`, `severity`, `from`, `to`, `page`, `page_size` | Sí |
-| AC-002 | Respuesta: `{data: [], meta: {total, page, page_size, total_pages}}` | Sí |
+| AC-001 | GET `/api/v1/events` con query params: `device_id`, `event_type_id`, `severity`, `from`, `to`, `page`, `page_size` | Sí |
+| AC-002 | Respuesta: `{data: [], pagination: {page, page_size, total_items, total_pages}}` | Sí |
 | AC-003 | JOIN con `event_type`, `severity`, `media_type` para nombres legibles | Sí |
 | AC-004 | Índices BD optimizan filtros frecuentes (device_id + occurred_at) | Sí |
 
@@ -521,8 +522,8 @@
 
 | ID | Criterio | Testeable |
 |----|----------|-----------|
-| AC-001 | GET `/analytics/timeline` retorna eventos ordenados desc con filtros (fecha, tipo, severidad) | Sí |
-| AC-002 | GET `/analytics/metrics` retorna: freq por event_type, severidad media, tendencia semanal/mensual | Sí |
+| AC-001 | GET `/api/v1/analytics/timeline` retorna eventos ordenados desc con filtros (fecha, tipo, severidad) | Sí |
+| AC-002 | GET `/api/v1/analytics/metrics` retorna: freq por event_type, severidad media, tendencia semanal/mensual | Sí |
 | AC-003 | Agregaciones calculadas en BD (vistas materializadas o queries optimizadas) | Sí |
 | AC-004 | Respuesta < 500ms p95 para 10k eventos | Sí |
 
@@ -550,10 +551,11 @@
 
 | ID | Criterio | Testeable |
 |----|----------|-----------|
-| AC-001 | POST `/api/v1/analytics/reports` solicita generación con resumen IA (prompt con métricas + eventos) → `202 Accepted` | Sí |
-| AC-002 | GET `/api/v1/analytics/reports` genera/descarga PDF/HTML: timeline + métricas + resumen IA + evidencia (thumbnails) | Sí |
+| AC-001 | POST `/api/v1/analytics/reports` solicita generación con resumen IA (prompt con métricas + eventos) → `202 Accepted {job_id}` (job temporal en memoria/Redis TTL 1h, sin persistencia) | Sí |
+| AC-002 | GET `/api/v1/analytics/reports/jobs/{job_id}` poll (`queued\|rendering\|ready\|failed`); en `ready` retorna URL prefirmada MinIO de un solo uso (expira 15min, objeto temporal con auto-borrado 1h): timeline + métricas + resumen IA + evidencia (thumbnails) | Sí |
 | AC-003 | Descarga directa (Content-Disposition: attachment) y visualización inline | Sí |
-| AC-004 | Cache de resumen/reporte 1h por usuario+periodo | Sí |
+| AC-004 | Cache de resumen/reporte 1h por usuario+periodo (Redis/memoria); regenera tras expirar | Sí |
+| AC-005 | Auditoría mínima sin PDFs: log JSON (user_id, params, status, timestamp); analytics sigue sin tablas propias | Sí |
 
 ### Dependencias
 
@@ -590,6 +592,7 @@
 |----------------|------|-------------|
 | HU-DB-001a | Bloqueante | Esquema base |
 | HU-API-010 | Relacionada | Consumidor principal |
+| RF-ANA-01,02 | Requisito | Base funcional |
 
 ---
 
@@ -651,7 +654,7 @@
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
 | HU-API-006 | Relacionada | Device registrado |
-| RF-EDGE-01,02,03,09,11, RF-TEL-05 | Requisito | Base funcional |
+| RF-EDGE-01,02,03,09,11, RF-TEL-05, RF-DEV-04,05 | Requisito | Base funcional |
 | ADR-010 | Decisión | Diseño provisioning/self-register |
 
 ---
@@ -672,7 +675,7 @@
 |----|----------|-----------|
 | AC-001 | Buffer SQLite local: tabla `pending_events` (event_json, evidence_path, retries, created_at) | Sí |
 | AC-002 | Detección conectividad: ping/HEAD a API cada 30s; online → sync automático | Sí |
-| AC-003 | Envío lote (máx 100) a POST `/telemetry/events`; reintentos exponenciales (1m, 2m, 4m, max 1h) | Sí |
+| AC-003 | Envío lote (máx 100) a POST `/api/v1/telemetry/events`; reintentos exponenciales (1m, 2m, 4m, max 1h) | Sí |
 | AC-004 | Deduplicación: `event_id` UUID único; duplicados se reportan en `duplicate_ids` del `201` (no son error) | Sí |
 | AC-005 | Limpieza automática tras ACK 201 (borra confirmados); retención 7d para fallidos | Sí |
 | AC-006 | Almacenamiento local < 90% → AS-09; política retención evidencia 7d | Sí |
@@ -786,8 +789,8 @@
 
 | ID | Criterio | Testeable |
 |----|----------|-----------|
-| AC-001 | Botón "Generar resumen IA" llama POST `/analytics/summary`, muestra texto en modal | Sí |
-| AC-002 | Botón "Descargar reporte" llama POST `/analytics/report`, descarga PDF | Sí |
+| AC-001 | Botón "Generar resumen IA" llama `POST /api/v1/analytics/reports` → `202 {job_id}`, muestra texto en modal | Sí |
+| AC-002 | Botón "Descargar reporte" hace poll a `GET /api/v1/analytics/reports/jobs/{job_id}` y descarga vía URL prefirmada (un uso, expira 15min) | Sí |
 | AC-003 | Loading states y manejo errores (reintento, notificación) | Sí |
 
 ### Dependencias
@@ -852,7 +855,7 @@
 |----------------|------|-------------|
 | HU-APP-001 | Bloqueante | Auth + token push |
 | HU-API-009 | Bloqueante | Backend env├¡a push |
-| RF-MON-01,04 | Requisito | Base funcional |
+| RF-MON-01,02,03,04 | Requisito | Base funcional |
 
 ---
 

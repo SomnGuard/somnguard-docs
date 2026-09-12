@@ -76,7 +76,7 @@ Reglas de negocio del sistema. Fuente de verdad de las reglas `RN-*`; consolidan
 > | RN-PAR-01 | Los catálogos base se administran por CRUD restringido |
 > | RN-PAR-02 | `sound_pattern` solo lo gestiona el administrador |
 > | RN-PAR-03 | `event_type` define umbrales configurables por tipo de evento |
-> | RN-PAR-04 | Los defaults de catálogo admiten override por `device_config` |
+> | RN-PAR-04 | Los defaults de catálogo admiten override por `device_config` (merge en lectura en `GET /devices/{id}/config`; `device_config.configuration` guarda solo overrides; precedencia override > catálogo) |
 > | RN-PAR-05 | Los cambios de catálogo quedan versionados con auditoría |
 > | RN-TEL-01 | La ingesta es idempotente por `event_id` (duplicados se reportan, no son error) |
 > | RN-TEL-02 | Cada evento lleva como máximo una evidencia en MinIO (`evidence.event_id` UNIQUE) |
