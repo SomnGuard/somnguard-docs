@@ -27,7 +27,9 @@ Vista de negocio de los eventos de dominio del sistema: disparador, cambio de es
 | `account.password_reset_requested` | Solicitud de reseteo | Se emite token temporal | security |
 | `device.registered` | Alta de dispositivo | Dispositivo registrado | device-management |
 | `device.assigned` | Asignación a cuenta | Dispositivo asignado | device-management, telemetry-service |
-| `device.config_updated` | Cambio de configuración vía PATCH (solo overrides) | Nueva configuración vigente | device-management (sincronización) |
+| `config.global_version_incremented` | `POST/PATCH/DELETE` efectivo en `sound_pattern`/`event_type` (bump API, ADR-011) | `global_config.version++` + snapshot en `global_config_history` | parameterization (bump), device-management (pull manual) |
+| `device.config_update_pending` | `POST /devices/{id}/config/refresh` (gesto usuario) | `pending=true`, visible como `heartbeat{configPending=true}` (solo manual) y `GET /config/status{pending/outdated}` | device-management (sincronización) |
+| `device.config_updated` | `GET /devices/{id}/config` con API Key (pull aplicado) | `applied_config_version=global`, `pending=false`, upsert `device_config` + INSERT `device_config_history` | device-management (sincronización) |
 | `device.synced` | Lote de eventos recibido | Sincronización confirmada | telemetry-service |
 | `event.recorded` | Evento detectado recibido | Evento persistido (idempotente) | telemetry-service, analytics |
 | `evidence.uploaded` | Evidencia multimedia subida | Referencia disponible | telemetry-service, analytics |
@@ -79,7 +81,7 @@ El `correlation_id` une los eventos de una misma operación (p. ej. el lote sinc
 - Los eventos se nombran `<entidad>.<accion>` en inglés; el módulo emisor se identifica con `source_module` del envelope.
 - La idempotencia se garantiza con `event_id` (RN-08).
 - **Hoy el payload viaja por HTTP** (dispositivo → API, `POST /api/v1/telemetry/events`). **Entre módulos no hay mensajería**: el monolito hexagonal se comunica por puertos (interfaces de entrada/salida en Java), no por eventos. El envelope solo se materializa como mensaje si se adopta una cola (p. ej. `adapter/in/amqp`) para desacoplar procesos como analytics.
-- Cambios en `sound_pattern`/`event_type` no emiten `device.config_updated` por device ni escriben `device_config`: se propagan por pull en el próximo `GET /devices/{id}/config` (merge en lectura).
+- Cambios en `sound_pattern`/`event_type` emiten `config.global_version_incremented` (bump `global_config.version++` + snapshot) y **no** marcan `pending` masivo (manual-only, ADR-011 enmendada): la app detecta `outdated` vía `GET /config/status`, el usuario pulsa Actualizar (`POST /refresh`) y el pull `GET /devices/{id}/config` escribe `device_config` + `device_config_history`.
 
 ## Ver también
 

@@ -65,8 +65,9 @@
 | RF-PAR-01 | CRUD catálogos base: event_category, severity, media_type, sound_pattern, event_type | RN-PAR-01 | Apéndice 1, 2 | Must | Parametrización |
 | RF-PAR-02 | Gestión de sound_pattern: frecuencia Hz, duración, repeticiones, patrón (continuo/intermitente) | RN-PAR-02 | Apéndice 1 (AS-01..AS-09) | Must | Parametrización |
 | RF-PAR-03 | Gestión de event_type con umbrales configurables (parpadeo, cierre ojos, bostezo, cabeceo, teléfono, mirada, cinturón) | RN-PAR-03 | Apéndice 2 (EV-SOM-*, EV-DIS-*, EV-CIN-*) | Must | Parametrización |
-| RF-PAR-04 | Configuración de umbrales por defecto y overridables por device_config (JSONB; merge en lectura, `device_config` guarda solo overrides) | RN-PAR-04 | RF-1.2, Apéndice 2 nota | Should | Parametrización |
-| RF-PAR-05 | Versionado de catálogos (histórico de cambios, auditoría) | RN-PAR-05 | — | Could | Parametrización |
+| RF-PAR-04 | ~~Configuración de umbrales por defecto y overridables por device_config (JSONB; merge en lectura, `device_config` guarda solo overrides)~~ **DEROGADA por ADR-011**: configuración 100% global, sin overrides por device (`device_config*` deprecated) | RN-PAR-04 | RF-1.2, Apéndice 2 nota | Dropped | Parametrización |
+| RF-PAR-05 | Versionado de catálogos + **versión global**: todo `POST/PATCH/DELETE` efectivo en `sound_pattern`/`event_type` hace `global_config.version++` en la misma transacción (API Java) y escribe `global_config_history.snapshot_json` | RN-PAR-05, RN-PAR-06 | — | Must | Parametrización |
+| RF-PAR-06 | Configuración global generada desde DB (`GET` construye JSON + `version`); `device.applied_config_version < global.version ⇒ desactualizado` (vía `GET /config/status{outdated}`); `heartbeat` expone solo `pending` manual + `POST /refresh` manual (sin lazy OR) | RN-PAR-06 | RF-1.2, RF-8.3 | Must | Parametrización |
 
 ### Device Management (RF-DEV-*)
 
@@ -74,8 +75,8 @@
 |----|-------------|-----------|-------------------|------------------|-------|
 | RF-DEV-01 | Alta de dispositivo: serial_number, firmware_version, api_key_hash, estado (Registrado/Asignado/Activo/Offline/Suspendido/Retirado) | RN-DEV-03 | RF-1.1, ES-device | Must | Gestión de dispositivos |
 | RF-DEV-02 | Asociación/desasociación device ↔ user (ver RF-DEV-06, RF-DEV-07) | RN-DEV-01, RN-DEV-02 | RF-9.6, RF-9.7 | Must | Gestión de dispositivos |
-| RF-DEV-03 | Configuración remota device_config (JSONB): umbrales, sound_pattern, volumen, intervalo sync (GET mergea catálogo vigente + overrides; PATCH guarda solo overrides) | RN-DEV-04 | RF-1.2, RF-8.3 | Must | Gestión de dispositivos |
-| RF-DEV-04 | Heartbeat dispositivo: last_seen, versión firmware, estado conectividad | RN-DEV-05 | RF-8.2 | Must | Gestión de dispositivos |
+| RF-DEV-03 | Configuración remota global versionada: `GET /devices/{id}/config` genera JSON desde DB + `version` global (sin overrides) y con API Key persiste upsert `device_config` + history + `applied/pending`; `PATCH /config` deprecated (`410`); `POST /config/refresh` marca `pending` manual | RN-DEV-04 | RF-1.2, RF-8.3 | Must | Gestión de dispositivos |
+| RF-DEV-04 | Heartbeat dispositivo: last_seen, versión firmware, estado conectividad + `configPending` manual-only (`pending`, sin lazy OR) y `configVersionAvailable` | RN-DEV-05 | RF-8.2 | Must | Gestión de dispositivos |
 | RF-DEV-05 | Gestión de estados del dispositivo (state machine: Registrado → Asignado → Activo ↔ Offline → Suspendido → Retirado) | RN-DEV-06 | Apéndice 2 (EV-SYS-*), ES-device | Must | Gestión de dispositivos |
 | RF-DEV-06 | Asociación dispositivo-usuario (1 device ↔ 1 user) | RN-DEV-01 | RF-9.6 | Must | Gestión de dispositivos |
 | RF-DEV-07 | Desasociación dispositivo (libera para otro usuario) | RN-DEV-02 | RF-9.7 | Should | Gestión de dispositivos |
@@ -93,7 +94,7 @@
 | RF-TEL-02 | Ingesta de evidencia multimedia (imagen/video) → MinIO bucket `somnguard-evidence`; vinculación a event | RN-TEL-02 | RF-7.4, RF-8.3 | Must | Telemetría y sincronización |
 | RF-TEL-03 | Registro de alert_log: código AS-XX, timestamp, event_id asociado, severidad | RN-TEL-03 | RF-6.1, RF-6.2, RF-7.3, Apéndice 1 | Must | Telemetría y sincronización |
 | RF-TEL-04 | Sincronización offline-first: buffer local en device (SQLite), reintentos con backoff, deduplicación por event_id | RN-TEL-04 | RF-8.1, RF-8.2, RF-8.3 | Must | Telemetría y sincronización |
-| RF-TEL-05 | Pull de device_config desde device (GET /devices/{id}/config) tras sync exitosa | RN-TEL-05 | RF-1.2, RF-8.3 | Must | Telemetría y sincronización |
+| RF-TEL-05 | Pull manual de config global versionada desde device (`GET /devices/{id}/config` tras `heartbeat{configPending manual}`; upsert `device_config` + history, persiste `applied_config_version`; arranque restaura caché local) | RN-TEL-05 | RF-1.2, RF-8.3 | Must | Telemetría y sincronización |
 | RF-TEL-06 | Consulta de eventos con filtros: device_id, event_type, severity, rango fechas, paginación | RN-TEL-06 | RF-10.1 | Must | Telemetría y sincronización |
 | RF-TEL-07 | Limpieza automática de buffer local tras confirmación de sincronización (ACK) | RN-TEL-07 | RNF-2.4 | Must | Telemetría y sincronización |
 
@@ -130,7 +131,7 @@
 | RF-EDGE-08 | Registro local de eventos + alert_log + evidencia (imagen frame) en buffer SQLite offline | RN-EDGE-08 | RF-7.1..7.4, RF-8.1 | Must | Telemetría y sincronización |
 | RF-EDGE-09 | Gestión de estado monitoreo: pausa si no hay rostro >30s (modo espera), reanuda al detectar rostro | RN-EDGE-09 | RF-1.5, EV-SYS-03 | Must | Telemetría y sincronización |
 | RF-EDGE-10 | Detección conectividad (ping/HTTP HEAD a API); sync automático cuando online; reintentos exponenciales | RN-EDGE-10 | RF-8.2, RF-8.3 | Must | Telemetría y sincronización |
-| RF-EDGE-11 | Aplicación device_config recibida (umbrales, sound_pattern, volumen, intervalo sync) | RN-EDGE-11 | RF-1.2, RF-8.3 | Must | Gestión de dispositivos |
+| RF-EDGE-11 | Aplicación config global versionada recibida (umbrales, sound_pattern, volumen, intervalo sync) en caliente + cache local + `applied_config_version` en API (ADR-011 enmendada; `detection_thresholds` se fusiona) | RN-EDGE-11 | RF-1.2, RF-8.3 | Must | Gestión de dispositivos |
 | RF-EDGE-12 | Liberación almacenamiento local: política retención (ej. 7 días) + auto-limpieza tras ACK sync | RN-EDGE-12 | RNF-2.4, RF-8.1 | Must | Telemetría y sincronización |
 | RF-EDGE-13 | Video streaming tiempo real (WebRTC) a demanda desde app/portal | RN-EDGE-13 | RF-10.6 | Could | Analítica y reportes |
 
@@ -159,7 +160,8 @@
 | RF-PAR-02 | RN-PAR-02 | Apéndice 1 | Parametrización | Parameterization | HU-API-004 |
 | RF-PAR-03 | RN-PAR-03 | Apéndice 2 | Parametrización | Parameterization | HU-API-004 |
 | RF-PAR-04 | RN-PAR-04 | RF-1.2 | Parametrización | Parameterization | HU-API-005 |
-| RF-PAR-05 | RN-PAR-05 | — | Parametrización | Parameterization | HU-API-004 |
+| RF-PAR-05 | RN-PAR-05, RN-PAR-06 | — | Parametrización | Parameterization | HU-API-004 |
+| RF-PAR-06 | RN-PAR-06 | RF-1.2,8.3 | Parametrización | Parameterization | HU-API-004, HU-API-005 |
 | RF-DEV-01 | RN-DEV-03 | RF-1.1 | Gestión de dispositivos | Device Management | HU-API-006 |
 | RF-DEV-02 | RN-DEV-01,02 | RF-9.6,9.7 | Gestión de dispositivos | Device Management | HU-API-006 |
 | RF-DEV-03 | RN-DEV-04 | RF-1.2,8.3 | Gestión de dispositivos | Device Management | HU-API-005 |

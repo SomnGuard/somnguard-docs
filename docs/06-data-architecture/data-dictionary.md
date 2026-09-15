@@ -42,8 +42,8 @@
 | Esquema (Módulo) | Entidades (Tablas) | Tipo |
 |------------------|-------------------|------|
 | `security` | `user`, `role`, `module`, `feature`, `role_feature`, `user_role`, `password_reset_request`, `audit_login`, `refresh_token`, `email_verification`, `user_status_audit` | Transaccional |
-| `parameterization` | `event_category`, `severity`, `media_type`, `sound_pattern`, `event_type`, `status_category`, `status`, `status_transition` | Catálogo / Config |
-| `device_management` | `device`, `device_assignment`, `device_config`, `device_config_history`, `device_status_audit`, `device_config_status_audit`, `device_provisioning_token`, `device_provisioning_audit` | Transaccional |
+| `parameterization` | `event_category`, `severity`, `media_type`, `sound_pattern`, `event_type`, `global_config`, `global_config_history`, `status_category`, `status`, `status_transition` | Catálogo / Config |
+| `device_management` | `device`, `device_assignment`, `device_config` (registro del pull, ADR-011 enmendada), `device_config_history` (registro del pull, ADR-011 enmendada), `device_status_audit`, `device_config_status_audit`, `device_provisioning_token`, `device_provisioning_audit` | Transaccional |
 | `telemetry_service` | `event`, `evidence`, `alert_log`, `event_status_audit` | Transaccional (alta escritura) |
 | `monitoring` | `notification`, `notification_status_audit` | Transaccional |
 | `analytics` | *Sin tablas propias* — vistas materializadas (`v_event_timeline`, `v_metrics_daily`) | Analítico |
@@ -382,6 +382,32 @@
 
 ---
 
+### `parameterization.global_config` — Versión global de configuración (ADR-011, singleton)
+
+| Columna | Tipo | Null | Default | FK | Índice | Descripción |
+|---------|------|------|---------|----|--------|-------------|
+| `id` | SMALLINT | NO | 1 | PK | PK | Singleton (`CHECK id=1`) |
+| `version` | INTEGER | NO | 1 | — | — | Contador monotónico; `++` por cada `POST/PATCH/DELETE` efectivo en `sound_pattern`/`event_type` (API Java, misma transacción, `SELECT FOR UPDATE`) |
+| `updated_at` | TIMESTAMPTZ | NO | `now()` | — | — | Último bump |
+| `updated_by` | UUID | SÍ | — | `security.user(id)` | — | Admin que provocó el bump |
+
+**Regla:** `device.applied_config_version < global_config.version ⇒ desactualizado`. Seed: `(1, 1, now(), NULL)`.
+
+---
+
+### `parameterization.global_config_history` — Historial de versiones globales (Append-only)
+
+| Columna | Tipo | Null | Default | FK | Índice | Descripción |
+|---------|------|------|---------|----|--------|-------------|
+| `id` | UUID | NO | — | PK | PK | Identificador |
+| `version` | INTEGER | NO | — | — | **UNIQUE** | Versión global de ese snapshot |
+| `snapshot_json` | JSONB | NO | — | — | — | Config efectiva completa (`{version, thresholds, event_sound_map, detection_thresholds, sound_patterns, volume_pct, volume_scale, schema_version, sync/heartbeat, retention}`) |
+| `created_at` | TIMESTAMPTZ | NO | `now()` | — | **IDX (created_at DESC)** | Timestamp del bump |
+| `created_by` | UUID | SÍ | — | `security.user(id)` | — | Admin que provocó el bump |
+| *append-only* | — | — | — | — | — | Solo INSERT |
+
+---
+
 ### `parameterization.status_category` — Categorías de estado (ADR-009)
 
 | Columna | Tipo | Null | Default | FK | Índice | Descripción |
@@ -485,7 +511,9 @@
 | `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE. FALSE = inactivo. | |
 | `last_heartbeat_at` | TIMESTAMPTZ | SÍ | — | — | IDX | Último heartbeat recibido | |
 | `last_sync_at` | TIMESTAMPTZ | SÍ | — | — | — | Última sincronización exitosa | |
-| `last_config_pull_at` | TIMESTAMPTZ | SÍ | — | — | — | Última descarga config | |
+| `last_config_pull_at` | TIMESTAMPTZ | SÍ | — | — | — | Última descarga config (solo pull del device, no lectura portal) | |
+| `applied_config_version` | INTEGER | NO | 0 | — | — | Última versión global aplicada (`global_config.version` del último `GET` con API Key; `0`=nunca; `applied < global ⇒ desactualizado`, ADR-011) | |
+| `pending_config_update` | BOOLEAN | NO | FALSE | — | — | Flag manual: `true` por `POST /refresh` (gesto usuario; `PATCH` legacy derogado); el heartbeat expone solo `pending` (manual-only) y el `GET` del device lo limpia; `applied<global` se expone vía `GET /config/status{outdated}` | |
 | `last_seen_ip` | VARCHAR(45) | SÍ | — | — | — | IP origen último request | |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: creación | |
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | User ID creador (admin que registra) | |
@@ -529,15 +557,17 @@
 
 ---
 
-### `device_management.device_config` — Configuración remota del dispositivo (JSONB)
+### `device_management.device_config` — Registro del pull (ADR-011 enmendada)
+
+> Cada `GET /devices/{id}/config` con API Key hace upsert (snapshot global aplicado). La config es 100% global (`parameterization.global_config`); `PATCH /devices/{id}/config` responde `410`.
 
 | Columna | Tipo | Null | Default | FK | Índice | Descripción |
 |---------|------|------|---------|----|--------|-------------|
 | `id` | UUID | NO | — | PK | PK | Identificador |
-| `device_id` | UUID | NO | — | `device_management.device(id)` | **UNIQUE** | Device (1 config por device) |
-| `configuration` | JSONB | NO | `'{}'` | — | — | Solo overrides por device (deltas). El GET mergea con el catálogo vigente; precedencia override > catálogo. |
+| `device_id` | UUID | NO | — | `device_management.device(id)` | **UNIQUE** | Device (1 config aplicada por device) |
+| `configuration` | JSONB | NO | `'{}'` | — | — | Snapshot global aplicado en el último pull (lo que el device cachea y aplica) |
 | `is_active` | BOOLEAN | NO | TRUE | — | — | **Soft delete** — por defecto TRUE. FALSE = inactivo. |
-| `version` | INTEGER | NO | 1 | — | — | Optimistic locking (incrementa en cada UPDATE; la publicación se versiona vía `published_at` + `device_config_history`) |
+| `version` | INTEGER | NO | 1 | — | — | Optimistic locking legacy |
 | `published_at` | TIMESTAMPTZ | SÍ | — | — | — | Cuándo se publicó |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Auditoría: creación |
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | User ID creador (admin) |
@@ -548,36 +578,35 @@
 | `status` | VARCHAR(50) | SÍ | NULL | `parameterization.status(code)` | IDX | Estado de negocio |
 | `status_category` | VARCHAR(30) | SÍ | NULL | `parameterization.status_category(code)` | — | Categoría de estado |
 
-**Ejemplo `configuration` JSONB:**
+**Ejemplo global vigente (`GET /devices/{id}/config`, ADR-011):**
 ```json
 {
-  "thresholds": {
-    "blink_rate_max": 25,
-    "eye_closed_min_sec": 2,
-    "head_tilt_deg_min": 20
-  },
-  "sound_patterns": {
-    "EV-SOM-01": "AS-01",
-    "EV-SOM-02": "AS-02",
-    "EV-SYS-02": "AS-09"
-  },
+  "version": 16,
+  "thresholds": {"EV-SOM-01": {"eye_closed_min_sec": 2}},
+  "event_sound_map": {"EV-SOM-01": "AS-02"},
+  "detection_thresholds": {},
+  "sound_patterns": {"AS-02": {"frequency_hz": 880, "duration_sec": 0.5}},
   "volume_pct": 80,
-  "sync_interval_seconds": 30,
+  "volume_scale": 0.8,
+  "schema_version": 1,
+  "sync_interval_sec": 30,
+  "heartbeat_interval_sec": 30,
   "retention_days": 7
 }
 ```
+> Nota: el firmware ignora `thresholds`/`event_sound_map` y fusiona `detection_thresholds` (vacío no borra base).
 
 ---
 
-### `device_management.device_config_history` — Historial de cambios de config (Append-only)
+### `device_management.device_config_history` — Historial de pulls (ADR-011 enmendada, append-only)
 
 | Columna | Tipo | Null | Default | FK | Índice | Descripción |
 |---------|------|------|---------|----|--------|-------------|
 | `id` | UUID | NO | — | PK | PK | Identificador |
 | `device_config_id` | UUID | NO | — | `device_management.device_config(id)` | IDX | Config padre |
-| `configuration` | JSONB | NO | — | — | — | Snapshot de los overrides de ese PATCH (no mergeado) |
-| `changed_by` | UUID | NO | — | `security.user(id)` | — | Admin que cambió |
-| `change_reason` | VARCHAR(200) | SÍ | — | — | — | Motivo del cambio |
+| `configuration` | JSONB | NO | — | — | — | Snapshot global aplicado en ese pull (ver `global_config_history` para el versionado global) |
+| `changed_by` | UUID | NO | — | `security.user(id)` | — | Actor del pull (`device.created_by`, o `SYSTEM_ID` si NULL por self-register) |
+| `change_reason` | VARCHAR(200) | SÍ | — | — | — | Motivo (`Pull manual tras refresh (heartbeat pending)`) |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | **IDX (created_at DESC)** | Timestamp |
 | `created_by` | UUID | SÍ | — | `security.user(id)` | — | = changed_by |
 | *append-only* | — | — | — | — | — | Solo INSERT |
@@ -817,9 +846,9 @@ CREATE INDEX ON {schema}.{entity}_status_audit ({entity}_id, changed_at DESC);
 | Tipo de Tabla | Ejemplos | Auditoria | Soft Delete | Version | Estados |
 |---------------|----------|-----------|-------------|---------|---------|
 | **Catálogo inmutable** | `role`, `module`, `feature`, `event_category`, `severity`, `media_type`, `sound_pattern`, `status_category`, `status`, `status_transition` | `created_at`, `created_by` (+`updated_at`/`is_active` donde existen: `role`, `event_category`, `severity`, `media_type`, `sound_pattern`, `event_type`) | NO | NO | NO |
-| **Configuración versionada** | `device_config`, `event_type` | Completa | SÍ | SÍ | `status_category` + `status` |
-| **Transaccional principal** | `user`, `device`, `device_assignment`, `event`, `notification` | Completa | SÍ | SÍ | `status_category` + `status` donde aplica (sin estado: `device_assignment`) |
-| **Append-only (eventos)** | `audit_login`, `alert_log`, `password_reset_request`, `evidence`, `device_config_history` | `created_at`/`created_by` (+`is_active` excepto `device_config_history`) | NO (físico) | NO | NO |
+| **Configuración versionada** | `global_config`, `global_config_history`, `event_type`, `device_config` + `device_config_history` (registro del pull, ADR-011 enmendada) | Completa | SÍ (`global_config` singleton sin soft delete) | SÍ (`global_config.version` monotónica) | `status_category` + `status` (solo `event_type`) |
+| **Transaccional principal** | `user`, `device` (`applied_config_version`, `pending_config_update`), `device_assignment`, `event`, `notification` | Completa | SÍ | SÍ | `status_category` + `status` donde aplica (sin estado: `device_assignment`) |
+| **Append-only (eventos)** | `audit_login`, `alert_log`, `password_reset_request`, `evidence`, `global_config_history`, `device_config_history` | `created_at`/`created_by` | NO (físico) | NO | NO |
 | **Histórico de estado** | `*_status_audit` | Append-only | NO | NO | N/A |
 
 ---

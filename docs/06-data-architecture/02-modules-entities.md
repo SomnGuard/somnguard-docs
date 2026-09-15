@@ -357,11 +357,38 @@ Tipos de eventos detectados por el sistema.
 
 ---
 
+## global_config
+
+Versión global de configuración (ADR-011, singleton, bump en API Java por cambios en `sound_pattern`/`event_type`).
+
+| Campo | Tipo |
+| ----- | ---- |
+| id | SMALLINT (=1) |
+| version | INTEGER |
+| updated_at | TIMESTAMPTZ |
+| updated_by | UUID |
+
+---
+
+## global_config_history
+
+Historial append-only de versiones globales (snapshot completo por versión).
+
+| Campo | Tipo |
+| ----- | ---- |
+| id | UUID |
+| version | INTEGER UNIQUE |
+| snapshot_json | JSONB |
+| created_at | TIMESTAMPTZ |
+| created_by | UUID |
+
+---
+
 # device-management
 
 ## Responsabilidad
 
-Gestiona dispositivos, asignaciones y configuración.
+Gestiona dispositivos, asignaciones y configuración global versionada (ADR-011 enmendada; `device_config*` = registro del pull).
 
 ---
 
@@ -379,6 +406,8 @@ Representa un dispositivo físico.
 | last_heartbeat_at | TIMESTAMPTZ |
 | last_sync_at | TIMESTAMPTZ |
 | last_config_pull_at | TIMESTAMPTZ |
+| applied_config_version | INTEGER |
+| pending_config_update | BOOLEAN |
 | last_seen_ip | VARCHAR(45) |
 | created_at | TIMESTAMPTZ |
 | created_by | UUID |
@@ -420,7 +449,9 @@ Historial de asignación de dispositivos.
 
 ## device_config
 
-Configuración remota del dispositivo (JSONB; `configuration` guarda solo overrides, el GET mergea con el catálogo vigente).
+> Registro del pull (ADR-011 enmendada; ver `parameterization.global_config`).
+
+Snapshot global aplicado por device (upsert en cada `GET /config` con API Key).
 
 | Campo | Tipo |
 | ----- | ---- |
@@ -443,7 +474,9 @@ Configuración remota del dispositivo (JSONB; `configuration` guarda solo overri
 
 ## device_config_history
 
-Historial de cambios de configuración del dispositivo.
+> Historial de pulls (ADR-011 enmendada; ver `global_config_history`).
+
+Historial de snapshots aplicados por device (INSERT por pull).
 
 | Campo | Tipo |
 | ----- | ---- |

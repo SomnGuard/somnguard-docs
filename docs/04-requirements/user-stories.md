@@ -342,43 +342,47 @@
 | AC-003 | `event_type`: umbrales configurables (parpadeo, cierre ojos, bostezo, cabeceo, teléfono, mirada, cinturón) | Sí |
 | AC-004 | Versionado: historial de cambios con `created_by`, `updated_by`, timestamp | Sí |
 | AC-005 | Seed inicial desde Apéndices 1 y 2 del SRS (AS-01..AS-09, EV-SOM-*, EV-DIS-*, EV-CIN-*) | Sí |
+| AC-006 | Bump global (ADR-011): todo `POST/PATCH/DELETE` efectivo en `sound_pattern`/`event_type` hace `global_config.version++` en la misma transacción (API Java, `SELECT FOR UPDATE` singleton) + fila en `global_config_history{snapshot_json, created_by}`; `severity/media_type/event_category` no bumpean | Sí |
 
 ### Dependencias
 
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
 | HU-DB-001a | Bloqueante | Esquemas BD creados |
-| RF-PAR-01..03, RF-PAR-05 | Requisito | Base funcional (incl. versionado AC-004) |
+| ADR-011 | Decisión | Configuración global versionada (solo global, bump API, manual-only) |
+| RF-PAR-01..03, RF-PAR-05, RF-PAR-06 | Requisito | Base funcional (incl. versionado AC-004 y bump AC-006) |
 
 ---
 
-## HU-API-005: Configuración remota de dispositivo (device_config)
+## HU-API-005: Configuración global versionada (solo global, ADR-011)
 
 > **Repo:** API, DB | **Sprint:** 2 | **SP:** 5 | **MoSCoW:** Must
 > **Épica:** Gestión de dispositivos | **Feature:** FEA-DEV-CONFIG
 
 ### Historia
 **Como** administrador
-**quiero** enviar configuración JSONB a un dispositivo (umbrales, sound_pattern, volumen, intervalo sync)
-**para** ajustar su comportamiento sin intervención física.
+**quiero** que la configuración del sistema se genere desde DB con versión global (umbrales, sound_pattern, volumen, intervalo sync)
+**para** ajustar el comportamiento de la flota sin intervención física ni JSON manual.
 
 ### Criterios de Aceptación
 
 | ID | Criterio | Testeable |
 |----|----------|-----------|
-| AC-001 | PATCH `/devices/{id}/config` valida JSON contra schema, persiste **solo overrides** en `device_config.configuration` | Sí |
-| AC-002 | GET `/devices/{id}/config` retorna config vigente = **merge en lectura**: defaults vivos de catálogo (`sound_pattern` activos + `event_type.threshold_config`) + overrides de `device_config.configuration`; precedencia override > catálogo | Sí |
-| AC-003 | Device pulla config tras sync exitosa (ver HU-DEVICE-002) | Sí |
-| AC-004 | Historial de cambios de config con auditoría (**solo** en PATCH manual; cambios de catálogo no generan filas aquí, se versionan en su catálogo HU-API-004) | Sí |
-| AC-005 | Cambio en `sound_pattern`/`event_type` se propaga solo al próximo pull del device, **sin PATCH manual por device** | Sí |
+| AC-001 | `PATCH /devices/{id}/config` DEPRECATED: responde `410 Gone` (puntero a catálogos). El registro vive en el pull `GET` (upsert `device_config` + history). RF-PAR-04 derogada | Sí |
+| AC-002 | `GET /devices/{id}/config` retorna config global generada desde DB + `version` global en raíz y `sources{global_version, global_updated_at}`. Con API Key hace upsert `device_config` (snapshot aplicado) + INSERT `device_config_history` + `applied=global` + `pending=false` + `last_config_pull_at`; con JWT solo lectura (para la app comparar `applied vs available` vía `GET /config/status`) | Sí |
+| AC-003 | Pull solo manual (sin lazy OR): `POST /config/refresh` marca `pending=true`; `heartbeat` responde `configPending=pending` + `configVersionAvailable=global`; el device hace `GET /config`. Sin fan-out masivo, sin pull tras cada heartbeat/sync ni auto-pull por `applied<global` | Sí |
+| AC-004 | Historial global: cada bump escribe `global_config_history{version, snapshot_json, created_by}`. Cada pull del device escribe `device_config_history{configuration, changed_by, change_reason}` | Sí |
+| AC-005 | Cambio en `sound_pattern`/`event_type` hace `global_config.version++` (HU-API-004 AC-006) y se propaga solo vía pull manual, sin PATCH por device | Sí |
 
 ### Dependencias
 
 | HU / Artefacto | Tipo | Descripción |
 |----------------|------|-------------|
 | HU-API-006 | Bloqueante | Requiere device registrado |
-| HU-DEVICE-002 | Relacionada | Pull config en device |
-| RF-DEV-03, RF-TEL-05, RF-PAR-04, RF-EDGE-11 | Requisito | Base funcional |
+| HU-API-004 | Bloqueante | Bump global en cambios de catálogo |
+| HU-DEVICE-002 | Relacionada | Pull config en device (guarda `applied`) |
+| ADR-011 | Decisión | Solo global, bump API, manual-only |
+| RF-DEV-03, RF-TEL-05, RF-PAR-05, RF-PAR-06, RF-EDGE-11 | Requisito | Base funcional |
 
 ---
 
@@ -644,8 +648,8 @@
 | AC-001 | Arranque < 60s (RNF-1.1); verifica cámara → AS-08 (ok) / AS-09 (error) | Sí |
 | AC-002 | Verifica campo visual: obstrucción/mala posición → AS-09, pausa detección | Sí |
 | AC-003 | Estado `Activo` ↔ `Espera` (sin rostro >30s) ↔ `Activo` (rostro detectado) | Sí |
-| AC-004 | Heartbeat cada 30s a API; transición `Activo` ↔ `Offline` por conectividad | Sí |
-| AC-005 | Carga `device_config` al iniciar y tras cada sync; aplica umbrales/sound_pattern/volumen | Sí |
+| AC-004 | Heartbeat cada 30s a API; transición `Activo` ↔ `Offline` por conectividad; si `configPending` (solo manual) hace `GET /config`, aplica en caliente, cachea en `device_config.cache.json` y la API persiste `applied/device_config/history` | Sí |
+| AC-005 | Al iniciar restaura `default → caché → override` (sin pull; la caché evita revertir a default cuando la API ya dice `applied==global`); aplica config global versionada solo vía pull manual (`heartbeat{configPending}` → `GET /config`); `detection_thresholds` se fusiona (vacío no borra base); aplica umbrales/sound_pattern/volumen en caliente | Sí |
 | AC-006 | Lee `serial_number` del hardware y `firmware_version` del software al arrancar; carga `X-Provision-Token` de entorno/config segura | Sí |
 | AC-007 | Primer arranque sin credenciales: POST `/devices/self-register` con serial+firmware; persiste `device_id + api_key` seguro y deja de usar el token; reintento no duplica ni reexpone key | Sí |
 
@@ -706,7 +710,7 @@
 |----|----------|-----------|
 | AC-001 | Reproduce patrón AS-XX según `event_type` + `severity` (tabla Apéndice 1) | Sí |
 | AC-002 | Escalamiento: evento persistente > 10s → siguiente nivel severidad (AS-01→AS-02→AS-03→AS-04) | Sí |
-| AC-003 | Volumen configurable via `device_config` (default 80%) | Sí |
+| AC-003 | Volumen configurable vía config global versionada (default 80%, ADR-011) | Sí |
 | AC-004 | No superposición: una alerta a la vez; cola si múltiples simultáneas | Sí |
 
 ### Dependencias

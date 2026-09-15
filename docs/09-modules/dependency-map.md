@@ -91,7 +91,7 @@
 |--------|------------|----------|-------------------|---------|
 | **security** | Ninguna (base) | Autenticación, autorización, auditoría | parameterization, device_management, telemetry_service, monitoring | Proporciona: users, roles, features, JWT, auditoría (`audit_login`). Las API Keys viven en `device_management.device` (security las valida) |
 | **parameterization** | Independiente | Catálogos configurables | device_management, telemetry_service, monitoring | Catálogos autónomos; FKs internos a parameterization (severity, sound_pattern, event_type, status_category, status) |
-| **device_management** | `security` + `parameterization` | Alta/asignación de devices, config remota por merge en lectura con catálogos vigentes (sin writes desde parameterization; sin triggers/fan-out) | telemetry_service | devices → user asignation; config con catálogos vigentes |
+| **device_management** | `security` + `parameterization` | Alta/asignación de devices, config global versionada generada desde DB (`global_config.version`, ADR-011; bump en API, pending manual, sin fan-out) | telemetry_service | devices → user asignation; config global versionada |
 | **telemetry_service** | `device_management` + `parameterization` | Ingesta events/evidence de devices | monitoring | events → device FK; event_type/severity FKs a catálogos |
 | **monitoring** | `telemetry_service` | Notificaciones, tracking delivery | analytics | notifications → alert_log FK; tracking vía columnas `sent/delivered/read_at` (sin tabla `notification_delivery`); usuario FK a security.user |
 | **analytics** | `todos los anteriores` (solo lectura) | Líneas de tiempo, métricas, reportes IA | Ningún módulo (es de solo lectura) | Vistas materializadas sobre tables de security+parameterization+device_management+telemetry+monitoring |
@@ -225,9 +225,9 @@ Capa externa:
 | `SQLite local` | Ninguna (autónoma) | Buffer de eventos pending_events, device_config, evidence local |
 | `API Key` | `security` (validación central) | API Key generada por security, validada HMAC-SHA256 en device |
 | `Heartbeat → API` | `device_management` (POST /api/v1/devices/{id}/heartbeat) | Cada 30-60s envía saludo con `X-Device-ID + X-API-Key`: `firmware_version, pending_count, free_disk_pct`. Actualiza `last_heartbeat_at`. Primer heartbeat `ASSIGNED->ACTIVE`, `>5min` sin heartbeat `->OFFLINE`. Distinto de `HEAD /actuator/health` (solo chequeo internet sin auth) |
-| `Config pull → API` | `device_management` (GET /api/v1/devices/{id}/config) | Solicita device_config JSONB, thresholds, sound_pattern, volumen |
+| `Config pull → API` | `device_management` (GET /api/v1/devices/{id}/config) | Solicita config global versionada (`{version, thresholds, event_sound_map, sound_patterns, volumen}` + `applied_config_version`, ADR-011) tras `heartbeat{configPending}` |
 | `Event sync → API` | `telemetry_service` (POST /api/v1/telemetry/events) | Envía lote de eventos offline, deduplicación por event_id UUID v7 |
-| `Local DB esquema` | Mismo patrón que BD `security + parameterization + device_management` (tabla mínima) | Solo lo necesario: device, pending_events, device_config (recorta las 6 esquemas completos) |
+| `Local DB esquema` | Mismo patrón que BD `security + parameterization + device_management` (tabla mínima) | Solo lo necesario: device, pending_events, config global cacheada + `applied_config_version` (recorta las 6 esquemas completos) |
 
 **No depende de:** JPA, Spring, HTTP frameworks. Usa `httpx` para calls HTTP simples a API gateway (Traefik en puerto 8080).
 
