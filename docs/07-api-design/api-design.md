@@ -31,13 +31,13 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 | Identificadores | UUID en rutas y cuerpo |
 | Fechas | ISO 8601 (`yyyy-MM-dd'T'HH:mm:ssXXX`) |
 | Autenticación | JWT RS256 + API keys por dispositivo — ver [authentication.md](./authentication.md) |
-| Idempotencia | `event_id` en telemetría (`201` con duplicados reportados); header `Idempotency-Key` en `POST /devices`, `/assign`, `/auth/*`, `PATCH /config`, `PATCH /rotate-key` — ver [guidelines.md](./guidelines.md) |
+| Idempotencia | `event_id` en telemetría (`201` con duplicados reportados); header `Idempotency-Key` en `POST /devices`, `/assign`, `/auth/*`, `PATCH /rotate-key` (ya no en `PATCH /config`: deprecated `410`, ADR-011) — ver [guidelines.md](./guidelines.md) |
 | Documentación en vivo | SpringDoc/OpenAPI (`/swagger-ui.html`) |
 
 ### Códigos HTTP
 
 - `200` OK · `201` Created · `204` No Content
-- `400` Bad Request · `401` Unauthorized · `403` Forbidden · `404` Not Found · `409` Conflict
+- `400` Bad Request · `401` Unauthorized · `403` Forbidden · `404` Not Found · `409` Conflict · `410` Gone (`PATCH /devices/{id}/config` deprecated, ADR-011)
 - `422` Unprocessable Entity · `500` Internal Server Error
 
 ## Módulo security
@@ -81,14 +81,16 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 | POST | `/api/v1/devices` | Registrar dispositivo (manual admin; convive con self-register) |
 | POST | `/api/v1/devices/provisioning-tokens` | Crear provisioning token (solo admin JWT + `device.provision`). Responde `201` con token en claro **una sola vez** + `token_id`, `expires_at` (7d), `max_uses` (1) |
 | POST | `/api/v1/devices/self-register` | Auto-registro del device. Auth `X-Provision-Token` + `Idempotency-Key`. Body `{serialNumber, firmwareVersion}` (del hardware, no manual). Responde `201 {device_id, api_key, claim_code}` una sola vez; reintento mismo token+serial → `200 {device_id, status}` sin reexponer key |
-| GET | `/api/v1/devices/{id}` | Consultar dispositivo |
+| GET | `/api/v1/devices/{id}` | Consultar dispositivo (incluye `applied_config_version`, `pending_config_update`, `last_config_pull_at` para la app comparar `applied vs available`) |
 | PUT | `/api/v1/devices/{id}` | Actualizar dispositivo |
 | POST | `/api/v1/devices/{id}/assign` | Asociar dispositivo a usuario (REGISTERED->ASSIGNED; admin o directo) |
 | POST | `/api/v1/devices/claim` | Reclamar dispositivo con `claim_code` público reutilizable (JWT user + `device.claim`). Crea `device_assignment` solo en REGISTERED (`409` si asignado; `unassign` libera y el mismo código re-sirve). El código es visible en `GET /devices` |
 | POST | `/api/v1/devices/{id}/unassign` | Desasociar dispositivo (->REGISTERED) |
-| POST | `/api/v1/devices/{id}/heartbeat` | Saludo periódico del device (ASSIGNED->ACTIVE, ACTIVE<->OFFLINE). Auth: `X-Device-ID + X-API-Key`. Actualiza `last_heartbeat_at, last_seen_ip, firmware_version` |
-| GET | `/api/v1/devices/{id}/config` | Consultar configuración vigente = merge en lectura (defaults vivos de `sound_pattern`/`event_type` + overrides de `device_config.configuration`; precedencia override > catálogo). Device con API Key o user con JWT. Cambios de catálogo se reflejan al próximo pull sin PATCH por device |
-| PATCH | `/api/v1/devices/{id}/config` | Actualizar solo overrides en `device_config.configuration` (solo admin JWT). Valida JSON contra schema, `version++`, registra `device_config_history`. No se usa para propagar cambios de catálogo |
+| POST | `/api/v1/devices/{id}/heartbeat` | Saludo periódico del device (ASSIGNED->ACTIVE, ACTIVE<->OFFLINE). Auth: `X-Device-ID + X-API-Key`. Actualiza `last_heartbeat_at, last_seen_ip, firmware_version`. Responde `configPending=pending_config_update` (**solo manual**, ADR-011 enmendada, sin fan-out ni auto-pull) + `configVersionAvailable=global.version` |
+| GET | `/api/v1/devices/{id}/config` | Configuración global generada desde DB + `version` global en raíz y `sources{global_version, global_updated_at}` (sin overrides, ADR-011). Device con API Key (upsert `device_config` con el snapshot aplicado + INSERT `device_config_history`, `applied_config_version=global`, limpia `pending`, actualiza `last_config_pull_at`) o user con JWT (solo lectura para la app). Ejemplo: `{"version":16,"thresholds":{...},"event_sound_map":{...},"detection_thresholds":{},"sound_patterns":{...},"volume_pct":80,"volume_scale":0.8,...}`. El firmware ignora `thresholds/event_sound_map` y fusiona `detection_thresholds` |
+| GET | `/api/v1/devices/{id}/config/status` | Estado de sincronización `{applied, available, pending, outdated}` (auth JWT `device.read/...`). La app lo usa para mostrar `actual vs disponible [Actualizar]` |
+| PATCH | `/api/v1/devices/{id}/config` | **DEPRECATED (ADR-011)**: responde `410 Gone` con puntero a `PATCH /catalogs/...`. No escribe por esta vía (el registro vive en el pull `GET`) |
+| POST | `/api/v1/devices/{id}/config/refresh` | Marcar config pendiente para pull manual (usuario pulsa Actualizar; app lo muestra cuando `status.outdated`). Auth JWT `device.read/device.write/device.config`. Pone `pending_config_update=true` (idempotente); el device lo pulla en el próximo heartbeat (`configPending=true` → `GET /config`) |
 | PATCH | `/api/v1/devices/{id}/rotate-key` | Rotar API Key (solo admin JWT). Invalida anterior de inmediato, devuelve nueva key una sola vez. Estado no cambia; device con key vieja recibe `401` hasta reprovisionar |
 
 ## Módulo telemetry-service

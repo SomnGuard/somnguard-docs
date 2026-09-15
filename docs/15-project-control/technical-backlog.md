@@ -38,6 +38,7 @@ Deuda técnica conocida y pendientes de construcción del proyecto SomnGuard. El
 | TD-007 | **Driver JDBC / dependencias de build sin fijar**: el `pom.xml` del backend aún no está definido. | Medio | P1 | backend-java | Abierto |
 | TD-008 | **Runbook de security pendiente**: `modules/security/` documentado salvo `runbook.md` exigido por la plantilla. | Bajo | P3 | 09-modules | Abierto |
 | TD-009 | **Implementar provisioning/self-register/claim**: endpoints (`provisioning-tokens`, `self-register`, `claim`), tablas (`device_provisioning_token`, `device_provisioning_audit`, claim en `device`), features (`device.provision`, `device.claim`). Diseño en ADR-010. | Alto | P1 | device_management, security | Abierto |
+| TD-010 | **Implementar ADR-011 (solo global)**: DDL (`global_config`, `global_config_history`, `device.applied_config_version` + regularizar `pending_config_update`), bump en `ParameterizationController` (misma tx + history), `GET /config` versionado (persiste `device_config/history`), `heartbeat` manual-only, `GET /config/status`, `PATCH 410`, `POST /refresh`, backfill `applied=0`, UI app `applied vs available`, caché + fusión `detection_thresholds` en device. Código implementado 2026-09-15 (enmienda manual-only); Q-021 ratificada. | Alto | P1 | parameterization, device_management, device, app/portal, db | Resuelto 2026-09-15 |
 
 ## Trabajo estructural pendiente (capa de aplicación)
 

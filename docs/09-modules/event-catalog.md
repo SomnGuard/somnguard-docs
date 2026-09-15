@@ -46,7 +46,7 @@
 | Evento | Descripción | Consumidores | Referencia |
 |--------|-------------|--------------|------------|
 | `device.synced` | Lote de eventos recibido y confirmado por API | `telemetry_service` (persiste events), `monitoring` (actualiza estado device) | RF-EDGE-10, HU-DEVICE-003 |
-| `device.config.pulled` | Configuración remota descargada por device (merge catálogo vigente + overrides; sin fan-out) | `device_management` (actualiza device_config_cache) | RF-EDGE-11, HU-DEVICE-004 |
+| `device.config.pulled` | Config global versionada descargada por device (`GET /config` con API Key tras `POST /refresh`; upsert `device_config` + history, `applied_config_version`, limpia `pending`; sin fan-out, manual-only ADR-011) | `device_management` (actualiza `applied_config_version`, limpia `pending`) | RF-EDGE-11, HU-DEVICE-004, ADR-011 |
 | `device.state.changed` | Estado device cambió (ACTIVE↔OFFLINE, etc.) | `monitoring`, `telemetry_service` | ADR-005, cross-cutting.md §5.2 |
 | `device.self_registered` | Device creado vía `POST /devices/self-register` (token consumido) | `monitoring`, `security` (auditoría) | RF-DEV-11, HU-API-006, ADR-010 |
 | `device.claimed` | Device reclamado por usuario vía `POST /devices/claim` | `monitoring`, `security` (auditoría) | RF-DEV-12, HU-API-006, ADR-010 |
@@ -138,7 +138,7 @@ Estos eventos son de **orquestación interna** de un módulo (worker↔worker, s
 | `document.lifecycle.tick` | document-service | document-lifecycle-worker: pulso de cron |
 | `monitoring.kpi.tick` | monitoring-service | cron de recálculo de KPIs cada 5 min |
 | `telemetry.batch.processed` | telemetry_service | Lote de events sincronizados exitosamente (post-ACK) |
-| `config.sync.applied` | device_management | Configuración device_config aplicada en runtime after sync |
+| `config.sync.applied` | device_management | Config global versionada aplicada en runtime tras pull manual (ADR-011 enmendada) |
 
 ---
 

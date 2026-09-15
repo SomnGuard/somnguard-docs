@@ -40,3 +40,4 @@ Las decisiones de arquitectura (Architecture Decision Records) se registran aqu�
 | [ADR-008](./records/ADR-008-traefik-edge-gateway.md) | Traefik Edge Gateway | Aceptada | 2026-08-22 |
 | [ADR-009](./records/ADR-009-status-parametrized-audit.md) | Estados Parametrizados + Auditoría Append-Only | Aceptada | 2026-08-22 |
 | [ADR-010](./records/ADR-010-provisioning-self-register.md) | Aprovisionamiento y auto-registro (Provisioning Token + API Key + Claim) | Aceptada | 2026-09-05 |
+| [ADR-011](./records/ADR-011-global-config-version.md) | Configuración global versionada (global_config.version + pull manual, solo global) | Aceptada | 2026-09-14 (enmienda 2026-09-15) |

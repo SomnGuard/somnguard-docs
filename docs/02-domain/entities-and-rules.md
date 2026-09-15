@@ -32,7 +32,7 @@ Reglas de negocio del sistema. Fuente de verdad de las reglas `RN-*`; consolidan
 | RN-07 | monitoring | Las notificaciones de eventos críticos se generan automáticamente y se dirigen a la cuenta propietaria del dispositivo |
 | RN-08 | telemetry-service | La sincronización offline no debe duplicar eventos: el dispositivo envía un identificador único (idempotencia) y la API descarta envíos repetidos |
 | RN-09 | parameterization | El catálogo de sonidos (`sound_pattern`) es gestionado exclusivamente por el administrador técnico |
-| RN-10 | device-management | La configuración básica del dispositivo (`device_config`) se descarga del backend y se aplica localmente antes de iniciar el monitoreo |
+| RN-10 | device-management | La configuración global versionada se descarga del backend y se aplica localmente antes de iniciar el monitoreo (ADR-011) |
 
 > Equivalencias: RN-01..RN-10 ↔ RB-01..RB-10 del [informe de diseño](../05-architecture/software-design-report.md).
 >
@@ -67,8 +67,8 @@ Reglas de negocio del sistema. Fuente de verdad de las reglas `RN-*`; consolidan
 > | RN-DEV-01 | 1 usuario ↔ 1 device vigente: ni el device puede estar asignado a otro usuario, ni el usuario tener otro device asignado (`device_assignment` con UNIQUE parcial por `device_id` y por `user_id`) |
 > | RN-DEV-02 | Desasociar libera el dispositivo (`unassign` → `REGISTERED`) |
 > | RN-DEV-03 | El alta genera `api_key_hash`; la key en claro se muestra una sola vez |
-> | RN-DEV-04 | La configuración remota (`device_config` JSONB) es descargable por el device |
-> | RN-DEV-05 | El heartbeat periódico define `ACTIVE`/`OFFLINE` (timeout 5 min) |
+> | RN-DEV-04 | La configuración remota es 100% global y versionada (ADR-011): el `GET /devices/{id}/config` genera el JSON desde DB con `version` global; sin overrides por device (`PATCH` deprecated) |
+> | RN-DEV-05 | El heartbeat periódico define `ACTIVE`/`OFFLINE` (timeout 5 min) y expone `configPending` manual-only (`pending_config_update`, sin lazy OR) + `configVersionAvailable`; desactualizado se detecta vía `GET /config/status{outdated}` |
 > | RN-DEV-06 | Los cambios de estado siguen `status_transition` según rol |
 > | RN-DEV-07 | La consulta de dispositivos filtra por estado y fecha de asignación |
 > | RN-DEV-08 | Provisioning de un uso + self-register idempotente (key expuesta una vez) |
@@ -76,13 +76,14 @@ Reglas de negocio del sistema. Fuente de verdad de las reglas `RN-*`; consolidan
 > | RN-PAR-01 | Los catálogos base se administran por CRUD restringido |
 > | RN-PAR-02 | `sound_pattern` solo lo gestiona el administrador |
 > | RN-PAR-03 | `event_type` define umbrales configurables por tipo de evento |
-> | RN-PAR-04 | Los defaults de catálogo admiten override por `device_config` (merge en lectura en `GET /devices/{id}/config`; `device_config.configuration` guarda solo overrides; precedencia override > catálogo) |
-> | RN-PAR-05 | Los cambios de catálogo quedan versionados con auditoría |
+> | RN-PAR-04 | ~~Los defaults de catálogo admiten override por `device_config`~~ **DEROGADA por ADR-011**: sin overrides; la config es solo global |
+> | RN-PAR-05 | Los cambios de catálogo quedan versionados con auditoría + bump de `global_config.version` (API Java, misma transacción) con snapshot en `global_config_history` |
+> | RN-PAR-06 | La DB es la fuente de verdad: `global_config.version` monotónica; `device.applied_config_version < global.version ⇒ desactualizado`; `POST /refresh` marca `pending`, `heartbeat` expone solo el flag manual, `GET` del device lo aplica, persiste `device_config/history` y limpia |
 > | RN-TEL-01 | La ingesta es idempotente por `event_id` (duplicados se reportan, no son error) |
 > | RN-TEL-02 | Cada evento lleva como máximo una evidencia en MinIO (`evidence.event_id` UNIQUE) |
 > | RN-TEL-03 | Toda alerta del device se registra en `alert_log` con su evento y sonido |
 > | RN-TEL-04 | El buffer offline reintenta con backoff y retención de 7 días |
-> | RN-TEL-05 | El device descarga `device_config` tras cada sync exitosa |
+> | RN-TEL-05 | El device descarga la config global versionada solo manual: `POST /refresh` → `pending`, `heartbeat{configPending}` → `GET /config` (upsert `device_config` + history, persiste `applied_config_version`); al arrancar restaura su caché local (sin pull) |
 > | RN-TEL-06 | La consulta de eventos filtra por device, tipo, severidad y fechas |
 > | RN-TEL-07 | El buffer local se limpia tras el ACK del servidor |
 > | RN-MON-01 | Los eventos críticos notifican automáticamente al propietario del device |
@@ -113,8 +114,8 @@ Reglas de negocio del sistema. Fuente de verdad de las reglas `RN-*`; consolidan
 | Módulo | Entidades (agregados y tablas) |
 |--------|--------------------------------|
 | security | user, role, module, feature, role_feature, user_role, password_reset_request, audit_login |
-| parameterization | event_category, severity, media_type, sound_pattern, event_type |
-| device-management | device, device_assignment, device_config |
+| parameterization | event_category, severity, media_type, sound_pattern, event_type, global_config, global_config_history |
+| device-management | device, device_assignment, device_config (DEPRECATED, solo lectura migración), device_config_history (DEPRECATED) |
 | telemetry-service | event, evidence, alert_log |
 | monitoring | notification |
 | analytics | vistas/reportes derivados (sin entidades transaccionales) |

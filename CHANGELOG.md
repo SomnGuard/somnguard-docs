@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Fixed (2026-09-15)
+- **ADR-011 enmienda manual-only:** `heartbeat{configPending}` = solo flag de `POST /refresh` (ya no `applied<global OR pending`); desactualizado se detecta vía `GET /config/status{outdated}` o `applied vs available`. `GET /config` con API Key persiste upsert `device_config` + INSERT `device_config_history` (actor `SYSTEM_ID` si `created_by` NULL por self-register) + `applied/pending/last_pull`. Device restaura `device_config.cache.json` al arrancar (default→caché→override) y fusiona `detection_thresholds` (vacío no borra base; fin de falsos AS-09). `PATCH /config 410` se mantiene.
+
+### Added (2026-09-14)
+- **ADR-011 (Propuesta) configuración global versionada — solo global, bump en API, lazy:** `parameterization.global_config(version)` singleton + `global_config_history{snapshot_json}`; `device.applied_config_version` (`applied < global ⇒ desactualizado`); `POST/PATCH/DELETE` en `sound_pattern`/`event_type` hace `version++` en misma transacción Java; `heartbeat{configPending=(applied<global OR pending), configVersionAvailable}` sin fan-out; `GET /config` con `version` global (API Key persiste `applied`, JWT solo lectura); `PATCH /config 410` y `device_config*` deprecated; `RF-PAR-04` derogada, `RF-PAR-05/06`, `RN-PAR-04/05/06`, `RN-DEV-04/05`, `RN-TEL-05`, `HU-API-004 AC-006`, `HU-API-005` reescrita, `HU-DEVICE-002 AC-004/05`, eventos `config.global_version_incremented`, Q-021 + TD-010. Regulariza `pending_config_update` faltante en DDL.
+
 ### Fixed (2026-09-05, cont.)
 - **Trazabilidad RF↔HU bidireccional:** HU deps a HUs que declaran el RF (`HU-API-005`, `HU-DEVICE-002`), `RF-SEC-04→HU-API-002`, `RF-EDGE-11/RF-TEL-04/RF-TEL-05` con cobertura device+API, `RF-DEV-06/07` movidos a su sección, `RF-SEC-06/07` reservados, resumen HU con SP 65/44 no aditivos, backlog con IDs reales y fases aclaradas.
 - **Seeds y estados:** tabla de seeds con 23 códigos prefijados (+nota `event_type` bare en seeds), categorías reales en §5.2 con alias lógicos, transiciones `unassign` pendientes en seeds, `migration-strategy:379` con archivos reales, `checksum_sha256` requerido (DDL lo exige), catálogos con `is_active` matizado, `AS-09`/`EV-SYS-04/05` a seeds.
