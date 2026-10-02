@@ -683,6 +683,7 @@
 | AC-004 | Deduplicación: `event_id` UUID único; duplicados se reportan en `duplicate_ids` del `201` (no son error) | Sí |
 | AC-005 | Limpieza automática tras ACK 201 (borra confirmados); retención 7d para fallidos | Sí |
 | AC-006 | Almacenamiento local < 90% → AS-09; política retención evidencia 7d | Sí |
+| AC-007 | Foto del evento en local: al confirmar un evento con severidad ≥ MODERADA el device guarda 1 frame JPEG (640px lado mayor, calidad 70) en `<data_dir>/media/<event_id>.jpg` y registra su ruta en `evidence_path`; si falla la captura, el evento se guarda igual sin evidencia (no bloquea) | Sí |
 
 ### Dependencias
 
