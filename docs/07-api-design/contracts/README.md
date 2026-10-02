@@ -29,6 +29,7 @@ Contratos OpenAPI por módulo. Aún no hay contratos publicados; la especificaci
 | `openapi/telemetry-service.yaml` | Contrato del módulo telemetry-service | Pendiente |
 | `openapi/monitoring.yaml` | Contrato del módulo monitoring | Pendiente |
 | `openapi/analytics.yaml` | Contrato del módulo analytics | Pendiente |
+| `openapi/streaming.yaml` | Contrato streaming WebRTC post-MVP (HU-API-012, ADR-013) | Propuesta |
 
 ## Ver también
 

@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: SomnGuard Streaming (post-MVP HU-API-012, ADR-013 Aceptada parcial)
+  version: 0.2.0
+  description: Vivo a demanda. Fase 1 relay MJPEG/P2P por WS, fase 2 SFU LiveKit. Solo device Activo + dueño.
+servers:
+  - url: /api/v1
+paths:
+  /devices/{id}/stream/start:
+    post:
+      summary: Iniciar sesión en vivo
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Sesión creada
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [session_id, room, token_viewer, ws_url, expires_at]
+                properties:
+                  session_id:
+                    type: string
+                    format: uuid
+                  room:
+                    type: string
+                  token_viewer:
+                    type: string
+                  ws_url:
+                    type: string
+                    example: /ws/stream
+                  expires_at:
+                    type: string
+                    format: date-time
+                  livekit_url:
+                    type: string
+                    description: Solo con LIVEKIT_ENABLED=true
+                  livekit_token:
+                    type: string
+                    description: Viewer solo-suscribe, identidad única
+        '403':
+          description: Sin assignment o sin feature device.read
+        '404':
+          description: Device no existe
+        '409':
+          description: Device OFFLINE/Suspendido o sesión activa
+  /devices/{id}/stream/stop:
+    post:
+      summary: Cerrar sesión en vivo (idempotente)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Sesión cerrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                    format: uuid
+                  closed:
+                    type: boolean
+  /devices/{id}/stream/session:
+    get:
+      summary: Estado sesión activa (viewer JWT o poll Pi con API key)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Sesión activa (incluye detection_paused y tokens LiveKit según credencial)
+        '404':
+          description: Sin sesión activa
+  /devices/{id}/stream/detection:
+    post:
+      summary: Pausar/reanudar detección (manual, prioritaria sobre presencia)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paused:
+                  type: boolean
+      responses:
+        '200':
+          description: Estado aplicado {device_id, paused}
+    get:
+      summary: Leer pausa (viewer JWT o poll Pi con API key)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: '{device_id, paused}'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

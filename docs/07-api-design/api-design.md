@@ -133,6 +133,21 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 | POST | `/api/v1/analytics/reports` | Solicitar generación de reporte (propuesta async, `202 Accepted {job_id}`, sin persistencia; PDF temporal en MinIO con auto-borrado 1h) |
 | GET | `/api/v1/analytics/reports/jobs/{job_id}` | Poll de estado (`queued\|rendering\|ready\|failed`); en `ready` retorna URL prefirmada de un solo uso (expira 15min) |
 
+## Módulo streaming (post-MVP — HU-API-012, ADR-013 Aceptada parcial)
+
+Solo a demanda, TTL deslizante 5min (cada poll extiende). Requiere device `Activo` + `assignment` al `sub` del JWT; si no `403`. Fase 1 relay por API, fase 2 SFU LiveKit (`LIVEKIT_ENABLED`, tokens en `start/session`).
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/api/v1/devices/{id}/stream/start` | Iniciar sesión en vivo. Auth JWT `device.read` (dueño). `201 {session_id, room, token_viewer, ws_url:/ws/stream, expires_at, livekit_url?, livekit_token?}` (viewer solo-suscribe, identidad única). `404` sin device, `403` sin assignment, `409` si `OFFLINE/Suspendido` o sesión activa. |
+| POST | `/api/v1/devices/{id}/stream/stop` | Cerrar sesión (viewer o dueño). Auth JWT. Idempotente `200 {session_id, closed:true}` aunque ya cerrada. |
+| GET | `/api/v1/devices/{id}/stream/session` | Estado sesión activa + `detection_paused` + tokens LiveKit (viewer o publisher según credencial). `404` sin sesión. Auth JWT dueño o `X-Device-ID + X-API-Key` (poll Pi). |
+| POST | `/api/v1/devices/{id}/stream/detection` | Pausar/reanudar detección `{paused}`. Auth JWT dueño/admin. Memoria API (sin migración); prioritaria sobre presencia en Pi. |
+| GET | `/api/v1/devices/{id}/stream/detection` | Leer pausa `{device_id, paused}`. Auth JWT dueño/admin o API key Pi (poll 5s). |
+| WS | `/ws/stream` | Signaling + frames MJPEG + estado. Mensajes `{type: offer\|answer\|ice\|subscribe\|stop\|frame\|request-offer\|subscribe-status\|subscribed-status\|status, session_id?, device_id?, sdp?, candidate?, data?}`. Buffer 512KB por mensaje. |
+
+Flujo: `start (JWT)` → API crea sesión → Pi la detecta en poll ≤5s → publica MJPEG/P2P al relay o H.264 al SFU → viewer suscribe. Detalle en [ADR-013](../05-architecture/decisions/records/ADR-013-webrtc-live-streaming.md) y `contracts/openapi/streaming.yaml`.
+
 ## Modelo de respuesta de ejemplo
 
 ```json

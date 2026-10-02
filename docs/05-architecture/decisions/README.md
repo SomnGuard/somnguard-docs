@@ -41,3 +41,5 @@ Las decisiones de arquitectura (Architecture Decision Records) se registran aqu�
 | [ADR-009](./records/ADR-009-status-parametrized-audit.md) | Estados Parametrizados + Auditoría Append-Only | Aceptada | 2026-08-22 |
 | [ADR-010](./records/ADR-010-provisioning-self-register.md) | Aprovisionamiento y auto-registro (Provisioning Token + API Key + Claim) | Aceptada | 2026-09-05 |
 | [ADR-011](./records/ADR-011-global-config-version.md) | Configuración global versionada (global_config.version + pull manual, solo global) | Aceptada | 2026-09-14 (enmienda 2026-09-15) |
+| [ADR-012](./records/ADR-012-device-vision-thresholds.md) | Umbrales de visión edge HU-DEVICE-001 — desvíos justificados vs Apéndice 2 | Aceptada | 2026-09-17 |
+| [ADR-013](./records/ADR-013-webrtc-live-streaming.md) | Video en vivo post-MVP (WebRTC a demanda para app/portal) | Propuesta | 2026-09-25 |
