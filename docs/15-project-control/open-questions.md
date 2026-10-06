@@ -26,7 +26,7 @@ Preguntas y decisiones pendientes del proyecto, recopiladas de actas, arquitectu
 | Q-001 | ¿Qué proveedor de nube se usa (AWS/Azure) o se despliega en infraestructura local? | Acta kick-off 2026-02-10 | Líder Técnico |
 | Q-003 | ¿Se designa un Product Owner formal? | Metodología adoptada | Líder Técnico |
 | Q-006 | ¿Cuál es la política de retención de datos al eliminar cuenta? | Funcionalidades del sistema | Líder Técnico |
-| Q-008 | ¿Qué canal usa la notificación push (FCM/APNs) y cómo se maneja el estado de lectura? | Arquitectura, sección 12 | Arquitectura |
+| Q-008 | ~~¿Qué canal usa la notificación push (FCM/APNs) y cómo se maneja el estado de lectura?~~ **RESUELTA 2026-10-05**: FCM vía cuenta de servicio (transporte `RestClient`); lectura vía `POST /notifications/{id}/read`. Ver QR-023. | Arquitectura, sección 12 | Arquitectura |
 | Q-009 | ¿Cuál es la cobertura objetivo de pruebas y la herramienta de reportes (JaCoCo)? | Estrategia de pruebas | Líder Técnico |
 | Q-010 | ¿El despliegue productivo usa contenedores (Docker) y orquestación? (Docker Compose local ya está definido en `10-devops/local-setup.md`) | Estrategia CI/CD | Líder Técnico |
 | Q-012 | ¿Cuándo se incorporan las pruebas automatizadas al DoD formal? | Metodología adoptada | Equipo |
@@ -51,6 +51,7 @@ Preguntas y decisiones pendientes del proyecto, recopiladas de actas, arquitectu
 | QR-019 | ¿Qué formato tiene el payload de sincronización offline (JSON + multimedia)? | Lote `POST /telemetry/events` solo metadata JSON `{"events":[]}` + `POST /telemetry/events/{id}/evidence` multipart (base64 descartado) | [api-design.md](../07-api-design/api-design.md), [ADR-005](../05-architecture/decisions/records/ADR-005-offline-first-device.md) | 2026-09-04 |
 | QR-020 | ¿Cómo se registra un device sin alta manual (auto-registro)? | Provisioning Token (un uso) + `POST /devices/self-register` + claim por usuario | [ADR-010](../05-architecture/decisions/records/ADR-010-provisioning-self-register.md) | 2026-09-05 |
 | QR-022 | ¿Se ratifica ADR-011 (Q-021)? | Sí, con enmienda manual-only: `heartbeat{configPending}` solo flag de `POST /refresh`, `device_config/history` = registro del pull, device con caché + fusión `detection_thresholds` | [ADR-011](../05-architecture/decisions/records/ADR-011-global-config-version.md) | 2026-09-15 |
+| QR-023 | ¿Qué canal usa la notificación push (Q-008) y cómo se maneja la lectura? | FCM (cuenta de servicio, `NOTIFICATION_PUSH_PROVIDER=fcm`); lectura con `POST /notifications/{id}/read`; entrega única ruteada (token activo → push, si no → in-app) | [api-design.md](../07-api-design/api-design.md), HU-API-009 | 2026-10-05 |
 
 > `QR-*` conserva el número de su pregunta cuando existe (`QR-011←Q-011`); si el número está ocupado por otra pregunta se asigna el siguiente libre (`Q-007→QR-019` porque `QR-007` es el canal Discord).
 

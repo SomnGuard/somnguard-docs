@@ -69,7 +69,7 @@ flowchart LR
 | **PostgreSQL 16** | Base de datos | Motor relacional; esquema versionado con Liquibase | Definido (ADR-001) | — |
 | **Liquibase** | Migraciones | Versionado del esquema | Definido (ADR-001) | — |
 | **MinIO/S3** | Object storage | Evidencia multimedia (solo referencia en BD) | Definido (QR-005) | R-006 |
-| **Notificaciones push (FCM/APNs)** | Servicio externo | Notificaciones de eventos críticos | Sin decidir (Q-008) | R-008 |
+| **Notificaciones push (FCM)** | Servicio externo | Notificaciones de eventos críticos (cuenta de servicio, HU-API-009) | Definido (QR-023) | R-008 |
 | **Modelo IA (resumen)** | Servicio externo | Resumen de eventos en analytics | Sin decidir | R-010 |
 | **Docker** | Runtime local | Levantar PostgreSQL y servicios | En uso local | — |
 | **Traefik** | Edge gateway | TLS, rate-limit, CORS (ver ADR-008) | Definido (ADR-008) | — |
