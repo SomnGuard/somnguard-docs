@@ -490,7 +490,7 @@
 
 ### Historia
 **Como** usuario de la plataforma
-**quiero** recibir notificación push/email cuando mi dispositivo detecte evento crítico
+**quiero** recibir notificación push cuando mi dispositivo detecte evento crítico
 **para** actuar o revisar de inmediato.
 
 ### Criterios de Aceptación
@@ -498,9 +498,9 @@
 | ID | Criterio | Testeable |
 |----|----------|-----------|
 | AC-001 | Trigger automático al persistir evento con `severity = crítica` (EV-SOM-05, EV-DIS-02, EV-DIS-04, EV-CIN-01/02) | Sí |
-| AC-002 | Plantilla por `event_type` + `severity`; canales: push (FCM/APNs), email, in-app | Sí |
-| AC-003 | Tracking: `sent` → `delivered` → `read`; reintentos exponenciales (max 3) | Sí |
-| AC-004 | Preferencias usuario: habilitar/deshabilitar por canal, horario silencio, severidad mínima | Sí |
+| AC-002 | Plantilla por `event_type` + `severity`; entrega única ruteada (con token de app → push FCM, si no → in-app); canal email catalogado, no emitido en MVP | Sí |
+| AC-003 | Tracking: `sent` → `delivered` → `read`; reintentos exponenciales (max 3) + scheduler cada 5 min | Sí |
+| AC-004 | Preferencias usuario: habilitar/deshabilitar (portal expone interruptor único; API soporta granular), horario silencio, severidad mínima | Sí |
 
 ### Dependencias
 

@@ -109,8 +109,14 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | GET | `/api/v1/notifications` | Listar notificaciones del usuario |
-| GET | `/api/v1/notifications/{id}` | Consultar notificación |
+| GET | `/api/v1/notifications/unread-count` | Contador de no leídas |
+| POST | `/api/v1/notifications/{id}/delivered` | Confirmar entrega del canal |
 | POST | `/api/v1/notifications/{id}/read` | Marcar como leída |
+| POST | `/api/v1/notifications/device-tokens` | Registrar token push FCM/APNs (HU-APP-002) |
+| DELETE | `/api/v1/notifications/device-tokens?token=` | Desactivar token push |
+| GET | `/api/v1/users/me/notification-preferences` | Ver preferencias |
+| PUT | `/api/v1/users/me/notification-preferences` | Actualizar preferencias |
+| POST | `/api/v1/notifications/retry` | Reintento manual (admin; el scheduler corre cada 5 min) |
 
 ## Módulo parameterization
 
@@ -164,7 +170,7 @@ Flujo: `start (JWT)` → API crea sesión → Pi la detecta en poll ≤5s → pu
 ## Pendientes (no inventar contratos aún)
 
 - ~~Contrato de sincronización offline del dispositivo (formato de payload y archivos multimedia)~~ Definido: `POST /telemetry/events JSON {"events":[]}` + `POST /telemetry/events/{id}/evidence multipart` (ver arriba + ADR-005 + ADR-006). Descartado `base64 en event_json` (infla 33%) y `multipart` en lote.
-- Formato de notificaciones push y estado de lectura.
+- ~~Formato de notificaciones push y estado de lectura.~~ Definido: plantilla por `event_type + severity + canal` (`monitoring.notification_template`), tracking `sent → delivered → read` + auditoría, reintentos con backoff (max 3) y proveedor FCM vía cuenta de servicio (QR-023).
 - Política de retención de datos al eliminar cuenta.
 - Respuestas de paginación y filtros definitivos por recurso.
 
