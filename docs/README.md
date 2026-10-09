@@ -39,4 +39,5 @@
 | [13-operations](./13-operations/README.md) | Operaciones |
 | [14-training-and-adoption](./14-training-and-adoption/README.md) | Capacitación y adopción |
 | [15-project-control](./15-project-control/README.md) | Actas y control del proyecto |
+| [16-scientific-publications](./16-scientific-publications/README.md) | Artículos científicos y entregables de publicación |
 | [99-archive](./99-archive/README.md) | Documentación archivada o deprecada |

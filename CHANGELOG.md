@@ -5,6 +5,9 @@
 ### Added (2026-10-02)
 - **Streaming alineado a implementación (ADR-013 Aceptada parcial):** fase 1 relay MJPEG/P2P + fase 2 LiveKit v1.13 con tokens HS256 (viewer único por conexión); QoS q55@8/q45@6/q35@4; `POST/GET /stream/detection` pausa manual; push WS de estado; TTL deslizante; heartbeat al arrancar; contratos `api-design.md` + `streaming.yaml` v0.2.0.
 
+### Added (2026-10-09)
+- **Publicación científica SomnGuard:** nueva sección `16-scientific-publications/` con los entregables españoles en formatos IEEE, ACM y APA7. La carpeta inglesa queda preparada para la traducción posterior.
+
 ### Fixed (2026-09-15)
 - **ADR-011 enmienda manual-only:** `heartbeat{configPending}` = solo flag de `POST /refresh` (ya no `applied<global OR pending`); desactualizado se detecta vía `GET /config/status{outdated}` o `applied vs available`. `GET /config` con API Key persiste upsert `device_config` + INSERT `device_config_history` (actor `SYSTEM_ID` si `created_by` NULL por self-register) + `applied/pending/last_pull`. Device restaura `device_config.cache.json` al arrancar (default→caché→override) y fusiona `detection_thresholds` (vacío no borra base; fin de falsos AS-09). `PATCH /config 410` se mantiene.
 
@@ -100,5 +103,4 @@
   - `docs/02-domain/glossary.md` — glosario del dominio, técnico y de proceso.
   - `docs/15-project-control/open-questions.md` — preguntas abiertas y decisiones resueltas.
   - `docs/05-architecture/software-design-report.md` — informe de diseño de software (modelo arquitectónico, componentes, modelo de datos, interfaces, patrones de diseño, reglas de negocio, seguridad y especificaciones técnicas).
-
 
