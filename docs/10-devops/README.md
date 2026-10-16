@@ -25,6 +25,7 @@ Documentación de CI/CD, despliegue e infraestructura.
 |---------|-------------|--------|
 | [ci-cd-strategy.md](./ci-cd-strategy.md) | Estrategia de CI/CD con GitHub Actions y Maven | En progreso |
 | [local-setup.md](./local-setup.md) | Levantamiento del entorno local (Postgres, backend, migraciones) | En progreso |
+| [manual-despliegue-somnguard.md](./manual-despliegue-somnguard.md) | Manual de despliegue del stack en VPS (DB, API, portal y servicios) | Estable |
 | [environments.md](./environments.md) | Ambientes (develop/qa/main), BD por ambiente y secretos | En progreso |
 | [_template-deployment-plan.md](./_template-deployment-plan.md) | Plantilla de plan de despliegue | Plantilla |
 | [_template-release-checklist.md](./_template-release-checklist.md) | Plantilla de checklist de release | Plantilla |
