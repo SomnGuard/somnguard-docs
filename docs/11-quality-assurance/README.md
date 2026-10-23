@@ -25,5 +25,6 @@ Planes de prueba, casos de prueba y métricas de calidad.
 |---------|-------------|--------|
 | [test-strategy.md](./test-strategy.md) | Estrategia de pruebas por nivel, cobertura y criterios | En progreso |
 | [code-review.md](./code-review.md) | Flujo y checklist de revisión de código | En progreso |
+| [audit-report-2026.md](./audit-report-2026.md) | Informe de auditoría integral de gobernanza, arquitectura y calidad | Estable |
 | [_template-qa-report.md](./_template-qa-report.md) | Plantilla de reporte de QA por sprint/release | Plantilla |
 | [_template-test-evidence.md](./_template-test-evidence.md) | Plantilla de evidencia de pruebas por HU | Plantilla |
