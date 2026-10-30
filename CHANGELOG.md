@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Changed (2026-10-30)
+- **Manual de despliegue v1.1:** incorpora las evidencias de verificación del 30 de octubre de 2026 (TLS, PostgreSQL, API health, portal, SPA refresh, descargas, contenedores, recursos y video de evento). Quedan fuera Liquibase status y el `curl` de SeaweedFS, no capturados.
+
 ### Added (2026-10-02)
 - **Streaming alineado a implementación (ADR-013 Aceptada parcial):** fase 1 relay MJPEG/P2P + fase 2 LiveKit v1.13 con tokens HS256 (viewer único por conexión); QoS q55@8/q45@6/q35@4; `POST/GET /stream/detection` pausa manual; push WS de estado; TTL deslizante; heartbeat al arrancar; contratos `api-design.md` + `streaming.yaml` v0.2.0.
 
