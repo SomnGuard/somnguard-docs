@@ -11,7 +11,7 @@
 ## Manual de despliegue
 
 **Estado:** Estable
-**Fecha:** 2026-10-16
+**Fecha:** 2026-10-30
 
 </div>
 
@@ -24,8 +24,8 @@
 | Detalle | Valor |
 |---------|-------|
 | Sistema | SomnGuard - DB / API / Portal |
-| Versión del documento | 1.0 |
-| Fecha de referencia | 16 de octubre de 2026 (según manual técnico suministrado) |
+| Versión del documento | 1.1 |
+| Fecha de referencia | 16 de octubre de 2026 (manual técnico); evidencias de verificación del 30 de octubre de 2026 |
 | Destino | VPS Ubuntu con Docker Compose |
 | Ruta base del servidor | `/home/somnguard/somnguard/` |
 | Componentes | Traefik, PostgreSQL, Liquibase, SeaweedFS, Spring Boot, LiveKit, React/Nginx y descargas estáticas |
@@ -158,6 +158,9 @@ Traefik usa HTTP challenge de Let's Encrypt por el entrypoint web, redirige HTTP
 curl -I http://somnguard.tech
 ```
 
+![Certificado TLS de somnguard.tech](../../assets/images/despliegue/2026-10-30/02-traefik-tls.png)
+*Figura 1. Certificado de `somnguard.tech` emitido por Let's Encrypt (YR2), vigente hasta el 13 de enero de 2027.*
+
 ### 4.2 PostgreSQL y migraciones
 
 ```bash
@@ -167,6 +170,9 @@ docker compose config --quiet
 docker compose up -d
 docker exec somnguard-postgres pg_isready -U somnguard -d somnguard
 ```
+
+![PostgreSQL acepta conexiones](../../assets/images/despliegue/2026-10-30/05-postgres-ready.png)
+*Figura 2. `pg_isready` sobre `somnguard-postgres`: `/var/run/postgresql:5432` accepting connections.*
 
 La base usa el volumen persistente `postgres_data`. Liquibase emplea `changelog/changelog-master.yaml` y contextos `01_ddl`, `02_dml`, `03_dcl` y `04_tcl`. El API también ejecuta Liquibase al arrancar con `LIQUIBASE_CONTEXTS=prod`; el flujo manual permite revisar estado antes o después de la actualización.
 
@@ -208,6 +214,13 @@ docker logs -f somnguard-api --tail=200
 
 La API escucha en 8080 dentro de Docker y Traefik enruta `api.somnguard.tech`. El Compose configura el perfil `prod`, conexión JDBC, claves JWT, contexto Liquibase, endpoint S3 y ruta del archivo FCM. El health check `/actuator/health` solo debe usarse si Actuator está habilitado y expuesto.
 
+```bash
+curl -i https://api.somnguard.tech/actuator/health
+```
+
+![Health de la API](../../assets/images/despliegue/2026-10-30/04-api-health.png)
+*Figura 3. `https://api.somnguard.tech/actuator/health` responde HTTP/2 200 con `{"status":"UP"}`.*
+
 ### 4.5 LiveKit y TURN
 
 ```bash
@@ -218,6 +231,9 @@ docker logs -f somnguard-livekit
 ```
 
 La configuración anuncia 7880 para señalización, TCP 7881 para RTC, UDP 50000-50100 para medios y TURN UDP 3478 con relay UDP 30000-30100. Abra únicamente los puertos requeridos en firewall y proveedor VPS. Use claves idénticas entre `.env`, `livekit.yaml` y API.
+
+![Evento con evidencia de video en el portal](../../assets/images/despliegue/2026-10-30/10-livekit-test.png)
+*Figura 4. Detalle de evento en el portal con video de evidencia reproducible (cierre prolongado de ojos). Esta captura no sustituye un dump de señalización LiveKit.*
 
 ### 4.6 Portal y descargas
 
@@ -231,6 +247,16 @@ curl -I https://somnguard.tech
 
 `VITE_API_URL` se incorpora durante la compilación. Si cambia, reconstruya la imagen con `--build`. Nginx sirve el directorio `dist` y debe tener fallback de SPA `try_files $uri $uri/ /index.html`.
 
+![Portal SPA y consola del navegador](../../assets/images/despliegue/2026-10-30/07-portal-spa.png)
+*Figura 5. Portal en `https://somnguard.tech` con DevTools → Console sin errores de aplicación.*
+
+```bash
+curl -I https://somnguard.tech/login
+```
+
+![Refresco de ruta interna del SPA](../../assets/images/despliegue/2026-10-30/08-spa-refresh.png)
+*Figura 6. `curl -I https://somnguard.tech/login` responde HTTP/2 200 (fallback `try_files`, no 404).*
+
 ```bash
 cd /home/somnguard/somnguard/deploy/download
 docker compose config --quiet
@@ -238,6 +264,13 @@ docker compose up -d
 ```
 
 Coloque los archivos de descarga en `deploy/download/www/`.
+
+```bash
+curl -I https://download.somnguard.tech/SomnGuard.apk
+```
+
+![Host de descargas](../../assets/images/despliegue/2026-10-30/09-download-host.png)
+*Figura 7. `https://download.somnguard.tech/SomnGuard.apk` responde HTTP/2 200 (`application/octet-stream`).*
 
 ## 5. Verificación posterior
 
@@ -254,6 +287,9 @@ Coloque los archivos de descarga en `deploy/download/www/`.
 
 Complete también pruebas funcionales de autenticación, lectura autorizada, escritura y persistencia, correo, push (si se activa FCM), carga/lectura S3, navegación directa del portal y refresco de rutas. Registre endpoint, código observado y evidencia sin incluir tokens ni datos personales.
 
+![Estado de contenedores](../../assets/images/despliegue/2026-10-30/01-docker-ps.png)
+*Figura 8. `docker ps` del 30 de octubre de 2026: Traefik, PostgreSQL (healthy), SeaweedFS, API, LiveKit, portal y descargas en estado Up.*
+
 ### 5.1 Logs y recursos
 
 ```bash
@@ -268,16 +304,21 @@ df -h
 
 Compruebe que no haya excepciones críticas ni secretos en los logs. Portainer CE no se considera prerrequisito y su instalación no está confirmada en la información de referencia.
 
+![Recursos del VPS](../../assets/images/despliegue/2026-10-30/11-recursos.png)
+*Figura 9. `docker stats --no-stream`, `free -h` y `df -h`: CPU baja, RAM con margen (~2,9 GiB libres) y disco ~9 % en `/`.*
+
+Las capturas de esta ejecución están en `assets/images/despliegue/2026-10-30/`. No se tomaron `03-liquibase-status.png` ni `06-seaweedfs-storage.png`; el checklist de evidencia de esa carpeta permanece como referencia para una próxima pasada.
+
 ### 5.2 Tabla de evidencia
 
 | Evidencia | Registro |
 |-----------|----------|
-| Release/tag y commits | ____________________________________________ |
-| Migraciones Liquibase y changeset | ____________________________________________ |
-| Health checks y códigos HTTP | ____________________________________________ |
-| Portal y consola del navegador | ____________________________________________ |
-| Prueba DB, S3, correo y LiveKit | ____________________________________________ |
-| Backup y prueba de restauración | ____________________________________________ |
+| Release/tag y commits | Verificación del 30 de octubre de 2026 sobre el stack en VPS. Imágenes: `somnguard-api` (`ghcr.io/somnguard/somnguard-api:latest`, Up 21 h); resto Up 13 días. |
+| Migraciones Liquibase y changeset | No capturado en esta ejecución (`03-liquibase-status.png` pendiente). |
+| Health checks y códigos HTTP | API `/actuator/health`: HTTP/2 200 y `status: UP`. SPA `/login`: HTTP/2 200. Descarga `SomnGuard.apk`: HTTP/2 200. TLS Let's Encrypt vigente hasta 2027-01-13. |
+| Portal y consola del navegador | Portal visible en `https://somnguard.tech`; consola sin errores de aplicación. |
+| Prueba DB, S3, correo y LiveKit | PostgreSQL accepting connections. S3/SeaweedFS: contenedor Up; `curl` a `:8333` no capturado. LiveKit: contenedor Up; evidencia de evento con video en portal (no dump de señalización). Correo/push no verificados en esta pasada. |
+| Backup y prueba de restauración | No ejecutado en esta verificación. |
 
 ## 6. Operación y actualización
 
@@ -350,10 +391,10 @@ Hosts DNS: `somnguard.tech`, `api.somnguard.tech`, `livekit.somnguard.tech`, `tu
 
 | Campo | Registro |
 |-------|----------|
-| Fecha y hora de ejecución | ____________________________________________ |
+| Fecha y hora de ejecución | 30 de octubre de 2026 |
 | Desplegado por | ____________________________________________ |
 | Validado por QA / responsable técnico | ____________________________________________ |
-| Release y commits desplegados | ____________________________________________ |
-| Resultado | ☐ Exitoso   ☐ Exitoso con observaciones   ☐ Rollback |
-| Incidentes u observaciones | ____________________________________________ |
+| Release y commits desplegados | Stack observado en el VPS el 30 de octubre de 2026 (ver Figura 8) |
+| Resultado | ☐ Exitoso   ☑ Exitoso con observaciones   ☐ Rollback |
+| Incidentes u observaciones | Faltan capturas de Liquibase status y de `curl` a SeaweedFS (`localhost:8333`). LiveKit se documenta con reproducción de evidencia en portal, no con prueba de señalización. Backup/restore no ejecutado. |
 | Aprobación y fecha | ____________________________________________ |
