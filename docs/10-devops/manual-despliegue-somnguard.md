@@ -52,7 +52,7 @@ Este manual cubre el despliegue del stack SomnGuard en el VPS identificado en la
 | Proxy | Traefik v3.6.13 | 80/443; TLS Let's Encrypt y enrutamiento por host |
 | Base de datos | postgres:16-alpine | somnguard-postgres:5432; persistencia PostgreSQL |
 | Migraciones | Liquibase 4.33 | Repositorio somnguard-db; cambios versionados |
-| Almacenamiento | SeaweedFS 4.48 | somnguard-storage:8333; S3 compatible |
+| Almacenamiento de objetos S3-compatible | SeaweedFS 4.48 | `somnguard-storage:8333`; proveedor registrado para el VPS |
 | API | Spring Boot; Java 21 | ghcr.io/somnguard/somnguard-api:latest; puerto interno 8080 |
 | Streaming | LiveKit Server | livekit.somnguard.tech; medios WebRTC y TURN |
 | Portal | React 19, Vite 8, Nginx | somnguard.tech; SPA estática |
@@ -68,7 +68,7 @@ Este manual cubre el despliegue del stack SomnGuard en el VPS identificado en la
 | download.somnguard.tech | somnguard-download:80 | Descargas |
 | turn.somnguard.tech | LiveKit TURN; UDP 3478 | Relay de medios |
 
-Dependencias: API → PostgreSQL por JDBC; API → SeaweedFS por endpoint S3; API → LiveKit por WSS; API → Brevo para correo y FCM para push (el proveedor de notificaciones está en modo log en la configuración descrita); Portal → API mediante `VITE_API_URL` compilada durante el build.
+Dependencias: API → PostgreSQL por JDBC; API → almacenamiento de objetos mediante el contrato S3 (SeaweedFS en este VPS); API → LiveKit por WSS; API → Brevo para correo y FCM para push (el proveedor de notificaciones está en modo log en la configuración descrita); Portal → API mediante `VITE_API_URL` compilada durante el build. En desarrollo local se usa Adobe S3Mock según [setup local](./local-setup.md); ambos proveedores se configuran en el API con `S3_ENDPOINT`, `S3_BUCKET`, `S3_REGION`, `S3_ACCESS_KEY` y `S3_SECRET_KEY`.
 
 ## 2. Requisitos y preparación
 
@@ -192,6 +192,8 @@ bash scripts/verify-rollback.sh
 
 ### 4.3 Almacenamiento S3 compatible
 
+En este VPS, el proveedor es SeaweedFS. El contrato S3 y las variables `S3_*` son comunes; desarrollo local utiliza Adobe S3Mock. El API utiliza el SDK de MinIO como cliente S3, lo que no significa que el servidor MinIO se despliegue en estos ambientes. La configuración Compose de producción indicada abajo fue observada en el servidor, pero sus archivos fuente no están versionados en los repositorios revisados.
+
 ```bash
 cd /home/somnguard/somnguard/deploy/api
 docker compose -f storage-compose.yml config --quiet
@@ -200,7 +202,7 @@ docker logs -f somnguard-storage
 curl http://localhost:8333/
 ```
 
-El servicio SeaweedFS inicia con `mini -dir=/data`, persiste en `./data/seaweedfs` y escucha dentro de la red en `somnguard-storage:8333`. El API usa `S3_ENDPOINT=http://somnguard-storage:8333`, `S3_REGION=us-east-1` y el bucket configurado.
+El servicio SeaweedFS inicia con `mini -dir=/data`, persiste en `./data/seaweedfs` y escucha dentro de la red en `somnguard-storage:8333`. El API usa `S3_ENDPOINT=http://somnguard-storage:8333`, `S3_REGION=us-east-1` y el bucket configurado. La configuración equivalente de desarrollo local está en `somnguard-api/docker-compose.yml` y usa S3Mock.
 
 ### 4.4 API
 

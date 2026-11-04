@@ -80,7 +80,7 @@ Reglas de negocio del sistema. Fuente de verdad de las reglas `RN-*`; consolidan
 > | RN-PAR-05 | Los cambios de catálogo quedan versionados con auditoría + bump de `global_config.version` (API Java, misma transacción) con snapshot en `global_config_history` |
 > | RN-PAR-06 | La DB es la fuente de verdad: `global_config.version` monotónica; `device.applied_config_version < global.version ⇒ desactualizado`; `POST /refresh` marca `pending`, `heartbeat` expone solo el flag manual, `GET` del device lo aplica, persiste `device_config/history` y limpia |
 > | RN-TEL-01 | La ingesta es idempotente por `event_id` (duplicados se reportan, no son error) |
-> | RN-TEL-02 | Cada evento lleva como máximo una evidencia en MinIO (`evidence.event_id` UNIQUE) |
+> | RN-TEL-02 | Cada evento lleva como máximo una evidencia en almacenamiento de objetos compatible con S3 (`evidence.event_id` UNIQUE) |
 > | RN-TEL-03 | Toda alerta del device se registra en `alert_log` con su evento y sonido |
 > | RN-TEL-04 | El buffer offline reintenta con backoff y retención de 7 días |
 > | RN-TEL-05 | El device descarga la config global versionada solo manual: `POST /refresh` → `pending`, `heartbeat{configPending}` → `GET /config` (upsert `device_config` + history, persiste `applied_config_version`); al arrancar restaura su caché local (sin pull) |

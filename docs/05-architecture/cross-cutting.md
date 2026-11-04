@@ -115,6 +115,8 @@
 
 ## 3. Observabilidad (Logs, Métricas, Trazas)
 
+> **Estado implementado:** el API configura Spring Actuator/Micrometer (`health`, `info`, `prometheus`, `metrics`). No se encontraron OTel Collector, Tempo, Loki, servidor Prometheus, Grafana ni Alertmanager desplegables en los repositorios revisados. Las subsecciones de instrumentación, dashboards y alertas de este apartado son objetivos de diseño, no servicios activos. Ver [ADR-014](decisions/records/ADR-014-observability-current-baseline.md) y [observability.md](../13-operations/observability.md).
+
 ### 3.1 Logs Estructurados (JSON Lines)
 ```json
 {
@@ -157,7 +159,7 @@
 |-----------|---------------|
 | **API Global** | RED global, JVM (heap, GC, threads), DB pool, Redis pool |
 | **Auth** | Login success/failed rate, token refresh rate, 401/403 rate |
-| **Telemetry** | Events ingested/sec, batch size, MinIO upload latency, duplicate rate |
+| **Telemetry** | Events ingested/sec, batch size, S3-compatible object upload latency, duplicate rate |
 | **Device Sync** | Devices online/offline, sync success/failed, buffer age, config pull rate |
 | **Monitoring** | Notifications sent/delivered/failed, retry queue depth |
 | **Analytics** | Query latency p50/p95, report generation time, AI summary tokens |
@@ -261,12 +263,12 @@ Toda entidad con ciclo de vida usa **dos campos**:
 | 422 | `VALIDATION_ERROR` | `FIELD_VALIDATION` | @Valid falló |
 | 429 | `RATE_LIMITED` | `TOO_MANY_REQUESTS` | Rate limit excedido |
 | 500 | `INTERNAL_ERROR` | `UNEXPECTED` | Bug no controlado |
-| 503 | `SERVICE_UNAVAILABLE` | `DOWNSTREAM_FAILED` | MinIO/Redis/BD caído |
+| 503 | `SERVICE_UNAVAILABLE` | `DOWNSTREAM_FAILED` | almacenamiento S3-compatible/Redis/BD caído |
 
 ### 7.3 Logging de Errores
 - **SIEMPRE** loguear con `level: ERROR` + `trace_id` + `details` (stack trace sanitizado)
 - **NUNCA** loguear: passwords, tokens, API keys, PII sensible
-- **Correlación:** `trace_id` propagado en toda la cadena (device→API→DB→MinIO)
+- **Correlación propuesta:** propagar `trace_id` en la cadena device→API→DB→almacenamiento S3-compatible cuando se implemente el backend de trazas.
 
 ---
 
@@ -323,10 +325,11 @@ GET /api/v1/events?sort=occurred_at:desc,event_type_id
 | `SPRING_PROFILES_ACTIVE` | Perfil Spring | `docker` |
 | `JWT_PRIVATE_KEY_PATH` | Ruta clave privada RS256 | `/keys/private.pem` |
 | `JWT_PUBLIC_KEY_PATH` | Ruta clave pública | `/keys/public.pem` |
-| `MINIO_ENDPOINT` | Endpoint MinIO | `http://minio:9000` |
-| `MINIO_BUCKET` | Bucket evidencias | `somnguard-evidence` |
+| `S3_ENDPOINT` | Endpoint del proveedor S3-compatible | `http://localhost:9000` (host) o `http://minio:9090` (Compose/S3Mock) |
+| `S3_BUCKET` | Bucket de evidencias | `somnguard-evidence` |
+| `S3_REGION` | Región del proveedor compatible con S3 | `us-east-1` |
 | `REDIS_HOST` / `REDIS_PORT` | Redis cache | `redis:6379` |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTel Collector | `http://otel-collector:4317` |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | No configurado en el baseline actual; requiere despliegue OTel | — |
 | `LOG_LEVEL` | Nivel log root | `INFO` |
 | `RATE_LIMIT_USER_RPM` | Rate limit user | `100` |
 | `RATE_LIMIT_DEVICE_RPM` | Rate limit device | `1000` |
@@ -340,7 +343,7 @@ GET /api/v1/events?sort=occurred_at:desc,event_type_id
 | Control | Implementación |
 |---------|----------------|
 | **CORS** | Solo orígenes permitidos (portal domain, app bundle ID); `credentials: true` |
-| **CSP** | `default-src 'self'; script-src 'self'; img-src 'self' data: https://minio;` |
+| **CSP** | Restringir imágenes a la app/API y al dominio del proveedor solo si el cliente accede directamente a URLs S3 prefirmadas; no asumir un host `minio` fijo. |
 | **HSTS** | `Strict-Transport-Security: max-age=31536000; includeSubDomains` (prod) |
 | **Headers** | `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin` |
 | **Secrets** | Vault/Sealed Secrets en K8s; local `.env` gitignored |
@@ -360,7 +363,7 @@ GET /api/v1/events?sort=occurred_at:desc,event_type_id
 | `adapter/in/web` | Controllers REST, DTOs, mappers | `application/port/in` |
 | `adapter/in/amqp` | Consumidores de eventos (si aplica) | `application/port/in` |
 | `adapter/out/persistence` | JPA/SQLite repos, mappers, Liquibase | `application/port/out` |
-| `adapter/out/storage` | MinIO/S3 client | `application/port/out` |
+| `adapter/out/storage` | Cliente de almacenamiento S3-compatible | `application/port/out` |
 | `platform` | Config, security, observability, error handling, shared utils | **Transversal** (usado por adapters) |
 
 **Regla de Oro:** `domain` **nunca** depende de Spring, JPA, HTTP, frameworks. Las dependencias apuntan **hacia adentro**.
@@ -376,12 +379,13 @@ GET /api/v1/events?sort=occurred_at:desc,event_type_id
 | ADR-003 | Analytics Module | Aceptada | `decisions/records/ADR-003-analytics-module.md` |
 | ADR-004 | Database Strategy — 1 PostgreSQL + Esquemas por Módulo + Liquibase | Aceptada | `decisions/records/ADR-004-database-strategy.md` |
 | ADR-005 | Offline-First en Device Edge (SQLite Local + Sync Idempotente) | Aceptada | `decisions/records/ADR-005-offline-first-device.md` |
-| ADR-006 | MinIO Evidence Storage | Aceptada | `decisions/records/ADR-006-minio-evidence-storage.md` |
-| ADR-007 | Observabilidad OpenTelemetry + LGTM | Aceptada | `decisions/records/ADR-007-observability-otel-lgtm.md` |
-| ADR-008 | Traefik Edge Gateway | Aceptada | `decisions/records/ADR-008-traefik-edge-gateway.md` |
+| ADR-006 | Almacenamiento multimedia compatible con S3 | Aceptada; proveedor por ambiente | `decisions/records/ADR-006-minio-evidence-storage.md` |
+| ADR-007 | Observabilidad OpenTelemetry + LGTM | Reemplazada por ADR-014 | `decisions/records/ADR-007-observability-otel-lgtm.md` |
+| ADR-008 | Traefik Edge Gateway | Aceptada; despliegue VPS registrado | `decisions/records/ADR-008-traefik-edge-gateway.md` |
 | ADR-009 | Estados Parametrizados + Auditoría Append-Only (status_category + status) | Aceptada | `decisions/records/ADR-009-status-parametrized-audit.md` |
+| ADR-014 | Baseline actual de observabilidad | Aceptada | `decisions/records/ADR-014-observability-current-baseline.md` |
 
-> **Nota:** ADRs 004-009 ya existen y están aceptados. Ver carpeta `decisions/records/`.
+> **Nota:** el estado de cada decisión está en el registro de [ADRs](decisions/README.md). ADR-007 se conserva como historial, no como stack desplegado.
 
 ---
 
@@ -389,22 +393,22 @@ GET /api/v1/events?sort=occurred_at:desc,event_type_id
 
 | Repo | Auth | Audit | Obs | Idempotencia | Estados | TZ | Errores | Paginación | Versionado | Config | Seguridad | Hexagonal |
 |------|------|-------|-----|--------------|---------|-----|---------|------------|------------|--------|-----------|-----------|
-| `somnguard-api` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `somnguard-db` | N/A | ✅ | N/A | N/A | ✅ | ✅ | N/A | N/A | N/A | ✅ | ✅ | N/A |
-| `somnguard-device` | ✅ (API Key) | ✅ (local) | ✅ (logs JSON) | ✅ | ✅ | ✅ | ✅ | N/A | N/A | ✅ | ✅ | ✅ (Python) |
-| `somnguard-portal` | ✅ (JWT) | N/A | ✅ (RUM) | N/A | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A |
-| `somnguard-app` | ✅ (JWT) | N/A | ✅ (RUM) | N/A | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A |
+| `somnguard-api` | ✅ | ✅ | ◐ Actuator/Micrometer | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `somnguard-db` | N/A | ✅ | ◐ healthcheck | N/A | ✅ | ✅ | N/A | N/A | N/A | ✅ | ✅ | N/A |
+| `somnguard-device` | ✅ (API Key) | ✅ (local) | ◐ logs locales | ✅ | ✅ | ✅ | ✅ | N/A | N/A | ✅ | ✅ | ✅ (Python) |
+| `somnguard-portal` | ✅ (JWT) | N/A | — | N/A | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A |
+| `somnguard-app` | ✅ (JWT) | N/A | — | N/A | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A |
 
-**Leyenda:** ✅ = Implementar obligatorio | N/A = No aplica en ese repo | **Estados** = ADR-009 (5 tablas core)
+**Leyenda:** ✅ = capacidad implementada en el alcance del módulo | ◐ = parcial/local, sin centralización | — = no implementado | N/A = no aplica | **Estados** = ADR-009 (5 tablas core)
 
 ---
 
 ## Próximos Pasos
 
-1. **Mantener ADRs** ADR-001..009 aceptadas en `docs/05-architecture/decisions/records/` (usar `_template-adr.md` para nuevas).
+1. **Mantener el registro de ADRs** actualizado; conservar ADR-007 como reemplazada por ADR-014.
 2. **Actualizar `modeling-conventions.md`** con campos de auditoría obligatorios.
 3. **Implementar middleware/base classes** en `somnguard-api/platform` para: auth, error handling, observabilidad, paginación.
-4. **Configurar OTel Collector + LGTM** en `somnguard-docker-infra` (ver propuesta separada).
+4. **Si se aprueba centralizar observabilidad**, versionar y probar el collector, backends y dashboards en un repositorio de infraestructura antes de actualizar el baseline.
 5. **Validar con equipo** en reunión de arquitectura (30 min).
 
 

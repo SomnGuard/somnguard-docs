@@ -24,7 +24,7 @@
 
 ## Stack de observabilidad
 
-> Valores de referencia del proyecto: ver ADR-007 (OpenTelemetry + Loki/Prometheus/Tempo/Grafana). Reemplazar la tabla al instanciar.
+> Estado vigente: ADR-014 (Actuator/Micrometer en API). El stack OTel/LGTM de ADR-007 fue reemplazado y no está desplegado. Al instanciar esta plantilla, documente solo herramientas configuradas y verificadas en el ambiente.
 
 | Pilar | Herramienta | Destino | Estado |
 |-------|-------------|---------|--------|
@@ -105,9 +105,9 @@
 
 | Endpoint | Qué verifica | Respuesta esperada |
 |----------|--------------|--------------------|
-| `GET /health` | Disponibilidad básica del proceso | `200 { "status": "ok" }` |
-| `GET /health/ready` | Disponibilidad + dependencias (BD, MinIO) | `200 { "status": "ready" }` |
-| `GET /health/live` | Proceso vivo (sin dependencias) | `200 { "status": "alive" }` |
+| `GET /actuator/health` | Estado general del API | Respuesta Actuator del perfil activo |
+| `GET /actuator/health/readiness` | Probe readiness de Spring | Respuesta Actuator del perfil activo |
+| `GET /actuator/health/liveness` | Probe liveness de Spring | Respuesta Actuator del perfil activo |
 
 ## Dashboard principal
 

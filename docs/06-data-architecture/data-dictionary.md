@@ -683,7 +683,7 @@
 | `id` | UUID | NO | — | PK | PK | Identificador evidencia |
 | `event_id` | UUID | NO | — | `telemetry_service.event(id)` | **UNIQUE** | Evento asociado (1 evidencia por evento en MVP). Mapeo lote: `POST /telemetry/events JSON` fase 1 -> `POST /telemetry/events/{id}/evidence multipart` fase 2. Key `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` |
 | `media_type_id` | UUID | NO | — | `parameterization.media_type(id)` | — | Tipo: image_jpeg, video_mp4 |
-| `minio_key` | VARCHAR(500) | NO | — | — | — | Key en MinIO: `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` (ver ADR-006) |
+| `minio_key` | VARCHAR(500) | NO | — | — | — | Nombre físico histórico para la clave del objeto S3-compatible: `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` (ver ADR-006); no identifica el proveedor |
 | `size_bytes` | BIGINT | NO | — | — | — | Tamaño archivo |
 | `checksum_sha256` | VARCHAR(64) | NO | — | — | — | SHA-256 del archivo (integridad) |
 | `created_at` | TIMESTAMPTZ | NO | `now()` | — | — | Timestamp subida |

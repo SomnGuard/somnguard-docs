@@ -168,7 +168,7 @@ La arquitectura limpia se formaliza como **hexagonal (puertos y adaptadores)**, 
 | Casos de uso | `application/usecase` | Implementaciones de los casos de uso. |
 | Dominio | `domain/model`, `domain/service` | Entidades de negocio y servicios de dominio (reglas). |
 | Adaptadores de entrada | `adapter/in/web`, `adapter/in/amqp` | Controladores REST y consumidores de mensajes. |
-| Adaptadores de salida | `adapter/out/persistence`, `adapter/out/storage` | Implementaciones concretas: JPA/PostgreSQL, MinIO/S3, notificadores. |
+| Adaptadores de salida | `adapter/out/persistence`, `adapter/out/storage` | Implementaciones concretas: JPA/PostgreSQL, almacenamiento compatible con S3, notificadores. |
 | Transversal (fuera del módulo) | `platform` | Manejo de errores, logging y observabilidad; paquete único al nivel de `com.somnguard`, compartido por todos los módulos. |
 
 Estructura de paquetes de referencia (Java/Spring Boot):

@@ -506,7 +506,7 @@ jobs:
 Para levantar un entorno nuevo (local/dev/qa/prod):
 
 ```bash
-# 1. Levantar infraestructura (BD, MinIO, Redis, Traefik, API, Portal)
+# 1. Levantar infraestructura (BD, almacenamiento S3-compatible del ambiente, Redis, Traefik, API, Portal)
 docker compose --profile api --profile observability up -d
 
 # 2. Aplicar migraciones ordenadas (DDL → DML → DCL)
@@ -535,7 +535,7 @@ docker compose --profile tooling run --rm liquibase rollback-count 1
 | `cross-cutting.md` | Estándares de auditoría, estados, TZ, errores |
 | `ADR-003` | Decisión de 1 BD PostgreSQL + esquemas por módulo |
 | `ADR-004` | Estados parametrizados (`status_category` + `status`) |
-| `ADR-006` | MinIO/S3 para evidencia (retención ILM) |
+| `ADR-006` | Almacenamiento S3-compatible para evidencia; retención ILM no verificada |
 | `software-analysis.md` | F-01..F-10 funcionalidades que requieren BD |
 | `01_ddl/changelog.yaml` | Estructura real de includes por módulo |
 | `02_dml/changelog.yaml` | Estructura real de includes de datos semilla |

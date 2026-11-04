@@ -91,7 +91,7 @@
 | ID | Descripción | RN Origen | Funcionalidad SRS | Prioridad MoSCoW | Épica |
 |----|-------------|-----------|-------------------|------------------|-------|
 | RF-TEL-01 | Ingesta de eventos (POST /telemetry/events): validación device + API key, idempotencia (event_id único), persistencia | RN-TEL-01 | RF-7.1, RF-7.2, RF-8.3 | Must | Telemetría y sincronización |
-| RF-TEL-02 | Ingesta de evidencia multimedia (imagen/video) → MinIO bucket `somnguard-evidence`; vinculación a event | RN-TEL-02 | RF-7.4, RF-8.3 | Must | Telemetría y sincronización |
+| RF-TEL-02 | Ingesta de evidencia multimedia (imagen/video) → bucket S3-compatible `somnguard-evidence`; vinculación al evento | RN-TEL-02 | RF-7.4, RF-8.3 | Must | Telemetría y sincronización |
 | RF-TEL-03 | Registro de alert_log: código AS-XX, timestamp, event_id asociado, severidad | RN-TEL-03 | RF-6.1, RF-6.2, RF-7.3, Apéndice 1 | Must | Telemetría y sincronización |
 | RF-TEL-04 | Sincronización offline-first: buffer local en device (SQLite), reintentos con backoff, deduplicación por event_id | RN-TEL-04 | RF-8.1, RF-8.2, RF-8.3 | Must | Telemetría y sincronización |
 | RF-TEL-05 | Pull manual de config global versionada desde device (`GET /devices/{id}/config` tras `heartbeat{configPending manual}`; upsert `device_config` + history, persiste `applied_config_version`; arranque restaura caché local) | RN-TEL-05 | RF-1.2, RF-8.3 | Must | Telemetría y sincronización |

@@ -1,9 +1,15 @@
 # ADR-008: Edge Gateway — Traefik v3 (Puerto Único 80/443, Routing API/Portal)
 
-**Estado:** Aceptada
+**Estado:** Aceptada — despliegue VPS registrado; configuración fuente pendiente de versionar
 **Fecha:** 2026-08-22
 **Autores:** Equipo SomnGuard
 **Equipos involucrados:** Arquitectura, Backend, Frontend, DevOps, Device
+
+---
+
+> **Estado verificado:** el [manual de despliegue](../../../10-devops/manual-despliegue-somnguard.md) registra Traefik v3.6.13 en el VPS y adjunta evidencia de TLS/servicios activos del 2026-10-30. La configuración Compose fuente indicada por el manual no está incluida en los repositorios revisados; para reproducir el despliegue debe incorporarse a un repositorio versionado.
+
+> **Alcance de este registro:** la decisión confirma el uso de Traefik en el VPS documentado. Los ejemplos y especificaciones detalladas siguientes son la propuesta original; no certifican que cada middleware, métrica, label o valor esté aplicado actualmente. La configuración operativa debe verificarse contra los archivos fuente cuando se versionen.
 
 ---
 

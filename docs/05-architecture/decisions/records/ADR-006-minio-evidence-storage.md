@@ -1,7 +1,7 @@
-# ADR-006: Object Storage — MinIO (S3-Compatible) para Evidencia Multimedia
+# ADR-006: Almacenamiento multimedia compatible con S3
 
-**Estado:** Aceptada
-**Fecha:** 2026-08-22
+**Estado:** Aceptada — decisión actualizada el 2026-11-03
+**Fecha original:** 2026-08-22
 **Autores:** Equipo SomnGuard
 **Equipos involucrados:** Arquitectura, Backend, Device, DevOps
 
@@ -9,152 +9,62 @@
 
 ## Contexto
 
-El sistema genera **evidencia multimedia** asociada a eventos críticos:
-- **Frames JPEG** del momento de detección (~50-200 KB c/u)
-- **Video clips** opcionales (futuro, ~1-5 MB c/u)
-- Volumen estimado MVP: 10k eventos/día × 1 frame = ~2 GB/día = ~60 GB/mes
-
-Requisitos:
-- **Almacenamiento barato y escalable** (objetos, no filesystem)
-- **Acceso vía HTTP** desde API (subida) y Portal/App (descarga/visualización)
-- **Privacidad:** Solo usuarios dueños del dispositivo + admins
-- **Retención:** 90 días por defecto, configurable por evento crítico (5 años)
-- **Compatibilidad:** Device sube directo (pre-signed URL) o via API; Portal/App descarga
-
----
+SomnGuard conserva evidencia multimedia asociada a eventos. PostgreSQL debe guardar sus metadatos y referencias, mientras los bytes viven en un servicio de objetos. La integración del API ya usa una interfaz S3 mediante el SDK de MinIO; los proveedores reales varían según el entorno.
 
 ## Decisión
 
-### 1. MinIO (S3-Compatible) como Object Storage
-| Aspecto | Especificación |
-|---------|----------------|
-| **Software** | MinIO (open source, S3 API compatible) |
-| **Despliegue** | Contenedor Docker (local/dev); MinIO Operator en K8s (prod) |
-| **Bucket único** | `somnguard-evidence` |
-| **Estructura de keys** | `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.{ext}` |
-| **Región** | `us-east-1` (dummy, MinIO single-node) |
-| **Versiónamiento** | **Habilitado** (protege contra borrado accidental) |
-| **Cifrado** | SSE-S3 (AES-256) en reposo; TLS 1.3 en tránsito |
+Se adopta **almacenamiento de objetos compatible con la API S3** como contrato común. MinIO es el nombre histórico de la ADR y del cliente Java utilizado por el adaptador; no implica que todos los ambientes ejecuten un servidor MinIO.
 
-### 2. Flujo de Subida (Ingesta en 2 fases, 1 evidencia por evento MVP)
-| Origen | Método | Detalle |
-|--------|--------|---------|
-| **Device → API (fase 1 metadata)** | `POST /telemetry/events` JSON `{"events":[]}` lote máx 100 | API valida `X-Device-ID+X-API-Key` + `event_id` único -> `201 {acked_ids[], duplicate_ids[]}`. Sin archivos inline |
-| **Device → API (fase 2 evidencia)** | `POST /telemetry/events/{eventId}/evidence` multipart single file | API valida -> sube a MinIO -> guarda `evidence_id` + `minio_key {device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` + `checksum_sha256` (64 hex, obligatorio) en BD. Mapeo 1:1 por `evidence.event_id UNIQUE` |
-| **Device → MinIO (futuro)** | Pre-signed PUT URL | API genera URL firmada (TTL 15 min) -> device sube directo -> notifica API |
-| **Portal/App** | Pre-signed GET URL | API genera URL firmada (TTL 1 hora) -> cliente descarga/visualiza |
+| Ambiente | Implementación documentada | Endpoint S3 | Evidencia |
+|---|---|---|---|
+| Desarrollo local | Adobe S3Mock 4.12.4. En Compose el servicio conserva el alias `minio` por compatibilidad con la configuración del API. | Dentro de Compose: `http://minio:9090`; desde el host: `http://localhost:9000` | `somnguard-api/docker-compose.yml`, `.env.example` y `docs/10-devops/local-setup.md` |
+| VPS documentado | SeaweedFS 4.48 | `http://somnguard-storage:8333` | `docs/10-devops/manual-despliegue-somnguard.md`, sección 4.3 y evidencia del despliegue del 2026-10-30 |
+| Otros ambientes | Proveedor S3 compatible configurado por variables de entorno. No se declara un proveedor productivo adicional hasta que exista una configuración versionada y verificada. | `S3_ENDPOINT` | Configuración del ambiente |
 
-### 3. Metadatos en Base de Datos (no en MinIO)
-| Tabla | Columnas Clave |
-|-------|----------------|
-| `telemetry.evidence` | `id` (PK UUID), `event_id` (FK), `minio_key` (VARCHAR), `media_type_id` (FK), `size_bytes`, `checksum_sha256` (64 hex), `created_at`, `created_by` (device_id) |
+### Contrato y datos
 
-> **Regla:** MinIO **solo almacena bytes**. Metadatos, permisos, relaciones → PostgreSQL.
+- El bucket se configura con `S3_BUCKET`; el bucket usado actualmente es `somnguard-evidence`.
+- Los objetos usan una clave con la forma `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg`.
+- El API sube y recupera la evidencia mediante su adaptador de almacenamiento S3. Device y clientes no acceden directamente al proveedor.
+- PostgreSQL conserva los metadatos y la clave del objeto; no almacena los bytes multimedia.
+- `minio_key` se mantiene como nombre físico histórico de una columna de base de datos. No es el nombre del proveedor ni del contrato de configuración.
+- Las credenciales y el endpoint se entregan por `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_ENDPOINT`, `S3_REGION` y `S3_BUCKET`. Los valores reales no se versionan.
 
-### 4. Políticas de Acceso (IAM Style)
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "DeviceWrite",
-      "Effect": "Allow",
-      "Principal": {"AWS": ["arn:aws:iam::device:*"]},
-      "Action": ["s3:PutObject", "s3:PutObjectTagging"],
-      "Resource": "arn:aws:s3:::somnguard-evidence/*",
-      "Condition": {"StringEquals": {"s3:x-amz-meta-device-id": "${device_id}"}}
-    },
-    {
-      "Sid": "UserReadOwn",
-      "Effect": "Allow",
-      "Principal": {"AWS": ["arn:aws:iam::user:*"]},
-      "Action": ["s3:GetObject"],
-      "Resource": "arn:aws:s3:::somnguard-evidence/*",
-      "Condition": {"StringLike": {"s3:prefix": "${user_device_ids}/*"}}
-    },
-    {
-      "Sid": "AdminFull",
-      "Effect": "Allow",
-      "Principal": {"AWS": ["arn:aws:iam::admin:*"]},
-      "Action": ["s3:*"],
-      "Resource": "arn:aws:s3:::somnguard-evidence/*"
-    }
-  ]
-}
-```
-> **Implementación real:** En API (middleware), no en MinIO policies. MinIO usa credenciales admin únicas; API valida ownership antes de firmar URLs.
+### Capacidades fuera del estado verificado
 
-### 5. Retención y Lifecycle
-| Regla | Acción |
-|-------|--------|
-| **Eventos normales** | Eliminar objeto a los 90 días (MinIO ILM rule) |
-| **Eventos críticos** (severity = `critical`) | Retener 5 años (tag `retention=long` en PUT) |
-| **Versiones antiguas** | Mantener últimas 3 versiones; purgar anteriores |
-| **Bucket size alert** | Prometheus alert si `bucket_size > 500 GB` |
-
-### 6. Device — Subida de Evidencia (2 fases)
-- **MVP (definido):** Fase 1 `POST /telemetry/events JSON {"events":[]}` solo metadata -> `201`. Fase 2 `POST /telemetry/events/{id}/evidence multipart` 1 JPG por evento. Descartado `base64 en event_json` (infla 33%, rompe límite 50MB, contradice §Alternativas: base64 en BD mala idea).
-- **Opción futura (optimización):** API devuelve pre-signed PUT URL en `GET /devices/{id}/config` → device sube directo a MinIO → reduce bandwidth API
-
-### 7. Portal/App — Visualización
-- **Imagen:** `<img src="{pre-signed-get-url}">` (TTL 1h, cache browser)
-- **Video:** `<video src="{pre-signed-get-url}">` (range requests soportados por MinIO)
-- **Descarga:** Botón "Descargar" → misma URL pre-firmada con `Content-Disposition: attachment`
-
-### 8. Configuración por Ambiente
-| Variable | Local | Dev | Prod |
-|----------|-------|-----|------|
-| `MINIO_ENDPOINT` | `http://minio:9000` | `https://minio.dev.somnguard.com` | `https://minio.somnguard.com` |
-| `MINIO_ACCESS_KEY` | `minioadmin` | Vault secret | Vault secret |
-| `MINIO_SECRET_KEY` | `minioadmin` | Vault secret | Vault secret |
-| `MINIO_BUCKET` | `somnguard-evidence` | `somnguard-evidence-dev` | `somnguard-evidence-prod` |
-| `MINIO_REGION` | `us-east-1` | `us-east-1` | `us-east-1` |
-
----
+Versionado de objetos, cifrado administrado por el servicio, URLs prefirmadas, reglas de ciclo de vida, retención de cinco años y alertas de capacidad no se consideran capacidades implementadas por esta decisión. Cada una requiere configuración verificable y pruebas antes de describirse como activa.
 
 ## Consecuencias
 
 ### Positivas
-- **Costo near-zero local:** MinIO en Docker = gratis; prod: S3/MinIO managed ~$0.023/GB/mes
-- **API S3 estándar:** SDKs en Java (Spring), Python (boto3), JS (AWS SDK) — mismo código
-- **Escalabilidad horizontal:** MinIO distributed mode (Erasure coding) si crece
-- **Versionamiento nativo:** Protección contra ransomware/borrado accidental
-- **Pre-signed URLs:** Offload de bandwidth API; descarga directa browser→MinIO
-- **Retención automática:** ILM rules en MinIO = sin jobs custom
+
+- Arquitectura, desarrollo y despliegue hablan de un único contrato: almacenamiento de objetos compatible con S3.
+- Se pueden usar proveedores distintos por ambiente sin exponerlos a los módulos del dominio.
+- El API y PostgreSQL mantienen sus responsabilidades separadas.
 
 ### Negativas / Trade-offs
-- **Componente extra** en infra (MinIO + Console en puerto 9001)
-- **Credenciales admin** en API (single tenant) → Mitigación: Vault, rotación 90d
-- **Consistencia eventual:** Objeto subido a MinIO vs registro en PG (mitigado: transacción API = PG commit + MinIO PUT; compensating transaction si falla MinIO)
-- **Video grande** → multipart upload necesario (> 5 MB) → complejidad en device
 
-### Riesgos
-- **Bucket público por error** → Mitigación: Default private; tests de seguridad en CI (s3cmd ls falla sin credenciales)
-- **Orphan objects** (en MinIO sin registro en PG) → Mitigación: Job semanal `LIST` vs `SELECT minio_key`; reporte discrepancias
-- **Crecimiento descontrolado** → Mitigación: ILM + alertas Prometheus + dashboard Grafana
+- S3Mock, SeaweedFS y otros proveedores pueden diferir en persistencia y capacidades; las pruebas deben cubrir el comportamiento usado por SomnGuard.
+- El API usa el SDK de MinIO, por lo que la compatibilidad con otro servicio se debe validar con operaciones reales de lectura y escritura.
 
----
+### Riesgos y pendientes
+
+- Mantener alineados `S3_ENDPOINT` y las credenciales entre API y proveedor en cada ambiente.
+- Incorporar a un repositorio versionado la configuración de despliegue del proveedor del VPS; el manual actual documenta el estado observado, pero no reemplaza el Compose de producción.
+- Definir e implementar retención, cifrado, versionado y estrategia de respaldo antes de depender de esas capacidades.
 
 ## Alternativas consideradas
 
-| Alternativa | Por qué se descartó |
-|-------------|---------------------|
-| **PostgreSQL BYTEA / Large Object** | Bloat tabla, backup lento, no streaming, no CDN, no pre-signed URLs, mala performance > 100 MB |
-| **Filesystem local (NFS / volume)** | No escalable, backup complejo, sin versionado, sin pre-signed URLs, single point of failure |
-| **AWS S3 directo (prod) + MinIO (local)** | Vendor lock-in; MinIO es S3-compatible → mismo código en todos ambientes |
-| **Azure Blob / GCS** | Equipo familiarizado con S3 API; MinIO corre en cualquier K8s/VM |
-| **GridFS (MongoDB)** | Añade MongoDB solo para esto; overkill |
-| **Base64 en BD (event.metadata)** | Límite 1 MB en PG `jsonb`; infla BD 33%; no streaming; mala idea |
-
----
+| Alternativa | Resultado |
+|---|---|
+| MinIO como proveedor obligatorio en todos los ambientes | Retirada como decisión de proveedor único; desarrollo usa S3Mock y el VPS documentado usa SeaweedFS. |
+| Almacenar bytes en PostgreSQL | Descartada; la base conserva metadatos y referencias, no los objetos. |
+| Crear una abstracción propietaria no compatible con S3 | Descartada; el API ya integra el contrato S3. |
 
 ## Referencias
 
-- [cross-cutting.md](../../cross-cutting.md) — (storage strategy implícita en observabilidad)
-- [functional.md](../../../04-requirements/functional.md) → RF-TEL-02, RF-EDGE-08, RF-ANA-05
-- [architecture-document.md](../../architecture-document.md) §7 (Storage)
-- [module-catalog.md](../../../09-modules/module-catalog.md) → `telemetry_service` adapter/out/storage
-- MinIO docs: https://min.io/docs
-- S3 API reference: https://docs.aws.amazon.com/AmazonS3/latest/API/API_Operations.html
-- Spring Cloud AWS S3: https://spring.io/projects/spring-cloud-aws
-
+- [Arquitectura del sistema](../../architecture-document.md#66-almacenamiento-multimedia)
+- [Manual de despliegue](../../../10-devops/manual-despliegue-somnguard.md#43-almacenamiento-s3-compatible)
+- [Setup local](../../../10-devops/local-setup.md)
+- Implementación del API: `somnguard-api/src/main/java/com/somnguard/telemetry_service/adapter/out/storage/`
+- Configuración local del API: `somnguard-api/docker-compose.yml` y `somnguard-api/.env.example`

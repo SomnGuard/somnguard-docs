@@ -52,7 +52,7 @@ com.somnguard.<nombre-modulo>/
     │   └── amqp/     # Consumidores de mensajes (si aplica)
     └── out/
         ├── persistence/  # Repositorios (PostgreSQL)
-        └── storage/      # Almacenamiento multimedia (MinIO/S3)
+        └── storage/      # Almacenamiento multimedia compatible con S3
 ```
 
 Reglas: ver [structure-rules.md](../../../00-documentation-governance/structure-rules.md) y ADR-002.

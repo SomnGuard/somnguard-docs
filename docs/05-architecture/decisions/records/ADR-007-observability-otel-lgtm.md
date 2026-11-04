@@ -1,9 +1,14 @@
 # ADR-007: Observabilidad — OpenTelemetry + LGTM Stack (Tempo, Prometheus, Loki, Grafana)
 
-**Estado:** Aceptada
-**Fecha:** 2026-08-22
+**Estado:** Reemplazada por ADR-014
+**Fecha original:** 2026-08-22
+**Fecha de reemplazo:** 2026-11-03
 **Autores:** Equipo SomnGuard
 **Equipos involucrados:** Arquitectura, Backend, Device, DevOps, SRE
+
+---
+
+> **Estado actual:** el stack completo OTel + Tempo + Prometheus + Loki + Grafana descrito en esta ADR no está desplegado en los repositorios revisados. La configuración vigente del API expone Actuator/Micrometer (`health`, `info`, `prometheus`, `metrics`); el pipeline centralizado de logs y trazas permanece fuera del alcance implementado. La decisión vigente para este baseline está en [ADR-014](ADR-014-observability-current-baseline.md). El contenido técnico de abajo se conserva como registro histórico de la propuesta reemplazada.
 
 ---
 

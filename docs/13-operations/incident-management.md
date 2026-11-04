@@ -17,14 +17,14 @@
 
 </div>
 
-Cómo se clasifica, responde, comunica y aprende de los incidentes del sistema SomnGuard. El marco aplica a base de datos, migraciones y, cuando exista, a la capa de aplicación (backend, MinIO, notificaciones).
+Cómo se clasifica, responde, comunica y aprende de los incidentes del sistema SomnGuard. El marco aplica a base de datos, migraciones y, cuando exista, a la capa de aplicación (backend, almacenamiento de objetos S3-compatible, notificaciones).
 
 ## Severidades
 
 | Sev | Definición | Ejemplos | Respuesta |
 |-----|------------|----------|-----------|
 | **P0** | Pérdida total o corrupción de datos; servicio caído | PostgreSQL no responde; corrupción de datos; pérdida de backups | Atención inmediata; se moviliza el equipo |
-| **P1** | Degradación grave o riesgo alto sin pérdida aún | Migración fallida; disco > 85%; fallo de MinIO que impide subir evidencia | Atención el mismo día |
+| **P1** | Degradación grave o riesgo alto sin pérdida aún | Migración fallida; disco > 85%; fallo del proveedor S3-compatible que impide subir evidencia | Atención el mismo día |
 | **P2** | Impacto acotado, con workaround | Consultas lentas sostenidas; notificaciones con retraso | Priorizable en el sprint |
 | **P3** | Impacto menor / cosmético | Discrepancia menor en datos de prueba | Deuda menor, se agenda |
 
@@ -70,7 +70,7 @@ Regla de mejora continua: toda acción correctiva se convierte en un ticket rast
 
 ## Puntos abiertos
 
-- Guardia on-call y canales reales (herramienta: Alertmanager + Grafana según ADR-007 §6).
+- Guardia on-call y canales reales pendientes; Alertmanager/Grafana de ADR-007 no están desplegados (ver ADR-014).
 - Umbrales de severidad ligados a SLO por servicio.
 
 ## Referencias

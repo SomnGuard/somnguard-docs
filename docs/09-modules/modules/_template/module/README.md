@@ -54,7 +54,7 @@
 | Puerto | Implementación |
 |--------|----------------|
 | `[EntidadRepository]` | `adapter/out/persistence` (PostgreSQL) |
-| `[MediaStorage]` | `adapter/out/storage` (MinIO/S3) |
+| `[MediaStorage]` | `adapter/out/storage` (S3-compatible) |
 
 ## Base de datos
 

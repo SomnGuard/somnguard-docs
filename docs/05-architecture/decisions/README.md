@@ -35,11 +35,12 @@ Las decisiones de arquitectura (Architecture Decision Records) se registran aqu�
 | [ADR-003](./records/ADR-003-analytics-module.md) | Módulo analítico (analytics) en el backend | Aceptada | 2026-08-19 |
 | [ADR-004](./records/ADR-004-database-strategy.md) | Database Strategy — 1 PostgreSQL + Esquemas por Módulo + Liquibase | Aceptada | 2026-08-19 |
 | [ADR-005](./records/ADR-005-offline-first-device.md) | Offline-First en Device Edge (SQLite Local + Sync Idempotente) | Aceptada | 2026-08-22 |
-| [ADR-006](./records/ADR-006-minio-evidence-storage.md) | MinIO Evidence Storage | Aceptada | 2026-08-22 |
-| [ADR-007](./records/ADR-007-observability-otel-lgtm.md) | Observabilidad OpenTelemetry + LGTM | Aceptada | 2026-08-22 |
-| [ADR-008](./records/ADR-008-traefik-edge-gateway.md) | Traefik Edge Gateway | Aceptada | 2026-08-22 |
+| [ADR-006](./records/ADR-006-minio-evidence-storage.md) | Almacenamiento multimedia compatible con S3 | Aceptada; proveedor por ambiente | 2026-11-03 |
+| [ADR-007](./records/ADR-007-observability-otel-lgtm.md) | Observabilidad OpenTelemetry + LGTM | Reemplazada por ADR-014 | 2026-11-03 |
+| [ADR-008](./records/ADR-008-traefik-edge-gateway.md) | Traefik Edge Gateway | Aceptada; despliegue VPS registrado, Compose fuente pendiente de versionar | 2026-08-22 |
 | [ADR-009](./records/ADR-009-status-parametrized-audit.md) | Estados Parametrizados + Auditoría Append-Only | Aceptada | 2026-08-22 |
 | [ADR-010](./records/ADR-010-provisioning-self-register.md) | Aprovisionamiento y auto-registro (Provisioning Token + API Key + Claim) | Aceptada | 2026-09-05 |
 | [ADR-011](./records/ADR-011-global-config-version.md) | Configuración global versionada (global_config.version + pull manual, solo global) | Aceptada | 2026-09-14 (enmienda 2026-09-15) |
 | [ADR-012](./records/ADR-012-device-vision-thresholds.md) | Umbrales de visión edge HU-DEVICE-001 — desvíos justificados vs Apéndice 2 | Aceptada | 2026-09-17 |
 | [ADR-013](./records/ADR-013-webrtc-live-streaming.md) | Video en vivo post-MVP (WebRTC a demanda para app/portal) | Propuesta | 2026-09-25 |
+| [ADR-014](./records/ADR-014-observability-current-baseline.md) | Baseline actual de observabilidad | Aceptada | 2026-11-03 |

@@ -38,7 +38,7 @@ Requisitos no funcionales del sistema, derivados de la sección 17 del documento
 |-----|---------------------|------------------------|
 | NFR-01 | security | platform (logging, observabilidad) |
 | NFR-02 | todos los módulos | platform, ADR-002 |
-| NFR-03 | telemetry-service, edge | device-management (API keys), storage (MinIO) |
+| NFR-03 | telemetry-service, edge | device-management (API keys), almacenamiento de objetos compatible con S3 |
 | NFR-04 | edge (detección) | telemetry-service (registro), monitoring (notificación) |
 | NFR-05 | backend (monolito modular) | PostgreSQL, devops (CI/CD) |
 | NFR-06 | telemetry-service, security | platform (observabilidad) |
