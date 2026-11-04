@@ -38,13 +38,13 @@
 
 ```text
 [Edge] → [Backend] → [PostgreSQL]
-                 → [MinIO/S3]
+                 → [Almacenamiento S3-compatible]
                  → [Notificaciones push]
 ```
 
 **Dependencias críticas:**
 - `PostgreSQL`: si cae, la API no puede procesar operaciones
-- `MinIO/S3`: si cae, no se puede subir/consultar evidencia multimedia
+- `Almacenamiento S3-compatible`: si cae, no se puede subir/consultar evidencia multimedia
 - `Notificaciones push`: si cae, el flujo de notificación de eventos críticos falla
 
 ## Alertas y diagnóstico rápido
@@ -56,7 +56,7 @@
 **Acciones:**
 1. Revisar logs recientes del backend (JSON estructurado).
 2. Si hay errores de BD: ver sección Base de datos.
-3. Si es error de dependencia externa (MinIO/push): verificar conectividad.
+3. Si es error de dependencia externa (almacenamiento S3-compatible/push): verificar conectividad.
 
 ### Latencia alta (p95 > SLO)
 
@@ -75,7 +75,7 @@ docker compose --env-file .env.<ambiente> exec postgres pg_isready -U <user> -d 
 # Respuesta esperada: "accepting connections"
 ```
 
-### Almacenamiento multimedia (MinIO)
+### Almacenamiento multimedia (S3-compatible)
 
 ```bash
 # Verificar salud del bucket

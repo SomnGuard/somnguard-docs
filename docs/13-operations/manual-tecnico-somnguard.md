@@ -205,7 +205,7 @@ docker compose --env-file .env.develop ps
 
 # En somnguard-api
 docker compose --env-file .env logs -f api
-docker compose --env-file .env logs -f minio
+docker compose --env-file .env logs -f minio # alias del servicio S3Mock local
 ```
 
 La comprobación HTTP del API es `GET /actuator/health`. En QA/producción los detalles de salud dependen del perfil y pueden quedar limitados a usuarios autorizados. `docker compose ps` muestra el estado del contenedor de PostgreSQL; el Compose de API no contiene una instancia PostgreSQL.

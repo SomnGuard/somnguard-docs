@@ -52,7 +52,7 @@ Detectar patrones de fatiga, somnolencia y microsueños en el conductor mediante
 ## Supuestos
 
 - La detección se ejecuta en el edge; el backend no procesa video en tiempo real.
-- La evidencia multimedia se almacena fuera de PostgreSQL (MinIO/S3).
+- La evidencia multimedia se almacena fuera de PostgreSQL mediante almacenamiento de objetos compatible con S3 (ver [ADR-006](../05-architecture/decisions/records/ADR-006-minio-evidence-storage.md)).
 - Infraestructura final (local/nube) se define más adelante.
 - El dispositivo funciona sin conectividad: alerta local y buffer offline con respaldo.
 

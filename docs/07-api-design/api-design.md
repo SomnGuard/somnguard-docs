@@ -98,7 +98,7 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | POST | `/api/v1/telemetry/events` | Ingresar lote de eventos **solo metadata JSON** `{"events":[{event_id UUIDv7, device_id, occurred_at UTC, event_type, severity, sound_pattern?, metadata, has_evidence}]}`. Auth `X-Device-ID + X-API-Key`. Lote máx 100, timeout 10s. `event_type`, `severity` y `sound_pattern` van por **código de catálogo** (ej. `EV-SOM-01`, `AS-02`); la API resuelve a `event_type_id/severity_id/sound_pattern_id`, `422` si desconocido. `sound_pattern` es opcional: si viene y está activo se usa (es el que sonó en edge); si no viene, fallback a `event_type.default_sound_pattern_id`. Idempotencia por `event_id`: el lote **siempre responde `201 {acked_ids[], duplicate_ids[]}`** (los duplicados se reportan, no son error). Device borra local ambos. `REGISTERED` sin assign -> `403` |
-| POST | `/api/v1/telemetry/events/{eventId}/evidence` | Subir evidencia de un evento (1 archivo por evento MVP). `multipart/form-data` single file `file` JPG ~50-200KB + `checksum_sha256` (64 hex, obligatorio). `201 {evidence_id}`; `409` si el evento ya tiene evidencia; `404` si el evento no existe. Alternativa prod: presigned PUT directo a MinIO (ver ADR-006). Mapeo `event_id -> minio_key {device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` |
+| POST | `/api/v1/telemetry/events/{eventId}/evidence` | Subir evidencia de un evento (1 archivo por evento MVP). `multipart/form-data` single file `file` JPG ~50-200KB + `checksum_sha256` (64 hex, obligatorio). `201 {evidence_id}`; `409` si el evento ya tiene evidencia; `404` si el evento no existe. El API escribe en el proveedor S3-compatible configurado (ADR-006). Las URLs prefirmadas directas son una alternativa futura, no implementada. La clave del objeto sigue el formato `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg`; la columna física `minio_key` es histórica. |
 | GET | `/api/v1/events` | Consultar eventos (filtros por dispositivo, tipo, rango de fechas) |
 | GET | `/api/v1/events/{id}` | Consultar detalle de evento |
 | GET | `/api/v1/events/{id}/evidence` | Consultar evidencia de un evento |
@@ -136,7 +136,7 @@ Propuesta inicial de diseño de la API del backend (Java 21 / Spring Boot 4.1.1)
 | GET | `/api/v1/analytics/timeline` | Línea de tiempo de eventos por dispositivo/rango |
 | GET | `/api/v1/analytics/metrics` | Métricas de comportamiento (sesiones de riesgo, duración) |
 | GET | `/api/v1/analytics/reports` | Listar trabajos de reporte (solo jobs vigentes en memoria/Redis, TTL 1h) |
-| POST | `/api/v1/analytics/reports` | Solicitar generación de reporte (propuesta async, `202 Accepted {job_id}`, sin persistencia; PDF temporal en MinIO con auto-borrado 1h) |
+| POST | `/api/v1/analytics/reports` | Solicitar generación de reporte (propuesta async, `202 Accepted {job_id}`, sin persistencia; almacenamiento temporal del PDF en proveedor S3-compatible, propuesta no implementada) |
 | GET | `/api/v1/analytics/reports/jobs/{job_id}` | Poll de estado (`queued\|rendering\|ready\|failed`); en `ready` retorna URL prefirmada de un solo uso (expira 15min) |
 
 ## Módulo streaming (post-MVP — HU-API-012, ADR-013 Aceptada parcial)

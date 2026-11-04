@@ -140,7 +140,7 @@ La base de datos PostgreSQL almacena entidades estructuradas, catálogos, usuari
 
 ### 6.6 Almacenamiento multimedia
 
-La evidencia multimedia no se guarda directamente en PostgreSQL. Se almacena en un servicio aparte y la base de datos conserva solo la referencia, URL o identificador asociado.
+La evidencia multimedia no se guarda directamente en PostgreSQL. El API usa el contrato de almacenamiento compatible con S3 y la base de datos conserva los metadatos y la clave del objeto. En desarrollo local el proveedor es Adobe S3Mock; el despliegue del VPS documentado usa SeaweedFS como proveedor S3-compatible. El adaptador Java usa el SDK de MinIO, pero eso no significa que el servidor MinIO esté desplegado en esos ambientes. La configuración común usa `S3_ENDPOINT`, `S3_BUCKET`, `S3_REGION`, `S3_ACCESS_KEY` y `S3_SECRET_KEY` (ver [ADR-006](./decisions/records/ADR-006-minio-evidence-storage.md)).
 
 ## 7. Módulos funcionales del backend
 
@@ -202,7 +202,7 @@ com.somnguard.<modulo>/
     │   └── amqp/          # Consumidores de mensajes (si aplica)
     └── out/
         ├── persistence/   # Adaptadores JPA/PostgreSQL
-        └── storage/       # Adaptadores de almacenamiento multimedia (MinIO/S3)
+        └── storage/       # Adaptadores de almacenamiento multimedia compatible con S3
 ```
 
 `platform` **no va dentro de cada módulo**: es un paquete único al nivel de `com.somnguard`, junto a los módulos, y todos lo comparten:

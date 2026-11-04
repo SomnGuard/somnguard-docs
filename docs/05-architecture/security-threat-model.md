@@ -27,7 +27,7 @@ Análisis STRIDE del sistema SomnGuard, alineado con el documento de arquitectur
 | Portal web (React JS) | Pública (Internet) | Credenciales, sesiones |
 | App móvil (React Native) | Pública (Internet) | Credenciales, notificaciones |
 | Dispositivo edge (Raspberry Pi) | Campo (física) | Buffer local, API key del dispositivo |
-| Almacenamiento multimedia (MinIO/S3) | Interna | Evidencia multimedia (PII) |
+| Almacenamiento multimedia compatible con S3 | Interna | Evidencia multimedia (PII) |
 | Base de datos PostgreSQL | Interna | PII, datos transaccionales |
 
 ## Amenazas identificadas (STRIDE)
@@ -40,7 +40,7 @@ Análisis STRIDE del sistema SomnGuard, alineado con el documento de arquitectur
 | T-004 | Tampering | Manipulación del buffer local del dispositivo | Edge | Media | Medio | Integridad del buffer, API key no expuesta al usuario final |
 | T-005 | Repudiation | Registro de eventos sin trazabilidad de origen | telemetry-service | Baja | Medio | `audit_login` + trazabilidad de eventos (NFR-06) |
 | T-006 | Information Disclosure | Exposición de PII o evidencia en logs o respuestas | Backend | Media | Alto | Logs sin PII, cifrado en reposo, RBAC |
-| T-007 | Information Disclosure | Acceso no autorizado a evidencia multimedia | MinIO/S3 | Media | Alto | URLs firmadas, RBAC por rol |
+| T-007 | Information Disclosure | Acceso no autorizado a evidencia multimedia | Almacenamiento S3-compatible | Media | Alto | Autorización en API y controles del proveedor; las URLs prefirmadas no están implementadas |
 | T-008 | Denial of Service | Saturación de endpoints públicos | API REST | Media | Medio | Rate limiting, 429, límites por API key |
 | T-009 | Elevation of Privilege | Escalada por asignación incorrecta de roles | security | Baja | Alto | Matriz rol × recurso, pruebas de autorización |
 | T-010 | Spoofing | Registro masivo con provisioning token filtrado | API / device-management | Media | Alto | Token un uso + expiración 7d + revocación + rate limit 5/min + auditoría (ADR-010) |
@@ -54,7 +54,7 @@ Análisis STRIDE del sistema SomnGuard, alineado con el documento de arquitectur
 | Edge | API key del dispositivo, buffer local con integridad, alerta local sin depender de red |
 | Transporte | TLS 1.2+ en API y sincronización |
 | API | JWT + RBAC, validación de idempotencia (RN-08), rate limiting |
-| Almacenamiento | Evidencia en MinIO con acceso controlado; PostgreSQL solo datos estructurados |
+| Almacenamiento | Evidencia multimedia en proveedor S3-compatible; PostgreSQL solo conserva metadatos y referencias |
 | Clientes | Sesiones con expiración, tokens de refresco, cifrado en tránsito |
 
 ## Datos sensibles (PII)
@@ -62,7 +62,7 @@ Análisis STRIDE del sistema SomnGuard, alineado con el documento de arquitectur
 | Dato | Clasificación | Almacenamiento | Acceso permitido |
 |------|---------------|----------------|------------------|
 | Email | PII contacto | Cifrado en reposo | Owner + Admin |
-| Evidencia multimedia | PII (imagen/video del conductor) | MinIO con acceso controlado | Owner + Admin |
+| Evidencia multimedia | PII (imagen/video del conductor) | Proveedor S3-compatible; acceso mediado por la API | Owner + Admin |
 | Contraseña | Credencial | Hash bcrypt (nunca plano) | Nadie (solo verificación) |
 | Ubicación / datos del vehículo | PII | Cifrado en reposo | Owner + Admin |
 

@@ -39,7 +39,7 @@ Ficha técnica del proyecto SomnGuard: identificación, dimensiones de complejid
 | Complejidad de dominio | media | Detección en edge + gestión de eventos y notificaciones |
 | Volumen esperado | < 10k usuarios | |
 | PII / compliance | básico | Ley 1581/2012: datos personales y evidencia multimedia |
-| Integraciones externas | 1-3 | Notificaciones push, almacenamiento multimedia (MinIO/S3) |
+| Integraciones externas | 1-3 | Notificaciones push, almacenamiento multimedia compatible con S3 |
 | Disponibilidad requerida | 99% | Alertas críticas con baja latencia |
 | Multi-tenant | no (single-tenant) | Una sola organización; separación por roles (RBAC) |
 

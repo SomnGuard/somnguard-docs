@@ -57,7 +57,7 @@
 |--------|-------------|--------------|------------|
 | `event.recorded` | Evento detectado recibido, persistido en BD (idempotente) | `telemetry_service` (propia tabla), `analytics` (línea de tiempo), `monitoring` (alertas) | RN-TEL-01, HU-API-007, HU-DEVICE-003 |
 | `alert.generated` | Evento crítico detectado, registrado en alert_log | `monitoring` (notificaciones), `security` (historial en `audit_login`) | RF-TEL-03, HU-API-009 |
-| `evidence.uploaded` | Evidencia multimedia (imagen/video) subida a MinIO | `telemetry_service` (guarda minio_key), `monitoring` (thumbnails) | RF-TEL-02, HU-API-007 |
+| `evidence.uploaded` | Evidencia multimedia (imagen/video) subida al almacenamiento S3-compatible | `telemetry_service` (guarda la clave en `minio_key`, nombre físico histórico), `monitoring` (thumbnails) | RF-TEL-02, HU-API-007 |
 | `event.sync.failed` | Sincronización fallida después de reintentos exponenciales | `device_management` (actualiza buffer retry), `monitoring` (métricas) | RF-EDGE-12, HU-DEVICE-003 |
 
 ### 2.3 `monitoring` (Notificaciones)

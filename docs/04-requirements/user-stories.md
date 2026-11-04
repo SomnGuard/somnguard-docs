@@ -439,7 +439,7 @@
 | AC-001 | POST `/api/v1/telemetry/events` (auth `X-Device-ID + X-API-Key`) acepta **solo metadata JSON** `{"events":[]}` lote máx 100, sin archivos inline (descartado base64) | Sí |
 | AC-002 | Validación: `device_id` + `api_key` coinciden, `event_type/severity/sound_pattern` por código (resuelve a id, `422` si desconocido; `sound_pattern` opcional con fallback a `event_type.default_sound_pattern_id`). `REGISTERED` sin assign -> `403`. Duplicados por `event_id` se reportan en `duplicate_ids` del `201`, no son error | Sí |
 | AC-003 | Persiste `event` (`event_type_id`, `occurred_at`, `severity_id`, `sound_pattern_id`, `metadata`, `is_offline_sync`; evidencia en tabla `evidence`, no `evidence_refs`) | Sí |
-| AC-004 | Evidencia 1/evento MVP: `POST /api/v1/telemetry/events/{id}/evidence` multipart 1 JPG -> MinIO `somnguard-evidence` key `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` + `evidence_id` + `checksum_sha256` (64 hex, obligatorio). `409` si ya existe evidencia; `404` si no existe el evento. Mapeo por `evidence.event_id UNIQUE` | Sí |
+| AC-004 | Evidencia 1/evento MVP: `POST /api/v1/telemetry/events/{id}/evidence` multipart 1 JPG -> proveedor S3-compatible, bucket `somnguard-evidence`, key `{device_id}/{YYYY}/{MM}/{DD}/{event_id}.jpg` + `evidence_id` + `checksum_sha256` (64 hex, obligatorio). `409` si ya existe evidencia; `404` si no existe el evento. Mapeo por `evidence.event_id UNIQUE` | Sí |
 | AC-005 | Registra `alert_log` con código AS-XX, timestamp, event_id, severidad | Sí |
 | AC-006 | Respuesta `201 {acked_ids[], duplicate_ids[]}`; ACK para limpieza buffer local (borra ambos) | Sí |
 | AC-007 | Lote máx 100 eventos; timeout 10s; payload máx 50MB | Sí |
@@ -556,7 +556,7 @@
 | ID | Criterio | Testeable |
 |----|----------|-----------|
 | AC-001 | POST `/api/v1/analytics/reports` solicita generación con resumen IA (prompt con métricas + eventos) → `202 Accepted {job_id}` (job temporal en memoria/Redis TTL 1h, sin persistencia) | Sí |
-| AC-002 | GET `/api/v1/analytics/reports/jobs/{job_id}` poll (`queued\|rendering\|ready\|failed`); en `ready` retorna URL prefirmada MinIO de un solo uso (expira 15min, objeto temporal con auto-borrado 1h): timeline + métricas + resumen IA + evidencia (thumbnails) | Sí |
+| AC-002 | GET `/api/v1/analytics/reports/jobs/{job_id}` poll (`queued\|rendering\|ready\|failed`); propuesta: en `ready` retorna URL prefirmada del proveedor S3-compatible (expira 15min, objeto temporal con auto-borrado 1h): timeline + métricas + resumen IA + evidencia (thumbnails). La generación y entrega de reportes no está implementada. | Sí |
 | AC-003 | Descarga directa (Content-Disposition: attachment) y visualización inline | Sí |
 | AC-004 | Cache de resumen/reporte 1h por usuario+periodo (Redis/memoria); regenera tras expirar | Sí |
 | AC-005 | Auditoría mínima sin PDFs: log JSON (user_id, params, status, timestamp); analytics sigue sin tablas propias | Sí |
@@ -567,7 +567,7 @@
 |----------------|------|-------------|
 | HU-API-010 | Bloqueante | Métricas base |
 | RF-ANA-03,04 | Requisito | Base funcional |
-| ADR-006 (Object Storage) | Decisión | MinIO para PDFs |
+| ADR-006 (Object Storage) | Decisión | Proveedor S3-compatible para PDFs temporales (flujo pendiente de implementación) |
 
 ---
 

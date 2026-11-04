@@ -17,14 +17,14 @@
 
 </div>
 
-Estrategia de respaldo y recuperación de la **base de datos** de SomnGuard. Alineada con la sección 16 del documento de arquitectura: una única instancia PostgreSQL 16, un schema por módulo, y evidencia multimedia fuera de la BD (MinIO/S3).
+Estrategia de respaldo y recuperación de la **base de datos** de SomnGuard. Alineada con la sección 16 del documento de arquitectura: una única instancia PostgreSQL 16, un schema por módulo, y evidencia multimedia fuera de la BD en almacenamiento compatible con S3 (ver ADR-006).
 
 ## Qué se respalda
 
 | Activo | Contenido | Criticidad |
 |--------|-----------|------------|
 | BD PostgreSQL (todos los schemas) | Datos de negocio de los 6 módulos | Alta |
-| MinIO/S3 (evidencia multimedia) | Imágenes/videos de eventos | Alta / PII |
+| Almacenamiento compatible con S3 (evidencia multimedia) | Imágenes/videos de eventos | Alta / PII |
 | Changelogs Liquibase (en git) | Definición versionada del esquema | Media (recuperable desde git) |
 | Archivos `.env.*` | Configuración por ambiente — **sin secretos versionados** | Fuera de git |
 
@@ -68,7 +68,7 @@ docker compose --env-file .env.develop exec -T postgres \
 
 Orden recomendado de recuperación total:
 1. Levantar PostgreSQL limpio del ambiente.
-2. Restaurar datos (dump o PITR) y evidencia (MinIO).
+2. Restaurar datos (dump o PITR) y evidencia desde el proveedor de objetos S3-compatible del ambiente.
 3. Verificar con Liquibase que cada módulo está en el **tag de release** correcto (`04_tcl`); si falta esquema, aplicar `update`.
 4. Verificar integridad: `pg_isready`, conteos de catálogos clave y unicidad de eventos por ID de idempotencia.
 

@@ -19,6 +19,8 @@
 
 > **Objetivo:** Visualizar y validar que las dependencias entre los 6 módulos del backend, el dominio central y los repos (API, DB, APP, PORTAL, DEVICE) siguen la arquitectura hexagonal y no hay ciclos de FK ni acoplamiento inverso que bloqueen el desarrollo paralelo.
 
+> **Nota de estado:** este mapa describe dependencias lógicas propuestas; no prueba que cada proveedor o stack transversal esté desplegado. Para estado de almacenamiento y observabilidad ver [ADR-006](../05-architecture/decisions/records/ADR-006-minio-evidence-storage.md) y [ADR-014](../05-architecture/decisions/records/ADR-014-observability-current-baseline.md).
+
 > **Fuente de verdad:** ADR-002 (arquitectura hexagonal), module-catalog.md, cross-cutting.md, data-dictionary.md, modeling-conventions.md, entities-and-rules.md
 
 ---

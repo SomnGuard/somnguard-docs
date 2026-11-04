@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Changed (2026-11-03)
+- **Punto 10 — infraestructura alineada con implementación:** ADR-006 y las referencias de arquitectura, despliegue y setup local usan el contrato S3-compatible, distinguen S3Mock local de SeaweedFS en el VPS y aclaran que `minio_key`/SDK MinIO no significan servidor MinIO desplegado.
+- **ADRs de infraestructura:** ADR-007 queda reemplazada por ADR-014, que describe el baseline Actuator/Micrometer realmente configurado. ADR-008 enlaza evidencia del Traefik desplegado y registra que la configuración Compose fuente aún no está versionada.
+- **Observabilidad:** se reemplazan afirmaciones de OTel/LGTM desplegado por el estado verificable de endpoints Actuator, métricas y logs locales; se actualizan preguntas y dependencias.
+
 ### Changed (2026-10-30)
 - **Manual de despliegue v1.1:** incorpora las evidencias de verificación del 30 de octubre de 2026 (TLS, PostgreSQL, API health, portal, SPA refresh, descargas, contenedores, recursos y video de evento). Quedan fuera Liquibase status y el `curl` de SeaweedFS, no capturados.
 

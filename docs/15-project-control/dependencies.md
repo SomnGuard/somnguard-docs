@@ -68,13 +68,14 @@ flowchart LR
 |-------------|------|-----|--------|-----------------|
 | **PostgreSQL 16** | Base de datos | Motor relacional; esquema versionado con Liquibase | Definido (ADR-001) | — |
 | **Liquibase** | Migraciones | Versionado del esquema | Definido (ADR-001) | — |
-| **MinIO/S3** | Object storage | Evidencia multimedia (solo referencia en BD) | Definido (QR-005) | R-006 |
+| **Almacenamiento compatible con S3** | Object storage | Evidencia multimedia (solo metadatos y clave en BD) | Implementado por ambiente (ADR-006) | R-006 |
 | **Notificaciones push (FCM)** | Servicio externo | Notificaciones de eventos críticos (cuenta de servicio, HU-API-009) | Definido (QR-023) | R-008 |
 | **Modelo IA (resumen)** | Servicio externo | Resumen de eventos en analytics | Sin decidir | R-010 |
 | **Docker** | Runtime local | Levantar PostgreSQL y servicios | En uso local | — |
-| **Traefik** | Edge gateway | TLS, rate-limit, CORS (ver ADR-008) | Definido (ADR-008) | — |
+| **Traefik** | Edge gateway | TLS y enrutamiento en VPS (ver ADR-008) | Despliegue registrado; configuración Compose fuente no versionada en los repositorios revisados | — |
 | **Redis** | Cache/rate-limit | Blocklist refresh tokens, conteo por IP/device | Previsto (ver `cross-cutting.md`) | — |
-| **OTel + LGTM** | Observabilidad | Trazas/métricas/logs (Tempo/Prom/Loki/Grafana, ver ADR-007) | Definido (ADR-007) | — |
+| **Actuator + Micrometer** | Observabilidad | Healthchecks y endpoint de métricas del API (ADR-014) | Implementado parcialmente; sin backend central | — |
+| **OTel + LGTM** | Observabilidad | Stack central de trazas/métricas/logs (ADR-007) | ADR-007 reemplazada por ADR-014; stack central no implementado | — |
 | **Secret Manager** | Gestión de secretos | Credenciales (hoy en `.env.*` fuera de git) | Pendiente | R-001 |
 
 ## Orden de construcción recomendado

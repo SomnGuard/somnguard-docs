@@ -1,86 +1,49 @@
-<div style="display:flex; align-items:center; justify-content:space-between;">
+# Observabilidad — estado implementado
 
-<div>
-<img src="../../assets/icons/logo-somnguard.png" width="140"/>
-</div>
+**Estado:** Baseline parcial implementado; centralización pendiente
+**Fecha de actualización:** 2026-11-03
 
-<div align="right">
+Este documento registra las capacidades que existen en los repositorios. La decisión vigente es [ADR-014](../05-architecture/decisions/records/ADR-014-observability-current-baseline.md). El stack completo OTel + LGTM descrito anteriormente fue reemplazado; su propuesta histórica permanece en [ADR-007](../05-architecture/decisions/records/ADR-007-observability-otel-lgtm.md).
 
-# SOMNGUARD
+## Capacidades actuales
 
-## Observabilidad
+| Componente | Capacidad verificable | Repositorio / fuente | Límite actual |
+|---|---|---|---|
+| API | Spring Actuator habilita `health`, `info`, `prometheus` y `metrics` bajo `/actuator`. | `somnguard-api/src/main/resources/application.yml` | No se encontró scraper Prometheus ni backend central desplegable en los repositorios revisados. |
+| Métricas API | `micrometer-registry-prometheus` exporta métricas en formato Prometheus. | `somnguard-api/pom.xml` | No hay dashboards ni reglas Alertmanager versionados. |
+| PostgreSQL | Docker healthcheck con `pg_isready`; Liquibase conserva historial de migraciones. | `somnguard-db/docker-compose.yml`, changelog | No sustituye métricas centralizadas de base de datos. |
+| Logs de proceso | Se pueden consultar desde el runtime del servicio (por ejemplo, `docker logs` para contenedores). | Compose de cada servicio | No hay colector y almacenamiento central de logs configurados. |
+| Trazas distribuidas | Sin implementación de exportación OTel/OTLP identificada en los repositorios revisados. | — | Propagación, collector y backend de trazas pendientes. |
 
-**Estado:** En progreso
-**Fecha:** 2026-08-19
+## Endpoints del API
 
-</div>
+La configuración actual declara los siguientes endpoints Actuator:
 
-</div>
+| Endpoint | Uso |
+|---|---|
+| `GET /actuator/health` | Estado general del API y dependencias registradas por Spring |
+| `GET /actuator/health/liveness` | Probe de liveness de Spring |
+| `GET /actuator/health/readiness` | Probe de readiness de Spring |
+| `GET /actuator/info` | Información de la aplicación |
+| `GET /actuator/prometheus` | Métricas en formato Prometheus |
+| `GET /actuator/metrics` | Métricas Micrometer |
 
-Cómo se observa SomnGuard a través de los tres pilares —logs, métricas y trazas— más healthchecks y alertas. Alineado con la sección 15 del documento de arquitectura y con `platform/observability`.
+La exposición se configura en `somnguard-api/src/main/resources/application.yml`. Antes de publicar estos endpoints fuera de la red interna, QA/DevOps debe verificar autenticación, reglas del proxy y datos que expone cada endpoint para el perfil del ambiente.
 
-## Fuentes de observabilidad
+## Desarrollo local
 
-| Fuente | Naturaleza | Estado hoy |
-|--------|------------|------------|
-| Backend (Java/Spring Boot) | Logs, métricas, healthchecks | Modelado; activo con la capa de aplicación |
-| PostgreSQL 16 | Logs, `pg_stat_*`, `pg_isready` | Disponible hoy |
-| Liquibase (`databasechangelog`) | Trazabilidad de migraciones | Disponible hoy |
-| `audit_login` | Auditoría de accesos (append-only) | Modelado; activo con la capa de aplicación |
-| `analytics` (métricas y reportes) | Observabilidad de negocio | Modelado |
+- Revisar la salud del API en `http://localhost:8080/actuator/health`.
+- Consultar métricas en `http://localhost:8080/actuator/metrics` y `http://localhost:8080/actuator/prometheus` cuando el API esté iniciado.
+- Consultar logs según el modo de ejecución: consola del proceso Maven o `docker logs <contenedor>`.
+- No se requiere ni se inicia Grafana, Loki, Tempo u OTel Collector en el setup local actual.
 
-> **Distinción importante:** `monitoring` y `analytics` son observabilidad del **negocio** (notificaciones, métricas de conducción), no reemplazan la observabilidad **técnica** (latencia, errores 5xx, saturación) de la plataforma. Ambas coexisten.
+## Estado de la decisión LGTM
 
-## Pilar 1 — Logs
-
-Formato de log **estructurado en JSON** con campos mínimos por evento: `timestamp`, `level` (INFO/WARN/ERROR), `service` (ej. `somnguard-backend`), `requestId`, `userId` si aplica, `module` (módulo del monolito), `message` y `context`. Detalle y política de retención por ambiente: ver [_template-observability.md](./_template-observability.md).
-
-## Pilar 2 — Métricas
-
-- **RED** por endpoint (Rate, Errors, Duration p95) para la API.
-- **USE** por recurso (Utilización, Saturación, Errores de CPU, memoria y pool de conexiones).
-- Métricas de BD: conexiones activas vs. límite del pool, consultas lentas (`pg_stat_activity`), tamaño y disco.
-- `analytics` expone métricas de dominio (eventos por severidad, alertas emitidas, notificaciones) que **no** son métricas de plataforma.
-
-## Pilar 3 — Trazas
-
-- Al existir comunicación entre módulos (puertos) y AMQP, se instrumentarán trazas con propagación de contexto (W3C TraceContext) y correlación por `event_id`/`requestId`.
-- Herramienta APM: Tempo (parte del stack OTel+LGTM de ADR-007).
-
-## Healthchecks
-
-| Endpoint | Qué verifica | Respuesta esperada |
-|----------|--------------|--------------------|
-| `GET /health` | Disponibilidad básica del proceso | `200 { "status": "ok" }` |
-| `GET /health/ready` | Disponibilidad + dependencias (BD, MinIO) | `200 { "status": "ready" }` |
-| `GET /health/live` | Proceso vivo (sin dependencias) | `200 { "status": "alive" }` |
-
-BD: `docker compose --env-file .env.develop exec postgres pg_isready -U <user> -d <db>` → "accepting connections".
-
-## Alertas
-
-Marco de alertas (umbrales de referencia hasta fijar SLOs reales):
-
-| Alerta | Condición (referencia) | Severidad | Aplica hoy |
-|--------|------------------------|-----------|------------|
-| PostgreSQL no responde | `pg_isready` falla | P0 | Listo |
-| BD sin espacio | Disco > 85% | P1 | Listo |
-| Migración fallida | `update` de un módulo termina en error | P1 | Listo |
-| Alta tasa de errores 5xx | Error rate > umbral | P1 | Pendiente: con aplicación |
-| Latencia alta | p95 > SLO | P2 | Pendiente: con aplicación |
-
-El enrutamiento de alertas usa Alertmanager + Grafana (ver ADR-007 §6: `APIHighErrorRate`, `DeviceOffline`).
-
-## Puntos abiertos
-
-- Stack concreto de logs/métricas/trazas: **decidido en ADR-007** (OTel + Loki/Prometheus/Tempo/Grafana); pendiente despliegue.
-- Umbrales definitivos: dependen de los SLO (usar [_template-sla-slo-sli.md](./_template-sla-slo-sli.md)).
-- Dashboards: por crear sobre el stack ADR-007.
+La ADR-007 había propuesto OpenTelemetry Collector, Tempo, Prometheus, Loki, Grafana y Alertmanager. Esos servicios no están configurados en los repositorios revisados, por lo que no se presentan como parte del runtime actual. Para implementarlos, primero se debe acordar el alcance y después versionar la configuración, retención, controles de acceso, dashboards, alertas y pruebas de extremo a extremo en un repositorio de infraestructura.
 
 ## Referencias
 
-- [_template-observability.md](./_template-observability.md)
-- [incident-management.md](./incident-management.md)
-- [backup-and-recovery.md](./backup-and-recovery.md)
-- [Requisitos no funcionales](../04-requirements/non-functional.md)
-- [Documento de arquitectura](../05-architecture/architecture-document.md#15-observabilidad-y-auditoría)
+- [ADR-014: baseline actual de observabilidad](../05-architecture/decisions/records/ADR-014-observability-current-baseline.md)
+- [ADR-007 reemplazada: propuesta OTel + LGTM](../05-architecture/decisions/records/ADR-007-observability-otel-lgtm.md)
+- [Actuator y métricas del API](https://github.com/SomnGuard/somnguard-api/blob/develop/README.md)
+- [Arquitectura](../05-architecture/architecture-document.md)
